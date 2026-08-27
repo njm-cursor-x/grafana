@@ -74,11 +74,12 @@ public/css/*.min.css
 .vscode/
 !.vscode/launch.json
 .vs/
-# Cursor: ignore local editor state, but keep the demo-reset skill in the fork.
+# Cursor: ignore local editor state, but keep project skills in the fork.
 .cursor/*
 !.cursor/skills/
 .cursor/skills/*
 !.cursor/skills/demo-reset/
+!.cursor/skills/branch-regression/
 .devcontainer/
 .claude/*
 
