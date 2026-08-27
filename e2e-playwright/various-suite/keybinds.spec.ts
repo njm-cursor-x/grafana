@@ -84,6 +84,21 @@ test.describe(
       await expect(timePickerButton).toHaveAttribute('aria-label', expectedRange);
     });
 
+    test('shift+k should toggle theme', async ({ page }) => {
+      const getThemeStylesheet = () =>
+        page.evaluate(() => {
+          const link = document.head.querySelector('link[rel="stylesheet"]');
+          return link?.getAttribute('href') ?? '';
+        });
+
+      const initialHref = await getThemeStylesheet();
+      await page.keyboard.press('Shift+K');
+      await expect.poll(getThemeStylesheet).not.toBe(initialHref);
+
+      await page.keyboard.press('Shift+K');
+      await expect.poll(getThemeStylesheet).toBe(initialHref);
+    });
+
     test('ctrl+o should toggle shared crosshair', async ({ page, selectors }) => {
       // Navigate to a new dashboard
       await page.goto('/dashboard/new?orgId=1');

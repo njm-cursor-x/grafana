@@ -156,6 +156,28 @@ describe('useShortcuts', () => {
     expect(assistantShortcut).toBeDefined();
   });
 
+  it('should include shift+k theme toggle shortcut in global shortcuts', () => {
+    mockUseAssistant.mockReturnValue({
+      isLoading: false,
+      isAvailable: false,
+      openAssistant: jest.fn(),
+      closeAssistant: jest.fn(),
+      toggleAssistant: jest.fn(),
+    });
+
+    const { result } = renderHook(() => useShortcuts());
+
+    const globalCategory = result.current.find((category) => category.category.includes('Global'));
+    expect(globalCategory).toBeDefined();
+
+    const themeToggleShortcut = globalCategory!.shortcuts.find(
+      (shortcut) => shortcut.keys.includes('shift') && shortcut.keys.includes('k')
+    );
+    expect(themeToggleShortcut).toBeDefined();
+    expect(themeToggleShortcut!.isNew).toBe(true);
+    expect(themeToggleShortcut!.description).toContain('Toggle light/dark theme');
+  });
+
   describe('time range zoom shortcuts with feature toggle', () => {
     beforeEach(() => {
       mockUseAssistant.mockReturnValue({
