@@ -100,16 +100,14 @@ test.describe(
         });
 
       const before = await getThemeMode();
-      await page.keyboard.press('Shift+K');
-      const after = await getThemeMode();
-
       expect(before).not.toBeNull();
-      expect(after).not.toBeNull();
-      expect(after).not.toBe(before);
 
-      // Toggle back to avoid polluting other tests
       await page.keyboard.press('Shift+K');
-      expect(await getThemeMode()).toBe(before);
+      await expect.poll(getThemeMode, { timeout: 10_000 }).not.toBe(before);
+
+      // Toggle back to avoid polluting other tests; changeTheme swaps CSS asynchronously.
+      await page.keyboard.press('Shift+K');
+      await expect.poll(getThemeMode, { timeout: 10_000 }).toBe(before);
     });
 
     test('ctrl+o should toggle shared crosshair', async ({ page, selectors }) => {
