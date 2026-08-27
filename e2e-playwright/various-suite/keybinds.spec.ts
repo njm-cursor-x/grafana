@@ -84,6 +84,34 @@ test.describe(
       await expect(timePickerButton).toHaveAttribute('aria-label', expectedRange);
     });
 
+    test('shift+k should toggle theme', async ({ page }) => {
+      const getThemeMode = () =>
+        page.evaluate(() => {
+          const hrefs = [...document.querySelectorAll('link[rel="stylesheet"]')].map(
+            (l) => (l as HTMLLinkElement).href
+          );
+          if (hrefs.some((h) => h.includes('.light.') || h.includes('/light.'))) {
+            return 'light';
+          }
+          if (hrefs.some((h) => h.includes('.dark.') || h.includes('/dark.'))) {
+            return 'dark';
+          }
+          return null;
+        });
+
+      const before = await getThemeMode();
+      await page.keyboard.press('Shift+K');
+      const after = await getThemeMode();
+
+      expect(before).not.toBeNull();
+      expect(after).not.toBeNull();
+      expect(after).not.toBe(before);
+
+      // Toggle back to avoid polluting other tests
+      await page.keyboard.press('Shift+K');
+      expect(await getThemeMode()).toBe(before);
+    });
+
     test('ctrl+o should toggle shared crosshair', async ({ page, selectors }) => {
       // Navigate to a new dashboard
       await page.goto('/dashboard/new?orgId=1');
