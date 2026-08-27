@@ -1,6 +1,6 @@
 ---
 name: demo-reset
-description: Resets this Grafana demo fork to a clean main by closing open GitHub PRs without merging, deleting all issues, deleting non-main remote and local branches, and hard-resetting the working tree to origin/main. Use when the user asks to reset the demo, demo reset, or wipe the demo repo.
+description: Resets this Grafana demo fork to a clean main by closing open GitHub PRs without merging, closing and deleting all issues so the GitHub Issues tab is empty, deleting non-main remote and local branches, and hard-resetting the working tree to origin/main. Use when the user asks to reset the demo, demo reset, or wipe the demo repo.
 ---
 
 # Demo reset
@@ -29,7 +29,7 @@ The script needs `gh` auth and git push access. Use permissions that allow netwo
 - Aborts if the GitHub repo owner is `grafana` or the repo is `grafana/grafana`
 - Aborts if the default branch is not `main`
 - Closes every **open** PR without merging
-- Deletes every issue (open and closed). Does not delete PRs.
+- Closes and **deletes** every issue (open and closed) so the GitHub Issues tab is empty. Closing alone is not enough — closed issues still appear under Closed. GitHub has no issue archive; delete is the wipe. Does not delete PRs.
 - Deletes every remote branch except `main`
 - Force-checkouts `main`, `git reset --hard origin/main`, `git clean -fd` (ignored files stay)
 - Deletes every local branch except `main`

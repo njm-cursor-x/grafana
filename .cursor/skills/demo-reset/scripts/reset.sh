@@ -67,15 +67,20 @@ ISSUES=()
 REMOTE_BRANCHES=()
 LOCAL_BRANCHES=()
 
+collect_issues() {
+  ISSUES=()
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ -z "$line" ]] && continue
+    ISSUES+=("$line")
+  done < <(gh issue list --state all --limit 1000 --json number,title,state --jq '.[] | "\(.number)\t\(.state)\t\(.title)"')
+}
+
 while IFS= read -r line || [[ -n "$line" ]]; do
   [[ -z "$line" ]] && continue
   OPEN_PRS+=("$line")
 done < <(gh pr list --state open --limit 1000 --json number,title --jq '.[] | "\(.number)\t\(.title)"')
 
-while IFS= read -r line || [[ -n "$line" ]]; do
-  [[ -z "$line" ]] && continue
-  ISSUES+=("$line")
-done < <(gh issue list --state all --limit 1000 --json number,title --jq '.[] | "\(.number)\t\(.title)"')
+collect_issues()
 
 while IFS= read -r line || [[ -n "$line" ]]; do
   [[ -z "$line" ]] && continue
@@ -105,7 +110,7 @@ print_section() {
 echo "Demo reset — ${NAME_WITH_OWNER}"
 echo "Mode: ${MODE}"
 print_section "Open PRs to close (not merge)" "${OPEN_PRS[@]+"${OPEN_PRS[@]}"}"
-print_section "Issues to delete" "${ISSUES[@]+"${ISSUES[@]}"}"
+print_section "Issues to close and delete (Issues tab must be empty)" "${ISSUES[@]+"${ISSUES[@]}"}"
 print_section "Remote branches to delete" "${REMOTE_BRANCHES[@]+"${REMOTE_BRANCHES[@]}"}"
 print_section "Local branches to delete" "${LOCAL_BRANCHES[@]+"${LOCAL_BRANCHES[@]}"}"
 echo
@@ -137,17 +142,39 @@ else
   done
 fi
 
-echo "Deleting issues..."
-if [[ ${#ISSUES[@]} -eq 0 ]]; then
-  echo "  (none)"
-else
+echo "Closing and deleting issues (Issues tab must be empty)..."
+# Closing is not enough: GitHub still lists closed issues. Delete until none remain.
+issue_pass=1
+while true; do
+  collect_issues
+  if [[ ${#ISSUES[@]} -eq 0 ]]; then
+    if [[ "$issue_pass" -eq 1 ]]; then
+      echo "  (none)"
+    else
+      echo "  Issues tab is empty."
+    fi
+    break
+  fi
+  echo "  Pass ${issue_pass}: close+delete ${#ISSUES[@]} issue(s)..."
   for line in "${ISSUES[@]}"; do
     number="${line%%$'\t'*}"
+    gh issue close "$number" >/dev/null 2>&1 || true
     if ! gh issue delete "$number" --yes; then
       warn "failed to delete issue #${number}"
     fi
   done
-fi
+  if [[ "$issue_pass" -ge 3 ]]; then
+    collect_issues
+    if [[ ${#ISSUES[@]} -ne 0 ]]; then
+      warn "issues still present; GitHub Issues tab is not empty"
+      for line in "${ISSUES[@]}"; do
+        echo "    remaining: ${line}" >&2
+      done
+    fi
+    break
+  fi
+  issue_pass=$((issue_pass + 1))
+done
 
 echo "Deleting remote branches..."
 if [[ ${#REMOTE_BRANCHES[@]} -eq 0 ]]; then
