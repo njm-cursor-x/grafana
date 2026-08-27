@@ -1,10 +1,11 @@
 import { generatedAPI as preferencesAPI } from '@grafana/api-clients/rtkq/preferences/v1';
+import { getThemeById } from '@grafana/data/internal';
 import { config } from '@grafana/runtime';
 import { setTestFlags } from '@grafana/test-utils/unstable';
 
 import { backendSrv } from './backend_srv';
 import { contextSrv } from './context_srv';
-import { changeTheme } from './theme';
+import { changeTheme, toggleTheme } from './theme';
 
 jest.mock('app/store/store', () => ({
   dispatch: jest.fn(() => ({ unwrap: () => Promise.resolve({}) })),
@@ -82,5 +83,38 @@ describe('changeTheme', () => {
 
     expect(document.head.querySelector(`link[href="${darkHref}"]`)).toBeNull();
     expect(document.head.querySelector(`link[href="${lightHref}"]`)).not.toBeNull();
+  });
+});
+
+describe('toggleTheme', () => {
+  const originalSignedIn = contextSrv.isSignedIn;
+  const originalUid = contextSrv.user.uid;
+  const originalTheme2 = config.theme2;
+
+  beforeEach(() => {
+    contextSrv.isSignedIn = true;
+    contextSrv.user.uid = 'abc123';
+    config.theme2 = getThemeById('dark');
+    config.bootData.assets = { ...config.bootData.assets, light: 'light.css', dark: 'dark.css' };
+    jest.spyOn(backendSrv, 'patch').mockResolvedValue({});
+    jest.spyOn(preferencesAPI.endpoints.updatePreferences, 'initiate');
+  });
+
+  afterEach(() => {
+    contextSrv.isSignedIn = originalSignedIn;
+    contextSrv.user.uid = originalUid;
+    config.theme2 = originalTheme2;
+    document.head.querySelectorAll('link[rel="stylesheet"]').forEach((link) => link.remove());
+    setTestFlags({});
+    jest.restoreAllMocks();
+  });
+
+  it('toggles to light and persists when starting from dark', async () => {
+    await toggleTheme(false);
+
+    expect(preferencesAPI.endpoints.updatePreferences.initiate).toHaveBeenCalledWith({
+      name: 'user-abc123',
+      patch: { spec: { theme: 'light' } },
+    });
   });
 });

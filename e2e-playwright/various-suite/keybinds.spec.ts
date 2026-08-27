@@ -84,6 +84,47 @@ test.describe(
       await expect(timePickerButton).toHaveAttribute('aria-label', expectedRange);
     });
 
+    test('shift+k should toggle light and dark theme', async ({ page }) => {
+      const getThemeStylesheetMode = async () => {
+        return page.evaluate(() => {
+          const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+          const themeLink = links.find((link) => {
+            const href = link.getAttribute('href') ?? '';
+            return href.includes('grafana.dark') || href.includes('grafana.light');
+          });
+
+          const href = themeLink?.getAttribute('href') ?? '';
+          if (href.includes('grafana.light')) {
+            return 'light';
+          }
+          if (href.includes('grafana.dark')) {
+            return 'dark';
+          }
+
+          return null;
+        });
+      };
+
+      const initialMode = await getThemeStylesheetMode();
+      expect(initialMode).toMatch(/^(light|dark)$/);
+
+      await page.keyboard.press('Shift+K');
+
+      await expect
+        .poll(async () => getThemeStylesheetMode(), {
+          message: 'Theme stylesheet should switch after Shift+K',
+        })
+        .toBe(initialMode === 'dark' ? 'light' : 'dark');
+
+      await page.keyboard.press('Shift+K');
+
+      await expect
+        .poll(async () => getThemeStylesheetMode(), {
+          message: 'Theme stylesheet should toggle back after second Shift+K',
+        })
+        .toBe(initialMode);
+    });
+
     test('ctrl+o should toggle shared crosshair', async ({ page, selectors }) => {
       // Navigate to a new dashboard
       await page.goto('/dashboard/new?orgId=1');
