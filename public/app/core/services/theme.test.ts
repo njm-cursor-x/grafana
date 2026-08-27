@@ -4,7 +4,7 @@ import { setTestFlags } from '@grafana/test-utils/unstable';
 
 import { backendSrv } from './backend_srv';
 import { contextSrv } from './context_srv';
-import { changeTheme } from './theme';
+import { changeTheme, toggleTheme } from './theme';
 
 jest.mock('app/store/store', () => ({
   dispatch: jest.fn(() => ({ unwrap: () => Promise.resolve({}) })),
@@ -29,6 +29,17 @@ describe('changeTheme', () => {
     document.head.querySelectorAll('link[rel="stylesheet"]').forEach((link) => link.remove());
     setTestFlags({});
     jest.restoreAllMocks();
+  });
+
+  it('persists the opposite theme when runtimeOnly is false', async () => {
+    config.theme2.isDark = true;
+
+    await toggleTheme(false);
+
+    expect(preferencesAPI.endpoints.updatePreferences.initiate).toHaveBeenCalledWith({
+      name: 'user-abc123',
+      patch: { spec: { theme: 'light' } },
+    });
   });
 
   it('does not persist when runtimeOnly is set', async () => {
