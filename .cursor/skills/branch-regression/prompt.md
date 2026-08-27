@@ -59,9 +59,18 @@ If Go changed: `go test -count=1` in **one** affected package. Do not test every
 
 **No Playwright.** Do not run `yarn e2e:playwright`.
 
-## 4. Pass → PR against main
+## 4. Pass → ready PR against main (never a draft)
 
-All green → `gh pr create` against `main`. Title like Grafana PRs: `Area: user-facing change`. Body: what changed, why, commands run, result pass. Do not mention this skill.
+All green → open a **ready-for-review** pull request against `main`. Title like Grafana PRs: `Area: user-facing change`. Body: what changed, why, commands run, result pass. Do not mention this skill.
+
+Never pass `--draft`. Cursor cloud agents often open PRs as drafts by default; that is a failure of this step. Create with `gh pr create` (no `--draft` flag), then immediately:
+
+```bash
+gh pr ready
+gh pr view --json isDraft,url,number
+```
+
+`isDraft` must be `false` before you report success. If it is still `true`, run `gh pr ready` again. Do not leave a draft PR.
 
 ## 5. Fail → issue, no PR
 

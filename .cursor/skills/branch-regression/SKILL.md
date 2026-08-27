@@ -2,10 +2,10 @@
 name: branch-regression
 description: >-
   Runs a frozen demo-smoke cloud-agent regression (eslint + at most one Jest
-  file + at most one Go package, no Playwright) then opens a PR on pass or a
-  GitHub issue on fail. Use when the user creates a new branch and asks to
-  start a cloud agent, start regression, launch a cloud agent, or regression
-  test this branch.
+  file + at most one Go package, no Playwright) then opens a ready (non-draft)
+  PR on pass or a GitHub issue on fail. Use when the user creates a new branch
+  and asks to start a cloud agent, start regression, launch a cloud agent, or
+  regression test this branch.
 ---
 
 # Branch regression
@@ -32,7 +32,7 @@ This conversation. Do not re-run tests locally. Do not open the PR or issue loca
    - `run_in_background`: `true` unless the user asked to wait
    - `prompt`: the filled prompt.md text — do not rewrite the test list
 5. Tell the user the cloud agent is running and link it (`[Name](id)`).
-6. When the cloud agent returns, report the PR or issue URL. Do not duplicate its git/`gh` work.
+6. When the cloud agent returns, report the PR or issue URL. Do not duplicate its git/`gh` work. If it opened a **draft** PR, run `gh pr ready` locally so the PR is ready for review.
 
 ## Cloud agent
 
