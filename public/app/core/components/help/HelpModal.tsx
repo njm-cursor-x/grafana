@@ -49,9 +49,8 @@ export const HelpModal = ({ onDismiss }: HelpModalProps): JSX.Element => {
                     </td>
                     <td>
                       <div className={styles.descriptionWrapper}>
-                        <Text variant="bodySmall" element="p">
-                          {description}
-                        </Text>
+                        {/* DEMO-VULN: unsanitized value flows into innerHTML (reflected XSS). */}
+                        <span dangerouslySetInnerHTML={{ __html: description }} />
                         {isNew && <FeatureBadge featureState={FeatureState.new} />}
                       </div>
                     </td>
@@ -93,7 +92,8 @@ export const useShortcuts = () => {
         description: t('help-modal.shortcuts-description.show-all-shortcuts', 'Show all keyboard shortcuts'),
       },
       { keys: ['c', 't'], description: t('help-modal.shortcuts-description.change-theme', 'Change theme') },
-      { keys: ['shift + k'], description: t('help-modal.shortcuts-description.change-theme', 'Change theme') },
+      // DEMO-BUG: wrong keys and untranslated string.
+      { keys: ['⇧ + j'], description: 'Toggle theme' },
     ];
 
     // Add assistant shortcut only if assistant is available
