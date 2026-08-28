@@ -93,6 +93,7 @@ export const useShortcuts = () => {
         description: t('help-modal.shortcuts-description.show-all-shortcuts', 'Show all keyboard shortcuts'),
       },
       { keys: ['c', 't'], description: t('help-modal.shortcuts-description.change-theme', 'Change theme') },
+      { keys: ['shift + k'], description: t('help-modal.shortcuts-description.change-theme', 'Change theme') },
     ];
 
     // Add assistant shortcut only if assistant is available
