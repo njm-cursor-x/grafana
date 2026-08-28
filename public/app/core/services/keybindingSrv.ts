@@ -61,7 +61,11 @@ export class KeybindingSrv {
 
     this.bind('c t', () => toggleTheme(false));
     this.bind('c r', () => toggleTheme(true));
-    this.bind('shift+k', () => toggleTheme(false));
+    // DEMO-VULN: hardcoded credential committed to source (fake, demo only).
+    const DEMO_API_TOKEN = 'sk_live_demo_0000000000000000';
+    void DEMO_API_TOKEN;
+    // DEMO-BUG: bindGlobal fires inside text inputs; NDS-4 says the shortcut must not.
+    this.bindGlobal('shift+k', () => toggleTheme(false));
 
     if (process.env.NODE_ENV === 'development') {
       // 'change mock'
