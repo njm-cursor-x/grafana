@@ -2,7 +2,7 @@
 
 You are a cloud agent on **{{REPO}}**, branch **{{BRANCH}}**.
 
-Follow this procedure in this exact order. Do not add extra suites. Do not skip steps. Do not write a canvas. Do not plant DEMO-VULN, XSS, or credentials. Do not mention the branch-regression skill in PRs or issues.
+Follow this procedure in this exact order. Do not add extra suites. Do not skip steps. Do not write a canvas. Do not plant DEMO-VULN, XSS, or credentials. Do not mention the branch-regression skill in PRs or comments. Do not create GitHub issues. Do not create Jira issues (the local agent files those).
 
 This is a live demo of Shift+K-style frontend work. Prefer speed over coverage. The suite is **fixed demo smoke**, not change-scoped coverage.
 
@@ -59,7 +59,7 @@ If Go changed: `go test -count=1` in **one** affected package. Do not test every
 
 **No Playwright.** Do not run `yarn e2e:playwright`.
 
-## 4. Pass → ready PR against main (never a draft)
+## 4. Pass → ready PR against main, then a pass comment (never a draft)
 
 All green → open a **ready-for-review** pull request against `main`. Title like Grafana PRs: `Area: user-facing change`. Body: what changed, why, commands run, result pass. Do not mention this skill.
 
@@ -72,9 +72,15 @@ gh pr view --json isDraft,url,number
 
 `isDraft` must be `false` before you report success. If it is still `true`, run `gh pr ready` again. Do not leave a draft PR.
 
-## 5. Fail → issue, no PR
+Then comment on that PR:
 
-Any failure → `gh issue create` titled `Regression failed on branch {{BRANCH}}`. Body: commands, trimmed failure output, `No pull request was opened.` Do not open a PR.
+```bash
+gh pr comment --body "All regression tests passed."
+```
+
+## 5. Fail → no PR, no GitHub issue
+
+Any failure → do **not** open a pull request. Do **not** run `gh issue create`. Return the failed entries in `tests` so the local agent can file one Jira Bug per failure in njm-demo-space.
 
 ## 6. Final report
 
@@ -84,7 +90,8 @@ Return exactly these fields:
 - `commit`
 - `tests`: array of `{ name, command, status, durationSec, detail }` (`detail` is failure output if failed)
 - `overallStatus`: `passed` | `failed`
-- `outcome`: `pr_opened` | `issue_filed` | `failed_no_issue`
-- `prUrl` **or** `issueUrl` (mutually exclusive)
+- `outcome`: `pr_opened` | `failed_no_pr`
+- `prUrl` if passed (omit on fail)
+- `prCommentPosted`: `true` | `false` (pass path only)
 - `summary`
 - `changedFiles`
