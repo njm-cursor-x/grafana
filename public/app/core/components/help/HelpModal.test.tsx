@@ -85,6 +85,26 @@ describe('useShortcuts', () => {
     );
   });
 
+  it('should include Shift+K as a global change-theme shortcut', () => {
+    mockUseAssistant.mockReturnValue({
+      isLoading: false,
+      isAvailable: false,
+      openAssistant: jest.fn(),
+      closeAssistant: jest.fn(),
+      toggleAssistant: jest.fn(),
+    });
+
+    const { result } = renderHook(() => useShortcuts());
+
+    const globalCategory = result.current.find((category) => category.category.includes('Global'));
+    const shiftKShortcut = globalCategory!.shortcuts.find(
+      (shortcut) => shortcut.keys.includes('⇧') && shortcut.keys.includes('k')
+    );
+
+    expect(shiftKShortcut?.keys).toEqual(['⇧', 'k']);
+    expect(shiftKShortcut?.description).toBe('Change theme');
+  });
+
   it('should use the correct modKey in shortcuts', () => {
     mockUseAssistant.mockReturnValue({
       isLoading: false,
