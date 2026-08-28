@@ -1,4 +1,5 @@
 import type { Preferences } from '@grafana/api-clients/rtkq/preferences/v1';
+import { getThemeById } from '@grafana/data';
 
 export const initPreferences = async (): Promise<Preferences | undefined> => {
   const preferences = await fetchMergedPreferences();
@@ -58,10 +59,11 @@ export async function fetchMergedPreferences(): Promise<Preferences | undefined>
 
 // Mirrors the DOM theme application from the inline boot script in index.html,
 // but using the merged-preferences value. Updates lightTheme, the <body> class,
-// and the theme stylesheet <link href>.
+// and the theme stylesheet <link href>. Extra themes (dim, high contrast, CVD)
+// share the light or dark CSS bundle; resolve mode from the theme registry so
+// IDs other than "light" still pick the correct stylesheet on reload.
 function applyTheme(theme: string) {
-  const isLightTheme =
-    theme === 'system' ? !window.matchMedia('(prefers-color-scheme: dark)').matches : theme === 'light';
+  const isLightTheme = getThemeById(theme).isLight;
 
   window.grafanaBootData.user.lightTheme = isLightTheme;
 

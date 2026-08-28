@@ -1,0 +1,67 @@
+{
+  "name": "High contrast (light)",
+  "id": "high_contrast_light",
+  "colors": {
+    "mode": "light",
+    "background": {
+      "canvas": "#FFFFFF",
+      "page": "#FFFFFF",
+      "primary": "#FFFFFF",
+      "secondary": "#F2F2F2",
+      "elevated": "#FFFFFF"
+    },
+    "text": {
+      "primary": "#000000",
+      "secondary": "#1A1A1A",
+      "disabled": "#4A4A4A",
+      "link": "#0033CC",
+      "maxContrast": "#000000"
+    },
+    "border": {
+      "weak": "#737373",
+      "medium": "#404040",
+      "strong": "#000000"
+    },
+    "primary": {
+      "main": "#0033CC",
+      "text": "#0029A3",
+      "border": "#0029A3"
+    },
+    "error": {
+      "main": "#B00020",
+      "text": "#8C0019"
+    },
+    "success": {
+      "main": "#006B3F",
+      "text": "#005733"
+    },
+    "warning": {
+      "main": "#8A5A00",
+      "text": "#6E4800"
+    },
+    "action": {
+      "hover": "rgba(0, 0, 0, 0.12)",
+      "selected": "rgba(0, 0, 0, 0.16)",
+      "selectedBorder": "#000000",
+      "focus": "rgba(0, 0, 0, 0.12)",
+      "hoverOpacity": 0.12,
+      "disabledText": "#4A4A4A",
+      "disabledBackground": "rgba(0, 0, 0, 0.08)",
+      "disabledOpacity": 0.5
+    },
+    "contrastThreshold": 7,
+    "hoverFactor": 0.08,
+    "tonalOffset": 0.2
+  },
+  "visualization": {
+    "palette": [
+      "#0072B2",
+      "#E69F00",
+      "#009E73",
+      "#CC79A7",
+      "#56B4E9",
+      "#D55E00",
+      "#F0E442"
+    ]
+  }
+}

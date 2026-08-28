@@ -6,8 +6,11 @@ import debug from './themeDefinitions/debug.json';
 import desertbloom from './themeDefinitions/desertbloom.json';
 import deut_prot_dark from './themeDefinitions/deut_prot_dark.json';
 import deut_prot_light from './themeDefinitions/deut_prot_light.json';
+import dim from './themeDefinitions/dim.json';
 import gildedgrove from './themeDefinitions/gildedgrove.json';
 import gloom from './themeDefinitions/gloom.json';
+import high_contrast_dark from './themeDefinitions/high_contrast_dark.json';
+import high_contrast_light from './themeDefinitions/high_contrast_light.json';
 import mars from './themeDefinitions/mars.json';
 import matrix from './themeDefinitions/matrix.json';
 import sapphiredusk from './themeDefinitions/sapphiredusk.json';
@@ -34,8 +37,11 @@ const extraThemes: { [key: string]: unknown } = {
   desertbloom,
   deut_prot_dark,
   deut_prot_light,
+  dim,
   gildedgrove,
   gloom,
+  high_contrast_dark,
+  high_contrast_light,
   mars,
   matrix,
   sapphiredusk,

@@ -184,3 +184,18 @@ describe('useStaticActions - open saved queries action', () => {
     expect(mockQueryLibraryContext.openDrawer).toHaveBeenCalledWith({ options: { context: 'command-palette' } });
   });
 });
+
+describe('useStaticActions - theme actions', () => {
+  it('includes dim and high contrast themes as children of Change theme', () => {
+    const { result } = renderStaticActions();
+    const byId = Object.fromEntries(result.current.map((action) => [action.id, action]));
+
+    expect(byId['preferences/theme']).toBeDefined();
+    expect(byId['preferences/dark-theme']?.parent).toBe('preferences/theme');
+    expect(byId['preferences/light-theme']?.parent).toBe('preferences/theme');
+    expect(byId['preferences/theme/dim']?.name).toBe('Dim');
+    expect(byId['preferences/theme/dim']?.parent).toBe('preferences/theme');
+    expect(byId['preferences/theme/high_contrast_dark']?.name).toBe('High contrast (dark)');
+    expect(byId['preferences/theme/high_contrast_light']?.name).toBe('High contrast (light)');
+  });
+});

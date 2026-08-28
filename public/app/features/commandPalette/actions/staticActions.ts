@@ -10,6 +10,8 @@ import {
   shouldRenderInviteUserButton,
   performInviteUserClick,
 } from 'app/core/components/AppChrome/TopBar/InviteUserButtonUtils';
+import { getTranslatedThemeName } from 'app/core/components/SharedPreferences/utils';
+import { getSelectableThemes } from 'app/core/components/ThemeSelector/getSelectableThemes';
 import { contextSrv } from 'app/core/services/context_srv';
 import { changeTheme } from 'app/core/services/theme';
 import { currentMockApiState, toggleMockApiAndReload, togglePseudoLocale } from 'app/dev-utils';
@@ -98,32 +100,59 @@ function navTreeToActions(navTree: NavModelItem[], parents: NavModelItem[] = [])
   return navActions;
 }
 
+function getThemeActionKeywords(themeId: string, themeName: string): string {
+  switch (themeId) {
+    case 'dark':
+      return 'dark theme';
+    case 'light':
+      return 'light theme';
+    case 'system':
+      return 'system preference os';
+    case 'dim':
+      return 'dim overnight on-call low luminance accessibility';
+    case 'high_contrast_dark':
+      return 'high contrast dark accessibility wcag aaa projector';
+    case 'high_contrast_light':
+      return 'high contrast light accessibility wcag aaa projector';
+    case 'deut_prot_dark':
+    case 'deut_prot_light':
+      return 'deuteranopia protanopia color blind accessibility';
+    case 'tritanopia_dark':
+    case 'tritanopia_light':
+      return 'tritanopia color blind accessibility';
+    default:
+      return `${themeName} theme`;
+  }
+}
+
+function getThemeActionId(themeId: string): string {
+  if (themeId === 'dark') {
+    return 'preferences/dark-theme';
+  }
+  if (themeId === 'light') {
+    return 'preferences/light-theme';
+  }
+  return `preferences/theme/${themeId}`;
+}
+
 function getGlobalActions(): CommandPaletteAction[] {
   const actions: CommandPaletteAction[] = [
     {
       id: 'preferences/theme',
       name: t('command-palette.action.change-theme', 'Change theme'),
-      keywords: 'interface color dark light',
+      keywords: 'interface color dark light dim contrast accessibility colorblind',
       section: t('command-palette.section.preferences', 'Preferences'),
       sectionId: SECTION_PREFERENCES,
       priority: PREFERENCES_PRIORITY,
     },
-    {
-      id: 'preferences/dark-theme',
-      name: t('command-palette.action.dark-theme', 'Dark'),
-      keywords: 'dark theme',
-      perform: () => changeTheme('dark'),
+    ...getSelectableThemes().map((theme) => ({
+      id: getThemeActionId(theme.id),
+      name: getTranslatedThemeName(theme),
+      keywords: getThemeActionKeywords(theme.id, theme.name),
+      perform: () => changeTheme(theme.id),
       parent: 'preferences/theme',
       priority: PREFERENCES_PRIORITY,
-    },
-    {
-      id: 'preferences/light-theme',
-      name: t('command-palette.action.light-theme', 'Light'),
-      keywords: 'light theme',
-      perform: () => changeTheme('light'),
-      parent: 'preferences/theme',
-      priority: PREFERENCES_PRIORITY,
-    },
+    })),
   ];
 
   if (process.env.NODE_ENV === 'development') {

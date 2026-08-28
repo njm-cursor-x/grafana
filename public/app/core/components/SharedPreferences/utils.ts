@@ -68,6 +68,12 @@ export const getTranslatedThemeName = (theme: ThemeRegistryItem) => {
       return t('shared.preferences.theme.light-label', 'Light');
     case 'system':
       return t('shared.preferences.theme.system-label', 'System preference');
+    case 'dim':
+      return t('shared.preferences.theme.dim-label', 'Dim');
+    case 'high_contrast_dark':
+      return t('shared.preferences.theme.high-contrast-dark-label', 'High contrast (dark)');
+    case 'high_contrast_light':
+      return t('shared.preferences.theme.high-contrast-light-label', 'High contrast (light)');
     default:
       return theme.name;
   }

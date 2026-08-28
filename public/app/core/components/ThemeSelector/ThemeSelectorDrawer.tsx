@@ -3,11 +3,11 @@ import { css } from '@emotion/css';
 import { type GrafanaTheme2, type ThemeRegistryItem } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { config, reportInteraction } from '@grafana/runtime';
-import { Drawer, TextLink, useStyles2, useTheme2 } from '@grafana/ui';
+import { Drawer, Text, TextLink, useStyles2, useTheme2 } from '@grafana/ui';
 import { changeTheme } from 'app/core/services/theme';
 
 import { ThemeCard } from './ThemeCard';
-import { getSelectableThemes } from './getSelectableThemes';
+import { getSelectableThemesByCategory, getThemePickerCategory } from './getSelectableThemes';
 
 interface Props {
   onClose: () => void;
@@ -15,7 +15,7 @@ interface Props {
 
 export function ThemeSelectorDrawer({ onClose }: Props) {
   const styles = useStyles2(getStyles);
-  const themes = getSelectableThemes();
+  const groupedThemes = getSelectableThemesByCategory();
   const currentTheme = useTheme2();
 
   const onChange = (theme: ThemeRegistryItem) => {
@@ -39,6 +39,12 @@ export function ThemeSelectorDrawer({ onClose }: Props) {
     </Trans>
   );
 
+  const sections: Array<{ id: 'core' | 'accessibility' | 'experimental'; title: string }> = [
+    { id: 'core', title: t('shared-preferences.theme.core', 'Core') },
+    { id: 'accessibility', title: t('shared-preferences.theme.accessibility', 'Accessibility') },
+    { id: 'experimental', title: t('shared-preferences.theme.experimental', 'Experimental') },
+  ];
+
   return (
     <Drawer
       title={t('profile.change-theme', 'Change theme')}
@@ -46,15 +52,24 @@ export function ThemeSelectorDrawer({ onClose }: Props) {
       size="md"
       subtitle={config.feedbackLinksEnabled ? subTitle : undefined}
     >
-      <div className={styles.grid} role="radiogroup">
-        {themes.map((themeOption) => (
-          <ThemeCard
-            themeOption={themeOption}
-            isExperimental={themeOption.isExtra}
-            key={themeOption.id}
-            onSelect={() => onChange(themeOption)}
-            isSelected={currentTheme.name === themeOption.name}
-          />
+      <div className={styles.sections} role="radiogroup">
+        {sections.map((section) => (
+          <section key={section.id} className={styles.section} aria-label={section.title}>
+            <Text variant="h5" element="h3">
+              {section.title}
+            </Text>
+            <div className={styles.grid}>
+              {groupedThemes[section.id].map((themeOption) => (
+                <ThemeCard
+                  themeOption={themeOption}
+                  isExperimental={getThemePickerCategory(themeOption) === 'experimental'}
+                  key={themeOption.id}
+                  onSelect={() => onChange(themeOption)}
+                  isSelected={currentTheme.name === themeOption.name}
+                />
+              ))}
+            </div>
+          </section>
         ))}
       </div>
     </Drawer>
@@ -63,6 +78,16 @@ export function ThemeSelectorDrawer({ onClose }: Props) {
 
 const getStyles = (theme: GrafanaTheme2) => {
   return {
+    sections: css({
+      display: 'flex',
+      flexDirection: 'column',
+      gap: theme.spacing(3),
+    }),
+    section: css({
+      display: 'flex',
+      flexDirection: 'column',
+      gap: theme.spacing(1.5),
+    }),
     grid: css({
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',

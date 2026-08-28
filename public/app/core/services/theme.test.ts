@@ -13,10 +13,16 @@ jest.mock('app/store/store', () => ({
 describe('changeTheme', () => {
   const originalSignedIn = contextSrv.isSignedIn;
   const originalUid = contextSrv.user.uid;
+  const originalTheme = contextSrv.user.theme;
+  const originalBootTheme = config.bootData.user.theme;
+  const originalLightTheme = config.bootData.user.lightTheme;
 
   beforeEach(() => {
     contextSrv.isSignedIn = true;
     contextSrv.user.uid = 'abc123';
+    contextSrv.user.theme = 'dark';
+    config.bootData.user.theme = 'dark';
+    config.bootData.user.lightTheme = false;
     // changeTheme swaps the stylesheet <link> when the colour mode changes, reading these asset URLs.
     config.bootData.assets = { ...config.bootData.assets, light: 'light.css', dark: 'dark.css' };
     jest.spyOn(backendSrv, 'patch').mockResolvedValue({});
@@ -26,6 +32,9 @@ describe('changeTheme', () => {
   afterEach(() => {
     contextSrv.isSignedIn = originalSignedIn;
     contextSrv.user.uid = originalUid;
+    contextSrv.user.theme = originalTheme;
+    config.bootData.user.theme = originalBootTheme;
+    config.bootData.user.lightTheme = originalLightTheme;
     document.head.querySelectorAll('link[rel="stylesheet"]').forEach((link) => link.remove());
     setTestFlags({});
     jest.restoreAllMocks();
@@ -82,5 +91,17 @@ describe('changeTheme', () => {
 
     expect(document.head.querySelector(`link[href="${darkHref}"]`)).toBeNull();
     expect(document.head.querySelector(`link[href="${lightHref}"]`)).not.toBeNull();
+  });
+
+  it('updates boot data so the selected theme survives in-session readers', async () => {
+    await changeTheme('dim', false);
+
+    expect(config.bootData.user.theme).toBe('dim');
+    expect(config.bootData.user.lightTheme).toBe(false);
+    expect(contextSrv.user.theme).toBe('dim');
+    expect(preferencesAPI.endpoints.updatePreferences.initiate).toHaveBeenCalledWith({
+      name: 'user-abc123',
+      patch: { spec: { theme: 'dim' } },
+    });
   });
 });

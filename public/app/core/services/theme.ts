@@ -11,6 +11,12 @@ export async function changeTheme(themeId: string, runtimeOnly?: boolean) {
 
   const newTheme = getThemeById(themeId);
 
+  // Keep boot-data in sync so a later reload and any boot-data readers see the
+  // selected theme id, not the value from the original HTML payload.
+  config.bootData.user.theme = themeId;
+  config.bootData.user.lightTheme = newTheme.isLight;
+  contextSrv.user.theme = themeId;
+
   appEvents.publish(new ThemeChangedEvent(newTheme));
 
   // Add css file for new theme

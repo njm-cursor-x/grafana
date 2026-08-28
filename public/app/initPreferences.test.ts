@@ -231,4 +231,39 @@ describe('applyTheme', () => {
     expect(document.body.classList.contains('theme-light')).toBe(true);
     expect(document.body.classList.contains('theme-dark')).toBe(false);
   });
+
+  it.each(['desertbloom', 'high_contrast_light', 'deut_prot_light'])(
+    'applies the light stylesheet for extra light theme "%s"',
+    async (themeId) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'dark.css';
+      document.head.appendChild(link);
+
+      server.use(http.get(PREFERENCES_URL, () => HttpResponse.json({ spec: { theme: themeId } })));
+
+      await initPreferences();
+
+      expect(window.grafanaBootData.user.theme).toBe(themeId);
+      expect(document.body.classList.contains('theme-light')).toBe(true);
+      expect(document.body.classList.contains('theme-dark')).toBe(false);
+      expect(link.getAttribute('href')).toBe('light.css');
+    }
+  );
+
+  it.each(['dim', 'high_contrast_dark'])('applies the dark stylesheet for extra dark theme "%s"', async (themeId) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'light.css';
+    document.head.appendChild(link);
+
+    server.use(http.get(PREFERENCES_URL, () => HttpResponse.json({ spec: { theme: themeId } })));
+
+    await initPreferences();
+
+    expect(window.grafanaBootData.user.theme).toBe(themeId);
+    expect(document.body.classList.contains('theme-dark')).toBe(true);
+    expect(document.body.classList.contains('theme-light')).toBe(false);
+    expect(link.getAttribute('href')).toBe('dark.css');
+  });
 });

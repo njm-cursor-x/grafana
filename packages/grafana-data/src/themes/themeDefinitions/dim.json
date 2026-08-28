@@ -1,0 +1,38 @@
+{
+  "name": "Dim",
+  "id": "dim",
+  "colors": {
+    "mode": "dark",
+    "background": {
+      "canvas": "#050506",
+      "page": "#08080a",
+      "primary": "#0b0c0e",
+      "secondary": "#121316",
+      "elevated": "#121316"
+    },
+    "text": {
+      "primary": "rgb(180, 180, 190)",
+      "secondary": "rgba(180, 180, 190, 0.72)",
+      "disabled": "rgba(180, 180, 190, 0.45)",
+      "link": "#6e9fff",
+      "maxContrast": "#e8e8ee"
+    },
+    "border": {
+      "weak": "rgba(180, 180, 190, 0.08)",
+      "medium": "rgba(180, 180, 190, 0.14)",
+      "strong": "rgba(180, 180, 190, 0.22)"
+    },
+    "action": {
+      "hover": "rgba(180, 180, 190, 0.06)",
+      "selected": "rgba(180, 180, 190, 0.10)",
+      "focus": "rgba(180, 180, 190, 0.06)",
+      "hoverOpacity": 0.04,
+      "disabledText": "rgba(180, 180, 190, 0.45)",
+      "disabledBackground": "rgba(180, 180, 190, 0.03)",
+      "disabledOpacity": 0.38
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.02,
+    "tonalOffset": 0.12
+  }
+}

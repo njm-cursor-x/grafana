@@ -25,7 +25,11 @@ import {
 import { changeTheme } from 'app/core/services/theme';
 
 import { DashboardPicker } from '../Select/DashboardPicker';
-import { getSelectableThemes } from '../ThemeSelector/getSelectableThemes';
+import {
+  getSelectableThemes,
+  getThemePickerCategory,
+  type ThemePickerCategory,
+} from '../ThemeSelector/getSelectableThemes';
 
 import { homeDashboardChanged, languageChanged, saveButtonClicked, themeChanged } from './analytics/main';
 import { useSharedPreferences } from './useSharedPreferences';
@@ -51,12 +55,18 @@ export const SharedPreferences = memo((props: Props) => {
   const themes = getSelectableThemes();
   const styles = useStyles2(getStyles);
 
+  const themeGroupLabels: Record<ThemePickerCategory, string | undefined> = {
+    core: undefined,
+    accessibility: t('shared-preferences.theme.accessibility', 'Accessibility'),
+    experimental: t('shared-preferences.theme.experimental', 'Experimental'),
+  };
+
   // Options are translated, so must be called after init but call them
   // in constructor to avoid memo-break of array changing every render
   const themeOptions: ComboboxOption[] = themes.map((theme) => ({
     value: theme.id,
     label: getTranslatedThemeName(theme),
-    group: theme.isExtra ? t('shared-preferences.theme.experimental', 'Experimental') : undefined,
+    group: themeGroupLabels[getThemePickerCategory(theme)],
   }));
   const languageOptions: ComboboxOption[] = getLanguageOptions();
 

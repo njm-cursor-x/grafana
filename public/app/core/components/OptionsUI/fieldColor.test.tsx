@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { FieldColorModeId } from '@grafana/data';
-import { config } from '@grafana/runtime';
 
 import { FieldColorEditor } from './fieldColor';
 
@@ -90,31 +89,12 @@ describe('fieldColor', () => {
     expect(screen.queryByText(/^Baz/i)).not.toBeInTheDocument();
   });
 
-  describe('enableColorblindSafePanelOptions', () => {
-    let previousEnableColorblindSafePanelOptions: boolean | undefined;
-
-    beforeEach(() => {
-      previousEnableColorblindSafePanelOptions = config.featureToggles.enableColorblindSafePanelOptions;
-    });
-
-    afterEach(() => {
-      config.featureToggles.enableColorblindSafePanelOptions = previousEnableColorblindSafePanelOptions;
-    });
-
-    it('shows the colorblind palette option only when the feature flag is enabled', async () => {
-      config.featureToggles.enableColorblindSafePanelOptions = true;
+  describe('colorblind palette', () => {
+    it('shows the colorblind palette option without a feature flag', async () => {
       render(<FieldColorEditor {...defaultEditorProps} />);
       await userEvent.type(screen.getByRole('combobox'), '{arrowdown}');
       expect(screen.getByText(/^Colorblind safe/i)).toBeInTheDocument();
       expect(screen.getAllByRole('option')).toHaveLength(3);
-    });
-
-    it('does not show the colorblind palette option when the feature flag is disabled', async () => {
-      config.featureToggles.enableColorblindSafePanelOptions = false;
-      render(<FieldColorEditor {...defaultEditorProps} />);
-      await userEvent.type(screen.getByRole('combobox'), '{arrowdown}');
-      expect(screen.queryByText(/^Colorblind safe/i)).not.toBeInTheDocument();
-      expect(screen.getAllByRole('option')).toHaveLength(2);
     });
   });
 

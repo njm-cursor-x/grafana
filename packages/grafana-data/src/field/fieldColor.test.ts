@@ -1,4 +1,5 @@
 import { createTheme } from '../themes/createTheme';
+import { getThemeById } from '../themes/registry';
 import { type DataFrame, type Field, FieldType } from '../types/dataFrame';
 import { FieldColorModeId } from '../types/fieldColor';
 
@@ -142,6 +143,24 @@ describe('fieldColorModeRegistry', () => {
     const color = '#123456';
     const calcFn = getCalculator({ mode: FieldColorModeId.Shades, seriesIndex: 1, fixedColor: color });
     expect(calcFn(70, 0, undefined)).not.toEqual(color);
+  });
+
+  it('Color blind safe palette assigns by series index', () => {
+    const first = getCalculator({ mode: FieldColorModeId.PaletteColorblind, seriesIndex: 0 });
+    const second = getCalculator({ mode: FieldColorModeId.PaletteColorblind, seriesIndex: 1 });
+
+    expect(first(70, 0, undefined)).toEqual('#0072B2');
+    expect(second(70, 0, undefined)).toEqual('#E69F00');
+  });
+
+  it('Classic palette uses deuteranopia theme hues when that theme is active', () => {
+    const theme = getThemeById('deut_prot_dark');
+    const field = getTestField(FieldColorModeId.PaletteClassic);
+    field.state!.seriesIndex = 0;
+    const calcFn = fieldColorModeRegistry.get(FieldColorModeId.PaletteClassic).getCalculator(field, theme);
+
+    expect(calcFn(70, 0, undefined)).not.toEqual('#73BF69');
+    expect(calcFn(70, 0, undefined)).toEqual(theme.visualization.getColorByName(theme.visualization.palette[0]));
   });
 
   it.each([
