@@ -7,3 +7,11 @@ export function logI18nError(message: string, error: unknown): void {
     ...(error instanceof Error && { stack: error.stack }),
   });
 }
+
+export function logI18nWarning(message: string): void {
+  console.warn({
+    level: 'warn',
+    msg: message,
+    source: 'grafana-i18n',
+  });
+}

@@ -6,7 +6,7 @@ import { initReactI18next, setDefaults, setI18n, Trans as I18NextTrans, getI18n 
 
 import { DEFAULT_LANGUAGE, PSEUDO_LOCALE } from './constants';
 import { LANGUAGES } from './languages';
-import { logI18nError } from './structuredLog';
+import { logI18nError, logI18nWarning } from './structuredLog';
 import { type ResourceLoader, type Resources, type TFunction, type TransProps, type TransType } from './types';
 
 let tFunc: I18NextTFunction<string[], undefined> | undefined;
@@ -203,7 +203,7 @@ export const t: TFunction = (id: string, defaultMessage: string, values?: Record
   initDefaultI18nInstance();
   if (!tFunc) {
     if (process.env.NODE_ENV !== 'test') {
-      console.warn(
+      logI18nWarning(
         't() was called before i18n was initialized. This is probably caused by calling t() in the root module scope, instead of lazily on render'
       );
     }
