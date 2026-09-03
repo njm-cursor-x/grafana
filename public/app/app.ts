@@ -21,7 +21,8 @@ import {
 } from '@grafana/data';
 import { DEFAULT_LANGUAGE } from '@grafana/i18n';
 import { initializeI18n, loadNamespacedResources } from '@grafana/i18n/internal';
-import { logStructured,
+import {
+  logStructured,
   HistoryWrapper,
   locationService,
   setBackendSrv,

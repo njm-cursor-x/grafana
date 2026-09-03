@@ -14,7 +14,14 @@ import {
   store,
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { logStructured, config, getDataSourceSrv, locationService, RefreshEvent, reportInteraction } from '@grafana/runtime';
+import {
+  logStructured,
+  config,
+  getDataSourceSrv,
+  locationService,
+  RefreshEvent,
+  reportInteraction,
+} from '@grafana/runtime';
 import { FlagKeys, getFeatureFlagClient, getPanelPluginMeta } from '@grafana/runtime/internal';
 import {
   type CancelActivationHandler,
@@ -514,7 +521,11 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> impleme
 
   public exitEditMode({ skipConfirm, restoreInitialState }: { skipConfirm: boolean; restoreInitialState?: boolean }) {
     if (!this.canDiscard()) {
-      logStructured('features.dashboard-scene', 'error', 'Trying to discard back to a state that does not exist, initialState undefined');
+      logStructured(
+        'features.dashboard-scene',
+        'error',
+        'Trying to discard back to a state that does not exist, initialState undefined'
+      );
       return;
     }
 
@@ -629,7 +640,11 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> impleme
    */
   public discardChangesAndKeepEditing() {
     if (!this.canDiscard()) {
-      logStructured('features.dashboard-scene', 'error', 'Trying to discard back to a state that does not exist, initialState undefined');
+      logStructured(
+        'features.dashboard-scene',
+        'error',
+        'Trying to discard back to a state that does not exist, initialState undefined'
+      );
       return;
     }
 
@@ -890,7 +905,11 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> impleme
         clearClipboard();
         store.set(LS_PANEL_COPY_KEY, JSON.stringify({ elements, gridItem: gridItemKind }));
       } else {
-        logStructured('features.dashboard-scene', 'error', 'Trying to copy a panel that is not DashboardGridItem child');
+        logStructured(
+          'features.dashboard-scene',
+          'error',
+          'Trying to copy a panel that is not DashboardGridItem child'
+        );
         throw new Error('Trying to copy a panel that is not DashboardGridItem child');
       }
       return;
@@ -1144,7 +1163,11 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> impleme
       return;
     }
 
-    logStructured('features.dashboard-scene', 'error', 'Trying to unlink a lib panel in a layout that is not DashboardGridItem or AutoGridItem');
+    logStructured(
+      'features.dashboard-scene',
+      'error',
+      'Trying to unlink a lib panel in a layout that is not DashboardGridItem or AutoGridItem'
+    );
   }
 
   public showModal(modal: SceneObject) {

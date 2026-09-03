@@ -1,10 +1,10 @@
-import { logStructured } from '@grafana/runtime';
 import { isEqual } from 'lodash';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { type SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import {
   type SceneComponentProps,
   SceneDataTransformer,
@@ -166,7 +166,11 @@ export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
     const gridItem = panel.parent;
 
     if (!(gridItem instanceof DashboardGridItem)) {
-      logStructured('features.dashboard-scene', 'error', 'Cannot update layout: panel parent is not a DashboardGridItem');
+      logStructured(
+        'features.dashboard-scene',
+        'error',
+        'Cannot update layout: panel parent is not a DashboardGridItem'
+      );
       return;
     }
 

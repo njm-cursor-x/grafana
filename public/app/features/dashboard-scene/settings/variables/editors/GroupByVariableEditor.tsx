@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { noop } from 'lodash';
 import { type FormEvent } from 'react';
 import { useAsync } from 'react-use';
@@ -9,6 +8,7 @@ import {
   type SelectableValue,
   getDataSourceRef,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { getDataSourceInstance } from '@grafana/runtime/unstable';
 import { GroupByVariable, type SceneVariable } from '@grafana/scenes';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';

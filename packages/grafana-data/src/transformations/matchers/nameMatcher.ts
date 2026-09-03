@@ -1,8 +1,8 @@
-import { writeStructuredLog } from '../../utils/structuredLog';
 import { getFieldDisplayName } from '../../field/fieldState';
 import { stringToJsRegex } from '../../text/string';
 import { type DataFrame, type Field, FieldType, TIME_SERIES_VALUE_FIELD_NAME } from '../../types/dataFrame';
 import { type FieldMatcher, type FieldMatcherInfo, type FrameMatcherInfo } from '../../types/transformations';
+import { writeStructuredLog } from '../../utils/structuredLog';
 
 import { FieldMatcherID, FrameMatcherID } from './ids';
 

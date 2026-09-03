@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import {
   AppEvents,
   type DataFrame,
@@ -10,6 +9,7 @@ import {
   VisualizationSuggestionScore,
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { getListedPanelPluginMetas, getPanelPluginMeta } from '@grafana/runtime/internal';
 import { appEvents } from 'app/core/app_events';
 import { isBuiltinPluginPath } from 'app/features/plugins/built_in_plugins';
@@ -52,7 +52,12 @@ export async function loadPlugins(pluginIds: string[]): Promise<PluginLoadResult
       plugins.push(settled.value);
     } else {
       const pluginId = pluginIds[i];
-      logStructured('features.panel', 'error', `Failed to load ${pluginId} for visualization suggestions:`, settled.reason);
+      logStructured(
+        'features.panel',
+        'error',
+        `Failed to load ${pluginId} for visualization suggestions:`,
+        settled.reason
+      );
 
       if (await isBuiltInPlugin(pluginId)) {
         hasErrors = true;

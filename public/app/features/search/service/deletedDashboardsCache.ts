@@ -492,7 +492,12 @@ export async function resolveDeletedByDisplayMap(
   } catch (error) {
     // `Promise.allSettled` cannot reject; this catches synchronous throws from `dispatch()`
     // itself. Mark every UID unknown so callers render placeholders, not raw UIDs.
-    logStructured('features.search', 'error', 'Failed to resolve deleted dashboard user displays:', getMessageFromError(error));
+    logStructured(
+      'features.search',
+      'error',
+      'Failed to resolve deleted dashboard user displays:',
+      getMessageFromError(error)
+    );
     for (const uid of toFetch) {
       result.set(uid, DELETED_BY_UNKNOWN);
     }
@@ -505,12 +510,22 @@ function extractDisplayData(
   settled: PromiseSettledResult<{ data?: DisplayList; error?: unknown }>
 ): DisplayList | undefined {
   if (settled.status === 'rejected') {
-    logStructured('features.search', 'error', 'Failed to resolve deleted dashboard user displays:', getMessageFromError(settled.reason));
+    logStructured(
+      'features.search',
+      'error',
+      'Failed to resolve deleted dashboard user displays:',
+      getMessageFromError(settled.reason)
+    );
     return undefined;
   }
   // RTK Query query thunks resolve (do not reject) on request errors — surface them explicitly.
   if (settled.value.error) {
-    logStructured('features.search', 'error', 'Failed to resolve deleted dashboard user displays:', getMessageFromError(settled.value.error));
+    logStructured(
+      'features.search',
+      'error',
+      'Failed to resolve deleted dashboard user displays:',
+      getMessageFromError(settled.value.error)
+    );
     return undefined;
   }
   return settled.value.data;

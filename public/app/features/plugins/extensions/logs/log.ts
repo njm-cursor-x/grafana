@@ -41,7 +41,8 @@ export class ExtensionsLog {
 
   warning(message: string, labels?: Labels): void {
     getLogger('ui-extension-logs').logWarning(message, { ...this.baseLabels, ...labels });
-    config.buildInfo.env === 'development' && logStructured('features.plugins', 'warn', message, { ...this.baseLabels, ...labels });
+    config.buildInfo.env === 'development' &&
+      logStructured('features.plugins', 'warn', message, { ...this.baseLabels, ...labels });
     this.log(LogLevel.warning, message, labels);
   }
 

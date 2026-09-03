@@ -74,7 +74,11 @@ const experimentalDefinitions: Record<string, unknown> = {
 for (const [name, json] of Object.entries(experimentalDefinitions)) {
   const result = NewThemeOptionsSchema.safeParse(json);
   if (!result.success) {
-    logStructured('features.theme-playground', 'error', `Invalid theme definition for theme ${name}: ${result.error.message}`);
+    logStructured(
+      'features.theme-playground',
+      'error',
+      `Invalid theme definition for theme ${name}: ${result.error.message}`
+    );
   } else {
     themeMap[result.data.id] = result.data;
   }

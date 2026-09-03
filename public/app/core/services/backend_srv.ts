@@ -26,7 +26,8 @@ import {
 } from 'rxjs/operators';
 
 import { AppEvents, DataQueryErrorType, deprecationWarning, generateUUID } from '@grafana/data';
-import { logStructured,
+import {
+  logStructured,
   type BackendSrv as BackendService,
   type BackendSrvRequest,
   config,

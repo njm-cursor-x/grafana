@@ -1,9 +1,9 @@
-import { logStructured } from '@grafana/runtime';
 import { css } from '@emotion/css';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { type GrafanaTheme2 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { FileDropzone, useStyles2, Button, type DropzoneFile, Field } from '@grafana/ui';
 import { SanitizedSVG } from 'app/core/components/SVG/SanitizedSVG';
 

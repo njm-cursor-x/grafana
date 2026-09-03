@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { uniqBy } from 'lodash';
 
 import {
@@ -10,6 +9,7 @@ import {
   rangeUtil,
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { type TimeRangePickerProps, TimeRangePicker } from '@grafana/ui';
 import { appEvents } from 'app/core/app_events';
 

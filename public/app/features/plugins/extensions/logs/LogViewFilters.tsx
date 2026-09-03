@@ -1,9 +1,9 @@
-import { logStructured } from '@grafana/runtime';
 import { isEmpty } from 'lodash';
 import { type ReactElement, useId, useMemo } from 'react';
 
 import { type DataFrame, type SelectableValue } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { type SceneDataProvider } from '@grafana/scenes';
 import { InlineField, InlineFieldRow, MultiSelect } from '@grafana/ui';
 

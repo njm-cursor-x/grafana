@@ -3,7 +3,8 @@ import { type CSSProperties } from 'react';
 import tinycolor from 'tinycolor2';
 import { type Count, varPreLine } from 'uwrap';
 
-import { writeStructuredLog,
+import {
+  writeStructuredLog,
   FieldType,
   type Field,
   fieldReducers,

@@ -1,5 +1,5 @@
-import { writeStructuredLog } from '../utils/structuredLog';
 import { Registry, type RegistryItem } from '../utils/Registry';
+import { writeStructuredLog } from '../utils/structuredLog';
 
 import { createTheme, NewThemeOptionsSchema } from './createTheme';
 import aubergine from './themeDefinitions/aubergine.json';

@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { type ChangeEvent, type ReactElement, useCallback } from 'react';
 
 import { type SwitchVariableModel } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { Switch } from '@grafana/ui';
 
 import { variableAdapters } from '../adapters';

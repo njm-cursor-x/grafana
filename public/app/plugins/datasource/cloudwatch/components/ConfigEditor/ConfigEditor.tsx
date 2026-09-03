@@ -220,7 +220,9 @@ function useDatasource(props: Props) {
           setDatasource(ds);
         }
       })
-      .catch((err) => logStructured('plugins.datasource', 'error', 'Could not load CloudWatch data source instance', err));
+      .catch((err) =>
+        logStructured('plugins.datasource', 'error', 'Could not load CloudWatch data source instance', err)
+      );
 
     return () => {
       cancelled = true;

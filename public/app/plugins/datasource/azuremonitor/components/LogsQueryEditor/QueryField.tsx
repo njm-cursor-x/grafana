@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { type EngineSchema, getKustoWorker } from '@kusto/monaco-kusto';
 import { useCallback, useEffect, useState } from 'react';
 
+import { logStructured } from '@grafana/runtime';
 import { CodeEditor, type Monaco, type MonacoEditor } from '@grafana/ui';
 
 import { type AzureQueryEditorFieldProps } from '../../types/types';

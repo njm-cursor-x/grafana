@@ -174,7 +174,11 @@ export const fetchNextChildrenPage = createAsyncThunk(
       fetchKind = 'folder';
     } else if (collection.lastFetchedKind === 'dashboard' && !collection.lastKindHasMoreItems) {
       // There's nothing to load at all
-      logStructured('features.browse-dashboards', 'warn', `fetchNextChildrenPage called for ${uid} but that collection is fully loaded`);
+      logStructured(
+        'features.browse-dashboards',
+        'warn',
+        `fetchNextChildrenPage called for ${uid} but that collection is fully loaded`
+      );
       // return;
     } else if (collection.lastFetchedKind === 'folder' && collection.lastKindHasMoreItems) {
       // Load additional pages of folders

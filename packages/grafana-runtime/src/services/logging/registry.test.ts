@@ -83,8 +83,12 @@ describe('logging registry', () => {
       addLogger('grafana/runtime.plugins.meta');
       addLogger('grafana/runtime.plugins.meta', { context: { env: 'dev' }, logToConsole: true });
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        'LoggerRegistry: a logger with the source:grafana/runtime.plugins.meta already exists, keeping existing entry.'
+      expect(logWarning).toHaveBeenCalledWith(
+        'LoggerRegistry: a logger with the source:grafana/runtime.plugins.meta already exists, keeping existing entry.',
+        {
+          source: 'grafana/runtime.logging.registry',
+          logger: 'grafana/runtime.plugins.meta',
+        }
       );
     });
 
@@ -140,15 +144,16 @@ describe('logging registry', () => {
           getLogger('grafana/runtime.plugins.meta');
         }
 
-        if (!warns) {
-          expect(warnSpy).not.toHaveBeenCalled();
-        }
-
         if (warns) {
-          expect(warnSpy).toHaveBeenCalledTimes(1);
-          expect(warnSpy).toHaveBeenCalledWith(
-            `LoggerRegistry: no logger 'grafana/runtime.plugins.meta' exists, are you calling getLogger before initializeLoggersRegistry function was called?`
+          expect(logWarning).toHaveBeenCalledWith(
+            `LoggerRegistry: no logger 'grafana/runtime.plugins.meta' exists, are you calling getLogger before initializeLoggersRegistry function was called?`,
+            {
+              logger: 'grafana/runtime.plugins.meta',
+              source: 'grafana/runtime.logging.registry',
+            }
           );
+        } else {
+          expect(logWarning).not.toHaveBeenCalled();
         }
       });
 
@@ -177,10 +182,7 @@ describe('logging registry', () => {
         getLogger('grafana/runtime.plugins.meta');
 
         if (warns) {
-          expect(warnSpy).toHaveBeenCalledTimes(2);
-          expect(warnSpy).toHaveBeenCalledWith(
-            `LoggerRegistry: no logger 'grafana/runtime.plugins.meta' exists, are you calling getLogger before initializeLoggersRegistry function was called?`
-          );
+          expect(logWarning).toHaveBeenCalledTimes(2);
         }
       });
 
@@ -282,33 +284,43 @@ function expectLoggerFunctions(
     }
   );
 
-  if (!defaults?.logToConsole) {
+  if (defaults?.logToConsole === false) {
     expect(spies.debugSpy).not.toHaveBeenCalled();
     expect(spies.errorSpy).not.toHaveBeenCalled();
     expect(spies.logSpy).not.toHaveBeenCalled();
     expect(spies.warnSpy).not.toHaveBeenCalled();
   }
 
-  if (defaults?.logToConsole) {
-    expect(spies.debugSpy).toHaveBeenCalledWith('registry debug test', {
-      ...defaults.context,
-      source: 'grafana/runtime.plugins.meta',
+  if (defaults?.logToConsole !== false) {
+    expect(spies.debugSpy).toHaveBeenCalledWith({
+      ...defaults?.context,
+      level: 'debug',
+      msg: 'registry debug test',
       pluginId: 'myorg-test-plugin',
+      source: 'grafana/runtime.plugins.meta',
     });
-    expect(spies.errorSpy).toHaveBeenCalledWith(
-      'registry error test',
-      { ...defaults.context, source: 'grafana/runtime.plugins.meta', pluginId: 'myorg-test-plugin' },
-      new Error('registry error test')
-    );
-    expect(spies.logSpy).toHaveBeenCalledWith('registry info test', {
-      ...defaults.context,
-      source: 'grafana/runtime.plugins.meta',
+    expect(spies.errorSpy).toHaveBeenCalledWith({
+      ...defaults?.context,
+      error: 'registry error test',
+      level: 'error',
+      msg: 'registry error test',
       pluginId: 'myorg-test-plugin',
+      source: 'grafana/runtime.plugins.meta',
+      stack: expect.any(String),
     });
-    expect(spies.warnSpy).toHaveBeenCalledWith('registry warning test', {
-      ...defaults.context,
-      source: 'grafana/runtime.plugins.meta',
+    expect(spies.logSpy).toHaveBeenCalledWith({
+      ...defaults?.context,
+      level: 'info',
+      msg: 'registry info test',
       pluginId: 'myorg-test-plugin',
+      source: 'grafana/runtime.plugins.meta',
+    });
+    expect(spies.warnSpy).toHaveBeenCalledWith({
+      ...defaults?.context,
+      level: 'warn',
+      msg: 'registry warning test',
+      pluginId: 'myorg-test-plugin',
+      source: 'grafana/runtime.plugins.meta',
     });
   }
 }

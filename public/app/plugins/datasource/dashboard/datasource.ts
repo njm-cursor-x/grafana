@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { type Observable, debounce, debounceTime, defer, filter, finalize, first, interval, map, of } from 'rxjs';
 
 import {
@@ -22,6 +21,7 @@ import {
   type DataSourceGetDrilldownsApplicabilityOptions,
   type DrilldownsApplicability,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import {
   isSceneObject,
   sceneGraph,

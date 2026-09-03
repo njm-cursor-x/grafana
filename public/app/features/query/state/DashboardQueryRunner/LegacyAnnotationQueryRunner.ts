@@ -1,8 +1,8 @@
-import { logStructured } from '@grafana/runtime';
 import { from, type Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { type AnnotationEvent, type DataSourceApi } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { shouldUseLegacyRunner } from 'app/features/annotations/standardAnnotationSupport';
 
 import { type AnnotationQueryRunner, type AnnotationQueryRunnerOptions } from './types';

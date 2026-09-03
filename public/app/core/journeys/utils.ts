@@ -54,7 +54,9 @@ function warnUnsupported(kind: string): void {
     return;
   }
   warnedTypes.add(kind);
-  logStructured('core.journeys', 'warn',
+  logStructured(
+    'core.journeys',
+    'warn',
     `[CUJ] str() received unsupported value of type "${kind}"; coerced to ''. ` +
       `Pass primitives (string/number/boolean) to reportInteraction so journey attributes stay queryable in Tempo.`
   );

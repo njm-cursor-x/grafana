@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { logStructured } from '@grafana/runtime';
 import * as React from 'react';
+
+import { logStructured } from '@grafana/runtime';
 
 import type TNil from '../../types/TNil';
 

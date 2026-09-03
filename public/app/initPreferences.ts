@@ -1,5 +1,5 @@
-import { logStructured } from '@grafana/runtime';
 import type { Preferences } from '@grafana/api-clients/rtkq/preferences/v1';
+import { logStructured } from '@grafana/runtime';
 
 export const initPreferences = async (): Promise<Preferences | undefined> => {
   const preferences = await fetchMergedPreferences();

@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useMemo } from 'react';
 
+import { logStructured } from '@grafana/runtime';
 import { useListTeamRolesQuery, useSetTeamRolesMutation } from 'app/api/clients/roles';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction, type Role } from 'app/types/accessControl';

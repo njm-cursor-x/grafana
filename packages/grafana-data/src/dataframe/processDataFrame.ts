@@ -1,5 +1,4 @@
 // Libraries
-import { writeStructuredLog } from '../utils/structuredLog';
 import { isArray } from 'lodash';
 
 import { fieldIndexComparer } from '../field/fieldComparers';
@@ -19,6 +18,7 @@ import {
 import { type DataQueryResponseData } from '../types/datasource';
 import { type GraphSeriesXY, type GraphSeriesValue } from '../types/graph';
 import { type PanelData } from '../types/panel';
+import { writeStructuredLog } from '../utils/structuredLog';
 
 import { arrayToDataFrame } from './ArrayDataFrame';
 import { dataFrameFromJSON } from './DataFrameJSON';

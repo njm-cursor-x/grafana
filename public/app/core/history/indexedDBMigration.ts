@@ -136,7 +136,9 @@ async function runMigration(indexedDBStorage: IndexedDBMigrationAccess): Promise
 
   if (currentAttempts >= MAX_MIGRATION_ATTEMPTS) {
     reportInteraction('grafana_query_history_migration_abandoned', { attempts: currentAttempts });
-    logStructured('core.history', 'warn',
+    logStructured(
+      'core.history',
+      'warn',
       `Query history migration to IndexedDB did not succeed after ${MAX_MIGRATION_ATTEMPTS} attempts. ` +
         `Existing query history remains in localStorage and/or the remote API. ` +
         `Set localStorage key '${RESET_MIGRATION_KEY}' to true and reload to retry the migration.`

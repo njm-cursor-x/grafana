@@ -1,5 +1,5 @@
-import { logStructured } from '@grafana/runtime';
 import { type Scope, type ScopeDashboardBinding, type ScopeNode } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { FlagKeys, getFeatureFlagClient } from '@grafana/runtime/internal';
 import { scopeAPIv0alpha1 } from 'app/api/clients/scope/v0alpha1';
 import type { FindDefaultScope } from 'app/api/clients/scope/v0alpha1/endpoints.gen';
@@ -76,7 +76,9 @@ export class ScopesApiClient {
 
       if (successfulScopes.length < scopesIds.length) {
         const failedCount = scopesIds.length - successfulScopes.length;
-        logStructured('features.scopes', 'warn',
+        logStructured(
+          'features.scopes',
+          'warn',
           'Failed to fetch',
           failedCount,
           'of',
@@ -254,13 +256,25 @@ export class ScopesApiClient {
 
       if ('error' in result) {
         const errorMessage = getMessageFromError(result.error);
-        logStructured('features.scopes', 'error', 'Failed to fetch scope navigations for scopes:', scopeNames, errorMessage);
+        logStructured(
+          'features.scopes',
+          'error',
+          'Failed to fetch scope navigations for scopes:',
+          scopeNames,
+          errorMessage
+        );
       }
 
       return [];
     } catch (err) {
       const errorMessage = getMessageFromError(err);
-      logStructured('features.scopes', 'error', 'Failed to fetch scope navigations for scopes:', scopeNames, errorMessage);
+      logStructured(
+        'features.scopes',
+        'error',
+        'Failed to fetch scope navigations for scopes:',
+        scopeNames,
+        errorMessage
+      );
       return [];
     } finally {
       // Unsubscribe for extra safety, even though with subscribe: false and awaiting,

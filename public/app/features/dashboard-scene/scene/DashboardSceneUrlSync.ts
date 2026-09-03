@@ -1,6 +1,6 @@
-import { logStructured } from '@grafana/runtime';
 import { type Unsubscribable } from 'rxjs';
 
+import { logStructured } from '@grafana/runtime';
 import { type SceneObjectUrlSyncHandler, type SceneObjectUrlValues, type VizPanel } from '@grafana/scenes';
 
 import { openPanelEditor } from '../panel-edit/openPanelEditor';

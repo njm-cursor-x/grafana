@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import {
   closestIdx,
   type DataFrame,
@@ -12,6 +11,7 @@ import {
   type QueryResultMetaStat,
   shallowCompare,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 function getFrameKey(frame: DataFrame): string | undefined {
   // Metric range query data

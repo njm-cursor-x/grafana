@@ -1,10 +1,10 @@
 /* Spreading unbound arrays can be very slow or even crash the browser if used for arguments */
 /* eslint no-restricted-syntax: ["error", "SpreadElement"] */
 
-import { writeStructuredLog } from '@grafana/data';
 import { debounce } from 'lodash';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 
+import { writeStructuredLog } from '@grafana/data';
 import { t } from '@grafana/i18n';
 
 import { fuzzyFind, itemToString } from './filter';

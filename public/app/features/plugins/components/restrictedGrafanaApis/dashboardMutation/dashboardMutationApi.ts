@@ -11,8 +11,8 @@
  * import this module directly because it lives inside the core bundle.
  */
 
-import { logStructured } from '@grafana/runtime';
 import type { DashboardMutationAPI } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { DashboardMutationClient } from 'app/features/dashboard-scene/mutation-api/DashboardMutationClient';
 import { provideMutationClientFactory } from 'app/features/dashboard-scene/mutation-api/clientBridge';
 import type { MutationClient, MutationRequest } from 'app/features/dashboard-scene/mutation-api/types';

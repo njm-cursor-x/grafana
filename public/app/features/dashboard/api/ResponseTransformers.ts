@@ -728,7 +728,9 @@ function getVariables(vars: TypedVariableModel[]): DashboardV2Spec['variables'] 
         let query = v.query || {};
 
         if (typeof query === 'string') {
-          logStructured('features.dashboard', 'warn',
+          logStructured(
+            'features.dashboard',
+            'warn',
             'Query variable query is a string which is deprecated in the schema v2. It should extend DataQuery'
           );
           query = {

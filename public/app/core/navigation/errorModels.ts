@@ -1,5 +1,5 @@
-import { logStructured } from '@grafana/runtime';
 import { type NavModel, type NavModelItem } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 export function getExceptionNav(error: unknown): NavModel {
   logStructured('core.navigation', 'error', error);

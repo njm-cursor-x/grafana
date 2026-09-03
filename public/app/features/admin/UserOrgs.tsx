@@ -1,9 +1,9 @@
-import { logStructured } from '@grafana/runtime';
 import { css, cx } from '@emotion/css';
 import { memo, type ReactElement, useEffect, useRef, useState } from 'react';
 
 import { type GrafanaTheme2, OrgRole } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { Button, ConfirmButton, Field, Icon, Modal, Tooltip, useStyles2, Stack, TextLink } from '@grafana/ui';
 import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
 import { fetchRoleOptions, updateUserRoles } from 'app/core/components/RolePicker/api';

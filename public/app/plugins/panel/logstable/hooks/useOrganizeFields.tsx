@@ -1,10 +1,10 @@
-import { logStructured } from '@grafana/runtime';
 import { merge } from 'lodash';
 import { useEffect, useState } from 'react';
 import useMountedState from 'react-use/lib/useMountedState';
 import { lastValueFrom } from 'rxjs';
 
 import { type DataFrame, type FieldConfigSource, transformDataFrame } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { type CustomCellRendererProps, TableCellDisplayMode } from '@grafana/ui';
 import { type LogsFrame } from 'app/features/logs/logsFrame';
 

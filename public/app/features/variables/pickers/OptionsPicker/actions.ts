@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { debounce, trim } from 'lodash';
 
 import { isEmptyObject, containsSearchFilter, type VariableWithOptions, type VariableOption } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { type StoreState, type ThunkDispatch, type ThunkResult } from 'app/types/store';
 
 import { variableAdapters } from '../../adapters';

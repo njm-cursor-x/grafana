@@ -1,6 +1,6 @@
-import { logStructured } from '@grafana/runtime';
 import { type Display } from '@grafana/api-clients/rtkq/iam/v0alpha1';
 import { type OrgRole, type CurrentUserDTO, type GrafanaConfig, type NavLinkDTO } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 const publicDashboardAccessToken = window.__grafanaPublicDashboardAccessToken;
 // Grafana can only fail to load once

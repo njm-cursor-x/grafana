@@ -1,5 +1,6 @@
-import { writeStructuredLog } from './structuredLog';
 import { type KeyValue } from '../types/data';
+
+import { writeStructuredLog } from './structuredLog';
 
 // Avoid writing the warning message more than once every 10s
 const history: KeyValue<number> = {};

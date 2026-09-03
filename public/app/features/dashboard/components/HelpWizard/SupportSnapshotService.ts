@@ -1,8 +1,8 @@
-import { logStructured } from '@grafana/runtime';
 import saveAs from 'file-saver';
 
 import { dateTimeFormat, formattedValueToString, getValueFormat, type SelectableValue } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { type SceneObject } from '@grafana/scenes';
 import { StateManagerBase } from 'app/core/services/StateManagerBase';
 import { type Randomize } from 'app/features/dashboard-scene/inspect/HelpWizard/randomizer';

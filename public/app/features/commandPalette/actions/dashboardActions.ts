@@ -124,7 +124,12 @@ async function getHybridDashboardActions(searchQuery: string): Promise<CommandPa
   try {
     hits = await searchDashboardsHybrid(searchQuery, { limit: MAX_HYBRID_SEARCH_RESULTS });
   } catch (error) {
-    logStructured('features.commandPalette', 'error', 'Hybrid dashboard search failed, falling back to the classic search.', error);
+    logStructured(
+      'features.commandPalette',
+      'error',
+      'Hybrid dashboard search failed, falling back to the classic search.',
+      error
+    );
     return getClassicSearchResultActions(searchQuery, ['dashboard']);
   }
 

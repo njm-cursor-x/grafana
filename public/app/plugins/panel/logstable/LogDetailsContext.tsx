@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
 import { store } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { type LogListModel } from 'app/features/logs/components/panel/processing';
 
 export interface LogDetailsContextData {

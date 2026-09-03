@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { customAlphabet } from 'nanoid';
 import { type Unsubscribable } from 'rxjs';
 
@@ -25,6 +24,7 @@ import {
   urlUtil,
   generateUUID,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { getDataSourceInstance } from '@grafana/runtime/unstable';
 import { RefreshPicker } from '@grafana/ui';
 import { ExpressionDatasourceUID } from 'app/features/expressions/types';
@@ -233,7 +233,11 @@ export async function ensureQueries(
         try {
           await getDataSourceInstance(query.datasource.uid);
         } catch {
-          logStructured('core.utils', 'error', `One of the queries has a datasource that is no longer available and was removed.`);
+          logStructured(
+            'core.utils',
+            'error',
+            `One of the queries has a datasource that is no longer available and was removed.`
+          );
           validDS = false;
         }
       }

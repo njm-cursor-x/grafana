@@ -1,7 +1,8 @@
-import { writeStructuredLog } from '../utils/structuredLog';
 import { sanitizeUrl as braintreeSanitizeUrl } from '@braintree/sanitize-url';
 import DOMPurify from 'dompurify';
 import * as xss from 'xss';
+
+import { writeStructuredLog } from '../utils/structuredLog';
 
 const XSSWL = Object.keys(xss.whiteList).reduce<xss.IWhiteList>((acc, element) => {
   acc[element] = xss.whiteList[element]?.concat(['class', 'style']);

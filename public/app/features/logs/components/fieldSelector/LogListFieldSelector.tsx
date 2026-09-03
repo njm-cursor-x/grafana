@@ -116,7 +116,9 @@ export const LogListFieldSelector = ({ containerElement, dataFrames, logs }: Log
   const fields = useMemo(() => getFieldsWithStats(dataFrames), [dataFrames]);
 
   if (!onClickShowField || !onClickHideField || !setDisplayedFields) {
-    logStructured('features.logs', 'warn',
+    logStructured(
+      'features.logs',
+      'warn',
       'LogListFieldSelector: Missing required props: onClickShowField, onClickHideField, setDisplayedFields'
     );
     return null;

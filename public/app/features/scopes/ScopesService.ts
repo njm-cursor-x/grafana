@@ -2,7 +2,12 @@ import { isEqual } from 'lodash';
 import { BehaviorSubject, type Observable, combineLatest, type Subscription } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 
-import { logStructured, type LocationService, type ScopesContextValue, type ScopesContextValueState } from '@grafana/runtime';
+import {
+  logStructured,
+  type LocationService,
+  type ScopesContextValue,
+  type ScopesContextValueState,
+} from '@grafana/runtime';
 
 import { type ScopesApiClient } from './ScopesApiClient';
 import { type ScopesDashboardsService } from './dashboards/ScopesDashboardsService';

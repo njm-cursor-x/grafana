@@ -144,7 +144,9 @@ const filterNonSafeDashboards = (dashboards: GnetDashboard[], dataSourceType?: s
     if (unsafePanelTypes.length > 0) {
       unsafeDashboardsCount++;
 
-      logStructured('features.dashboard', 'warn',
+      logStructured(
+        'features.dashboard',
+        'warn',
         `Community dashboard ${item.id} ${item.name} filtered out due to panel types ${item.panelTypeSlugs?.join(', ')} that can embed JavaScript`
       );
 

@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { type ThunkDispatch, type UnknownAction } from '@reduxjs/toolkit';
 import { type Subscription } from 'rxjs';
 
+import { logStructured } from '@grafana/runtime';
 import { ScopedResourceClient } from 'app/features/apiserver/client';
 import { type ListOptions, type GeneratedResourceList as ResourceList } from 'app/features/apiserver/types';
 

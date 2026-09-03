@@ -355,7 +355,12 @@ export default class ResourcePickerData extends DataSourceWithBackend<
           }
         }
       } catch (e) {
-        logStructured('plugins.datasource', 'warn', `Failed to fetch metric namespaces for region ${region}, falling back to predefined list:`, e);
+        logStructured(
+          'plugins.datasource',
+          'warn',
+          `Failed to fetch metric namespaces for region ${region}, falling back to predefined list:`,
+          e
+        );
       }
     };
 

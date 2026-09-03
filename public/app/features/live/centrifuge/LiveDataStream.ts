@@ -13,7 +13,8 @@ import {
   StreamingDataFrame,
 } from '@grafana/data';
 import { getStreamingFrameOptions } from '@grafana/data/internal';
-import { logStructured,
+import {
+  logStructured,
   type LiveDataStreamOptions,
   StreamingFrameAction,
   type StreamingFrameOptions,
@@ -280,7 +281,11 @@ export class LiveDataStream<T = unknown> {
       }
 
       if (!messages.length) {
-        logStructured('features.live', 'warn', `expected to find at least one non error message ${messages.map(({ type }) => type)}`);
+        logStructured(
+          'features.live',
+          'warn',
+          `expected to find at least one non error message ${messages.map(({ type }) => type)}`
+        );
         // send empty frame
         return {
           key: subKey,

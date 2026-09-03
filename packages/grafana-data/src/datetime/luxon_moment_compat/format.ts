@@ -1,4 +1,3 @@
-import { writeStructuredLog } from '../../utils/structuredLog';
 import type { DateTime } from './luxon';
 
 const LOWER_MERIDIEM_FORMAT = "'__mls__'a'__mle__'";

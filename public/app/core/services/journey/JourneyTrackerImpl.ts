@@ -1,6 +1,7 @@
 import { type Span, type Tracer, context, trace, SpanStatusCode, type Link } from '@opentelemetry/api';
 
-import { logStructured,
+import {
+  logStructured,
   type JourneyHandle,
   type JourneyOutcome,
   type JourneyTracker,
@@ -422,7 +423,12 @@ class JourneyHandleImpl implements JourneyHandle {
       try {
         cb();
       } catch (err) {
-        logStructured('core.services', 'error', `[JourneyTracker] onEnd callback error for "${this.journeyType}":`, err);
+        logStructured(
+          'core.services',
+          'error',
+          `[JourneyTracker] onEnd callback error for "${this.journeyType}":`,
+          err
+        );
       }
     }
   }

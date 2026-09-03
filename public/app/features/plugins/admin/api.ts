@@ -92,7 +92,11 @@ export async function getRemotePlugins(): Promise<RemotePlugin[]> {
     if (isFetchError(error)) {
       // It can happen that GCOM is not available, in that case we show a limited set of information to the user.
       error.isHandled = true;
-      logStructured('features.plugins', 'error', 'Failed to fetch plugins from catalog (default https://grafana.com/api/plugins)');
+      logStructured(
+        'features.plugins',
+        'error',
+        'Failed to fetch plugins from catalog (default https://grafana.com/api/plugins)'
+      );
       return [];
     }
 
@@ -272,7 +276,11 @@ export async function getPluginEntitlement(id: string): Promise<boolean> {
       if (error.status === 401 || error.status === 403 || error.status === 404) {
         return false;
       }
-      logStructured('features.plugins', 'warn', `Failed to fetch entitlement for plugin "${id}" (status ${error.status})`);
+      logStructured(
+        'features.plugins',
+        'warn',
+        `Failed to fetch entitlement for plugin "${id}" (status ${error.status})`
+      );
     } else {
       logStructured('features.plugins', 'warn', `Failed to fetch entitlement for plugin "${id}": unexpected error`);
     }

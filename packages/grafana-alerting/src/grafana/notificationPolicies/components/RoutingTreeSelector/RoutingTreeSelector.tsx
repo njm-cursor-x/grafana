@@ -1,7 +1,7 @@
-import { writeStructuredLog } from '@grafana/data';
 import { type ComponentProps, useMemo } from 'react';
 
 import { type RoutingTree } from '@grafana/api-clients/rtkq/notifications.alerting/v1beta1';
+import { writeStructuredLog } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { Alert, Combobox, type ComboboxOption, MultiCombobox } from '@grafana/ui';
 
@@ -127,7 +127,11 @@ function RoutingTreeSelector(props: RoutingTreeSelectorProps) {
     if (selectedOption) {
       const tree = treeLookup.get(selectedOption.value);
       if (!tree) {
-        writeStructuredLog('grafana-alerting', 'warn', `RoutingTreeSelector: could not find routing tree for value "${selectedOption.value}"`);
+        writeStructuredLog(
+          'grafana-alerting',
+          'warn',
+          `RoutingTreeSelector: could not find routing tree for value "${selectedOption.value}"`
+        );
         return;
       }
 

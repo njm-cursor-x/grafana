@@ -23,7 +23,8 @@ import {
   type TimeRange,
   toDataFrame,
 } from '@grafana/data';
-import { logStructured,
+import {
+  logStructured,
   type BackendSrvRequest,
   config,
   DataSourceWithBackend,

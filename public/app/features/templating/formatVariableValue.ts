@@ -43,7 +43,11 @@ export function formatVariableValue(value: any, format?: any, variable?: any, te
   let formatItem = formatRegistry.getIfExists(format);
 
   if (!formatItem) {
-    logStructured('features.templating', 'error', `Variable format ${format} not found. Using glob format as fallback.`);
+    logStructured(
+      'features.templating',
+      'error',
+      `Variable format ${format} not found. Using glob format as fallback.`
+    );
     formatItem = formatRegistry.get(VariableFormatID.Glob);
   }
 

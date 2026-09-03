@@ -1,4 +1,5 @@
 import { logStructured } from '@grafana/runtime';
+
 import { reportPerformance } from '../services/echo/EchoSrv';
 
 export function startMeasure(eventName: string) {

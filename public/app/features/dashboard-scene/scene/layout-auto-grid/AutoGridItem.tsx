@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { isEqual } from 'lodash';
 import React from 'react';
 
+import { logStructured } from '@grafana/runtime';
 import {
   CustomVariable,
   MultiValueVariable,

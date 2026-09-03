@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import * as React from 'react';
 
 import { PluginContext } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 interface PluginErrorBoundaryProps {
   children: React.ReactNode;

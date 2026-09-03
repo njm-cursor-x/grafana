@@ -1,8 +1,8 @@
-import { logStructured } from '@grafana/runtime';
 import { type FormEvent } from 'react';
 import { lastValueFrom } from 'rxjs';
 
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { ConstantVariable, type SceneVariable } from '@grafana/scenes';
 import { Input } from '@grafana/ui';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';

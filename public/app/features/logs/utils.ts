@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import saveAs from 'file-saver';
 import { countBy, chain } from 'lodash';
 import { type MouseEvent } from 'react';
@@ -33,6 +32,7 @@ import {
   store,
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { FlagKeys, getFeatureFlagClient } from '@grafana/runtime/internal';
 import { getConfig } from 'app/core/config';
 

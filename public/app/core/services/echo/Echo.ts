@@ -1,4 +1,5 @@
-import { logStructured,
+import {
+  logStructured,
   type EchoBackend,
   type EchoMeta,
   type EchoEvent,
@@ -76,7 +77,12 @@ export class Echo implements EchoSrv {
             try {
               cb(payload.properties ?? {});
             } catch (err) {
-              logStructured('core.services', 'error', `[Echo] onInteraction subscriber error for "${payload.interactionName}":`, err);
+              logStructured(
+                'core.services',
+                'error',
+                `[Echo] onInteraction subscriber error for "${payload.interactionName}":`,
+                err
+              );
             }
           }
         }

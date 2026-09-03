@@ -1,9 +1,9 @@
-import { logStructured } from '@grafana/runtime';
 import { useMemo } from 'react';
 import uPlot from 'uplot';
 
 import { type DataFrame, FieldType } from '@grafana/data';
 import { maybeSortFrame } from '@grafana/data/internal';
+import { logStructured } from '@grafana/runtime';
 import { type TimeRange2 } from '@grafana/ui/internal';
 
 import { DEFAULT_CLUSTERING_ANNOTATION_SPACING } from './constants';

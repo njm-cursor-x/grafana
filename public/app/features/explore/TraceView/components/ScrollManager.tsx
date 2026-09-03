@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import { logStructured } from '@grafana/runtime';
+
 import type TNil from './types/TNil';
 import { type TraceSpan, type TraceSpanReference, type Trace } from './types/trace';
 

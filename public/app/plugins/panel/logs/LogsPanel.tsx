@@ -615,7 +615,11 @@ async function requestMoreLogs(
   for (const uid in targetGroups) {
     const dataSource = dataSourcesMap.get(panelData.request.targets[0].refId);
     if (!dataSource) {
-      logStructured('plugins.panel', 'warn', `Could not resolve data source for target ${panelData.request.targets[0].refId}`);
+      logStructured(
+        'plugins.panel',
+        'warn',
+        `Could not resolve data source for target ${panelData.request.targets[0].refId}`
+      );
       continue;
     }
     dataRequests.push(

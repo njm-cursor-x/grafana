@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { logStructured } from '@grafana/runtime';
 import { isEqual as _isEqual } from 'lodash';
 
 // @ts-ignore
 import { type TraceKeyValuePair } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 import { AGGREGATION_PREFIX } from '../constants/aggregation';
 import { getTraceSpanIdsAsTree } from '../selectors/trace';

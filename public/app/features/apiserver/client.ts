@@ -262,7 +262,9 @@ export class ScopedResourceClient<T = object, S = object, K = string> implements
             return;
           }
           // Transient failure: log and retry next cycle.
-          logStructured('features.apiserver', 'warn',
+          logStructured(
+            'features.apiserver',
+            'warn',
             `Polling fallback error (${consecutiveFailures}/${ScopedResourceClient.MAX_CONSECUTIVE_POLL_FAILURES}):`,
             pollError
           );

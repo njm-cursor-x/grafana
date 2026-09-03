@@ -1,6 +1,6 @@
-import { logStructured } from '@grafana/runtime';
 import { type SelectableValue, store } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { type TermCount } from 'app/core/components/TagFilter/TagFilter';
 import {
   RECENTLY_DELETED_SORT_VALUES,

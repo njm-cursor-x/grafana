@@ -1,4 +1,3 @@
-import { writeStructuredLog } from '../utils/structuredLog';
 import EventEmitter from 'eventemitter3';
 import { type Unsubscribable, Observable, type Subscriber } from 'rxjs';
 import { filter } from 'rxjs/operators';

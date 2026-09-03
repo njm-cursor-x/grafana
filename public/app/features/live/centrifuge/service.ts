@@ -17,7 +17,8 @@ import {
   type LiveChannelId,
   toLiveChannelId,
 } from '@grafana/data';
-import { logStructured,
+import {
+  logStructured,
   type FetchResponse,
   type GrafanaLiveSrv,
   type LiveDataStreamOptions,

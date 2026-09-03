@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import ansicolor from 'ansicolor';
 
 import { BusEventWithPayload, type GrafanaTheme2 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 import { type LogLineTimestampResolution } from './LogLine';
 import { type LogListFontSize } from './LogList';

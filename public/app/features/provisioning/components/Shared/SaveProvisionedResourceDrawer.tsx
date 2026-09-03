@@ -298,7 +298,9 @@ export function SaveProvisionedResourceDrawer(props: SaveProvisionedResourceDraw
     // new kind wired into a page before its registry entry exists. Warn in dev so it's a visible signal
     // rather than a silent no-op where the user clicks save/delete and nothing happens.
     if (process.env.NODE_ENV !== 'production') {
-      logStructured('features.provisioning', 'warn',
+      logStructured(
+        'features.provisioning',
+        'warn',
         `SaveProvisionedResourceDrawer: no registered provisioning kind for "${props.resource.apiVersion}"/"${props.resource.kind}"; the drawer will not render.`
       );
     }

@@ -1,7 +1,8 @@
 import { lastValueFrom, type Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { writeStructuredLog,
+import {
+  writeStructuredLog,
   getDefaultTimeRange,
   type DataFrame,
   DataFrameView,

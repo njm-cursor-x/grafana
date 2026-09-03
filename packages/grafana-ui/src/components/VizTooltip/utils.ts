@@ -1,4 +1,5 @@
-import { writeStructuredLog,
+import {
+  writeStructuredLog,
   FALLBACK_COLOR,
   type Field,
   FieldType,

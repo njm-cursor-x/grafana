@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { logStructured } from '@grafana/runtime';
 import memoizeOne from 'memoize-one';
+
+import { logStructured } from '@grafana/runtime';
 
 import { type TraceSpan, type CriticalPathSection, type Trace } from '../types/trace';
 

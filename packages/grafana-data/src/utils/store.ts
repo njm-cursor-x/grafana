@@ -76,7 +76,11 @@ export class Store {
       try {
         ret = JSON.parse(json);
       } catch (error) {
-        writeStructuredLog('grafana-data', 'error', `Error parsing store object: ${key}. Returning default: ${def}. [${error}]`);
+        writeStructuredLog(
+          'grafana-data',
+          'error',
+          `Error parsing store object: ${key}. Returning default: ${def}. [${error}]`
+        );
       }
     }
     return ret;

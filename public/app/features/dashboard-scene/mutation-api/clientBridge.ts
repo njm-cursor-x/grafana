@@ -25,7 +25,9 @@ export function provideMutationClientFactory(create: CreateMutationClient): void
  */
 export function createMutationClient(scene: unknown, resource: MutationResource): () => void {
   if (!_create) {
-    logStructured('features.dashboard-scene', 'warn',
+    logStructured(
+      'features.dashboard-scene',
+      'warn',
       'createMutationClient called before provideMutationClientFactory. Mutation API will not be available.'
     );
     return () => {};

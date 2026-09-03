@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { omitBy, isNil, isNumber, defaultTo, groupBy, omit } from 'lodash';
 
 import {
@@ -13,6 +12,7 @@ import {
   ByNamesMatcherMode,
 } from '@grafana/data';
 import { type ReduceTransformerOptions } from '@grafana/data/internal';
+import { logStructured } from '@grafana/runtime';
 
 import { type Options } from './panelcfg.gen';
 

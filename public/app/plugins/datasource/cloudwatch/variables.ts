@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { from, type Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -9,6 +8,7 @@ import {
   type MetricFindValue,
   type SelectableValue,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 import { VariableQueryEditor } from './components/VariableQueryEditor/VariableQueryEditor';
 import { ALL_ACCOUNTS_OPTION } from './components/shared/Account';

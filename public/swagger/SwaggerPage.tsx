@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { Global } from '@emotion/react';
 import { OpenFeatureProvider } from '@openfeature/react-sdk';
 import getDefaultMonacoLanguages from 'lib/monaco-languages';
@@ -8,6 +7,7 @@ import SwaggerUI from 'swagger-ui-react';
 
 import { createTheme, monacoLanguageRegistry, type SelectableValue } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { getFeatureFlagClient } from '@grafana/runtime/internal';
 import { Button, Icon, Select, Stack, UserIcon, type UserView } from '@grafana/ui';
 import { setMonacoEnv } from 'app/core/monacoEnv';

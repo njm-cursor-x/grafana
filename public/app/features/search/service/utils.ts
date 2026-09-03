@@ -1,6 +1,6 @@
-import { logStructured } from '@grafana/runtime';
 import { type ManagedBy } from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
 import { type DataFrame, type DataFrameView, type IconName, fuzzySearch } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { type DashboardViewItemWithUIItems } from 'app/features/browse-dashboards/types';
 import {
   isSharedWithMe,

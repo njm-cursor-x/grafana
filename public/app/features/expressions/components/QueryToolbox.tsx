@@ -1,9 +1,9 @@
-import { logStructured } from '@grafana/runtime';
 import { css } from '@emotion/css';
 import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 
 import { type GrafanaTheme2 } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { IconButton, useStyles2, Stack, InlineToast, Tooltip, Icon } from '@grafana/ui';
 
 import { type SqlExpressionQuery } from '../types';

@@ -27,9 +27,7 @@ export function createStructuredLogRecord(
       (value): value is Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value)
     )
   );
-  const args = additionalValues.filter(
-    (value) => value === null || typeof value !== 'object' || Array.isArray(value)
-  );
+  const args = additionalValues.filter((value) => value === null || typeof value !== 'object' || Array.isArray(value));
 
   return {
     ...context,
@@ -49,7 +47,7 @@ export function writeStructuredLog(source: string, level: StructuredLogLevel, ..
       console.debug(record);
       break;
     case 'info':
-      console.info(record);
+      console.log(record);
       break;
     case 'warn':
       console.warn(record);

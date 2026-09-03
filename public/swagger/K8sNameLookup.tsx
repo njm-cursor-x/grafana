@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { useEffect, useState } from 'react';
 
 import { type SelectableValue } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { Select } from '@grafana/ui';
 
 import { NamespaceContext, ResourceContext } from './plugins';

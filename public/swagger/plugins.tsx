@@ -1,6 +1,6 @@
-import { logStructured } from '@grafana/runtime';
 import { createContext } from 'react';
 
+import { logStructured } from '@grafana/runtime';
 import { CodeEditor, type Monaco } from '@grafana/ui';
 
 import { K8sNameLookup } from './K8sNameLookup';

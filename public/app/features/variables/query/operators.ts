@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { from, of, type OperatorFunction } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
@@ -11,6 +10,7 @@ import {
   type PanelData,
   type QueryVariableModel,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { type ThunkDispatch } from 'app/types/store';
 
 import { validateVariableSelectionState } from '../state/actions';

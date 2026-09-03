@@ -73,7 +73,9 @@ async function createInternalXrayLink(datasourceUid: string, region: string): Pr
   }
 
   if (!ds) {
-    logStructured('plugins.datasource', 'error',
+    logStructured(
+      'plugins.datasource',
+      'error',
       `Could not find linked X-Ray data source with uid: ${datasourceUid}, it was probably deleted after it was linked`
     );
     return undefined;

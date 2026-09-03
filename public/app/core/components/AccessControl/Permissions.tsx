@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { css } from '@emotion/css';
 import { sortBy } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
@@ -7,6 +6,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 
 import { type GrafanaTheme2 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { Text, Box, Button, useStyles2, LoadingPlaceholder } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
 import { getBackendSrv } from 'app/core/services/backend_srv';

@@ -1,6 +1,6 @@
-import { logStructured } from '@grafana/runtime';
 import { attempt, isError } from 'lodash';
 
+import { logStructured } from '@grafana/runtime';
 import { type PromRuleDTO, type PromRuleGroupDTO } from 'app/types/unified-alerting-dto';
 
 import { type GrafanaPromRulesOptions } from '../../api/prometheusApi';

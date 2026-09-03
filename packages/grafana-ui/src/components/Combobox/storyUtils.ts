@@ -1,4 +1,5 @@
 import { writeStructuredLog } from '@grafana/data';
+
 import { type ComboboxOption } from './types';
 
 let fakeApiOptions: Array<ComboboxOption<string>>;

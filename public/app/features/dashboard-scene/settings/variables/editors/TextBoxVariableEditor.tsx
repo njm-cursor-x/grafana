@@ -1,8 +1,8 @@
-import { logStructured } from '@grafana/runtime';
 import { noop } from 'lodash';
 import { type FormEvent } from 'react';
 
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { type SceneVariable, TextBoxVariable } from '@grafana/scenes';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
 

@@ -1,8 +1,8 @@
-import { writeStructuredLog } from './structuredLog';
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 
 import { store } from './store';
+import { writeStructuredLog } from './structuredLog';
 
 interface Props<T> {
   storageKey: string;

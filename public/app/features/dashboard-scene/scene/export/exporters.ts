@@ -1,7 +1,7 @@
-import { logStructured } from '@grafana/runtime';
 import { defaults, each, sortBy } from 'lodash';
 
 import { type DataSourceRef, type VariableOption, VariableRefresh } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { getPanelPluginMeta } from '@grafana/runtime/internal';
 import { getDataSourceInstance, getDataSourceInstanceSettings } from '@grafana/runtime/unstable';
 import { type Panel } from '@grafana/schema';

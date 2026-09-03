@@ -1,6 +1,6 @@
-import { logStructured } from '@grafana/runtime';
 import { isEqual } from 'lodash';
 
+import { logStructured } from '@grafana/runtime';
 import {
   MultiValueVariable,
   sceneGraph,

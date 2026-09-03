@@ -1,6 +1,7 @@
 import { merge } from 'lodash';
 
-import { writeStructuredLog,
+import {
+  writeStructuredLog,
   type AppPluginConfig as AppPluginConfigGrafanaData,
   type AuthSettings,
   type AzureSettings as AzureSettingsGrafanaData,
@@ -315,7 +316,11 @@ function overrideFeatureTogglesFromLocalStorage(config: GrafanaBootConfig) {
       const toggleState = featureValue === 'true' || featureValue === '1';
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       featureToggles[featureName as keyof FeatureToggles] = toggleState;
-      writeStructuredLog('grafana-runtime', 'info', `Setting feature toggle ${featureName} = ${toggleState} via localstorage`);
+      writeStructuredLog(
+        'grafana-runtime',
+        'info',
+        `Setting feature toggle ${featureName} = ${toggleState} via localstorage`
+      );
     }
   }
 }
@@ -341,9 +346,17 @@ function overrideFeatureTogglesFromUrl(config: GrafanaBootConfig) {
       if (toggleState !== featureToggles[key]) {
         if (isDevelopment || safeRuntimeFeatureFlags.has(featureName)) {
           featureToggles[featureName] = toggleState;
-          writeStructuredLog('grafana-runtime', 'info', `Setting feature toggle ${featureName} = ${toggleState} via url`);
+          writeStructuredLog(
+            'grafana-runtime',
+            'info',
+            `Setting feature toggle ${featureName} = ${toggleState} via url`
+          );
         } else {
-          writeStructuredLog('grafana-runtime', 'info', `Unable to change feature toggle ${featureName} via url in production.`);
+          writeStructuredLog(
+            'grafana-runtime',
+            'info',
+            `Unable to change feature toggle ${featureName} via url in production.`
+          );
         }
       }
     }
@@ -354,7 +367,11 @@ let bootData = window.grafanaBootData;
 
 if (!bootData) {
   if (process.env.NODE_ENV !== 'test') {
-    writeStructuredLog('grafana-runtime', 'error', 'window.grafanaBootData was not set by the time config was initialized');
+    writeStructuredLog(
+      'grafana-runtime',
+      'error',
+      'window.grafanaBootData was not set by the time config was initialized'
+    );
   }
 
   bootData = {

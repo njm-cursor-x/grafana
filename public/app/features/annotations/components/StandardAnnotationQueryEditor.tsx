@@ -1,4 +1,3 @@
-import { logStructured } from '@grafana/runtime';
 import { memo, useCallback, useEffect, useRef, useState, type ReactElement } from 'react';
 import { lastValueFrom } from 'rxjs';
 
@@ -12,6 +11,7 @@ import {
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { type DataQuery } from '@grafana/schema';
 import { Alert, type AlertVariant, Button, Space, Spinner } from '@grafana/ui';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';

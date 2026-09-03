@@ -1,4 +1,3 @@
-import { writeStructuredLog } from '../utils/structuredLog';
 import { isNumber, set, unset, get, cloneDeep, defaultsDeep } from 'lodash';
 import { createContext, useContext, useMemo, useRef } from 'react';
 import { usePrevious } from 'react-use';
@@ -37,6 +36,7 @@ import { type TimeZone } from '../types/time';
 import { type FieldMatcher } from '../types/transformations';
 import { mapInternalLinkToExplore } from '../utils/dataLinks';
 import { locationUtil } from '../utils/location';
+import { writeStructuredLog } from '../utils/structuredLog';
 
 import { type FieldConfigOptionsRegistry } from './FieldConfigOptionsRegistry';
 import { getDisplayProcessor, getRawDisplayProcessor } from './displayProcessor';
@@ -126,7 +126,11 @@ export function applyFieldOverrides(
       const info = fieldMatchers.getIfExists(rule.matcher.id);
 
       if (!info) {
-        writeStructuredLog('grafana-data', 'warn', `Unknown field matcher id: "${rule.matcher.id}", skipping override rule`);
+        writeStructuredLog(
+          'grafana-data',
+          'warn',
+          `Unknown field matcher id: "${rule.matcher.id}", skipping override rule`
+        );
         continue;
       }
 

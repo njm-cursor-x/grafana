@@ -1,5 +1,5 @@
-import { writeStructuredLog } from '../utils/structuredLog';
 import { type DataFrame, type Field, FieldType } from '../types/dataFrame';
+import { writeStructuredLog } from '../utils/structuredLog';
 
 import { guessFieldTypeForField } from './guessFieldType';
 

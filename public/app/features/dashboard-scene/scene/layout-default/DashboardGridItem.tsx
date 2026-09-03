@@ -1,8 +1,8 @@
-import { logStructured } from '@grafana/runtime';
 import { isEqual } from 'lodash';
 import React from 'react';
 import { type Unsubscribable } from 'rxjs';
 
+import { logStructured } from '@grafana/runtime';
 import {
   type VizPanel,
   SceneObjectBase,

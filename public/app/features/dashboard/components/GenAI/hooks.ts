@@ -1,9 +1,9 @@
-import { logStructured } from '@grafana/runtime';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from 'react';
 import { useAsync } from 'react-use';
 import { type Subscription } from 'rxjs';
 
 import { llm } from '@grafana/llm';
+import { logStructured } from '@grafana/runtime';
 import { getLogger } from '@grafana/runtime/unstable';
 import { useAppNotification } from 'app/core/copy/appNotification';
 

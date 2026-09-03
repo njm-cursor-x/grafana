@@ -1,10 +1,6 @@
+import { createStructuredLogRecord, type StructuredLogLevel, writeStructuredLog } from '@grafana/data';
 import { faro, type LogContext, LogLevel } from '@grafana/faro-web-sdk';
 
-import {
-  createStructuredLogRecord,
-  type StructuredLogLevel,
-  writeStructuredLog,
-} from '@grafana/data';
 
 import { config } from '../config';
 

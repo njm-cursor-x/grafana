@@ -1,7 +1,8 @@
-import { writeStructuredLog } from '@grafana/data';
 import { LocalStorageProvider } from '@openfeature/localstorage-provider';
 import { OFREPWebProvider } from '@openfeature/ofrep-web-provider';
 import { OpenFeature, ProviderEvents, NOOP_PROVIDER, type EventDetails, MultiProvider } from '@openfeature/react-sdk';
+
+import { writeStructuredLog } from '@grafana/data';
 
 import { config } from '../../config';
 import { logError } from '../../utils/logging';

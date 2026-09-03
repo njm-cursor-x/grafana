@@ -1,8 +1,8 @@
-import { logStructured } from '@grafana/runtime';
 import { get as lodashGet } from 'lodash';
 
 import { type NestedPanelOptions, type NestedValueAccess } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { type ElementState } from 'app/features/canvas/runtime/element';
 import { FrameState } from 'app/features/canvas/runtime/frame';
 import { type Scene } from 'app/features/canvas/runtime/scene';

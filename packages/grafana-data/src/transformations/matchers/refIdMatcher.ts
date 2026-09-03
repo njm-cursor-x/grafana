@@ -1,7 +1,7 @@
-import { writeStructuredLog } from '../../utils/structuredLog';
 import { escapeStringForRegex, stringStartsAsRegEx, stringToJsRegex } from '../../text/string';
 import { type DataFrame } from '../../types/dataFrame';
 import { type FrameMatcherInfo } from '../../types/transformations';
+import { writeStructuredLog } from '../../utils/structuredLog';
 
 import { FrameMatcherID } from './ids';
 

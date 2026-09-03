@@ -1,5 +1,5 @@
-import { logStructured } from '@grafana/runtime';
 import { type FieldConfigSource as FieldConfigSourceV1, SpecialValueMatch as SpecialValueMatchV1 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import {
   VariableHide as VariableHideV1,
   VariableRefresh as VariableRefreshV1,
@@ -99,7 +99,11 @@ function transformSpecialValueMatchToV1(match: SpecialValueMatch): SpecialValueM
     case 'empty':
       return SpecialValueMatchV1.Empty;
     default:
-      logStructured('features.dashboard-scene', 'warn', `Skipping special value mapping with unknown match type: "${match}"`);
+      logStructured(
+        'features.dashboard-scene',
+        'warn',
+        `Skipping special value mapping with unknown match type: "${match}"`
+      );
       return undefined;
   }
 }

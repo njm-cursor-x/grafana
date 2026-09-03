@@ -1,8 +1,9 @@
 // Code based on Material UI
 // The MIT License (MIT)
 // Copyright (c) 2014 Call-Em-All
-import { writeStructuredLog } from '../utils/structuredLog';
 import * as z from 'zod';
+
+import { writeStructuredLog } from '../utils/structuredLog';
 
 import { type ThemeColors } from './createColors';
 

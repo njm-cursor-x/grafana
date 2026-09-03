@@ -1,6 +1,6 @@
-import { logStructured } from '@grafana/runtime';
 import { DEFAULT_LANGUAGE } from '@grafana/i18n';
 import { addResourceBundle } from '@grafana/i18n/internal';
+import { logStructured } from '@grafana/runtime';
 
 import { SystemJS } from '../loader/systemjs';
 import { resolveModulePath } from '../loader/utils';
@@ -27,7 +27,10 @@ export async function addTranslationsToI18n({
   const path = resolvedPath ?? fallbackPath;
 
   if (!path) {
-    logStructured('features.plugins', 'warn', `Could not find any translation for plugin ${pluginId}`, { resolvedLanguage, fallbackLanguage });
+    logStructured('features.plugins', 'warn', `Could not find any translation for plugin ${pluginId}`, {
+      resolvedLanguage,
+      fallbackLanguage,
+    });
     return;
   }
 
