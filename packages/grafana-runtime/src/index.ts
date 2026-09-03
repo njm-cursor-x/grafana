@@ -22,6 +22,7 @@ export {
   logDebug,
   logWarning,
   logError,
+  logStructured,
   createMonitoringLogger,
   logMeasurement,
   type MonitoringLogger,

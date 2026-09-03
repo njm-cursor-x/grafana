@@ -250,6 +250,12 @@ export {
 } from './utils/datasource';
 export { deprecationWarning } from './utils/deprecationWarning';
 export {
+  createStructuredLogRecord,
+  writeStructuredLog,
+  type StructuredLogLevel,
+  type StructuredLogRecord,
+} from './utils/structuredLog';
+export {
   CSVHeaderStyle,
   type CSVConfig,
   type CSVParseCallbacks,

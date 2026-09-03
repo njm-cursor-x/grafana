@@ -28,7 +28,7 @@ func (cfg *Cfg) readGrafanaJavascriptAgentConfig() {
 		CustomEndpoint:                        raw.Key("custom_endpoint").MustString("/log-grafana-javascript-agent"),
 		ApiKey:                                raw.Key("api_key").String(),
 		InternalLoggerLevel:                   raw.Key("internal_logger_level").MustInt(0),
-		ConsoleInstrumentalizationEnabled:     raw.Key("instrumentations_console_enabled").MustBool(true),
+		ConsoleInstrumentalizationEnabled:     raw.Key("instrumentations_console_enabled").MustBool(false),
 		PerformanceInstrumentalizationEnabled: raw.Key("instrumentations_performance_enabled").MustBool(true),
 		CSPInstrumentalizationEnabled:         raw.Key("instrumentations_csp_enabled").MustBool(true),
 		TracingInstrumentalizationEnabled:     raw.Key("instrumentations_tracing_enabled").MustBool(true),
