@@ -122,8 +122,6 @@ export const getFieldLinksSupplier = (value: FieldDisplay): LinkModelSupplier<Fi
             text: t('panel.get-field-links-supplier.text.value', 'Value'),
           };
         }
-      } else {
-        console.log('VALUE', value);
       }
 
       const replace: InterpolateFunction = (value: string, vars: ScopedVars | undefined, fmt?: string | Function) => {

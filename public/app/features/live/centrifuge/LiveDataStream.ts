@@ -17,6 +17,8 @@ import {
   type LiveDataStreamOptions,
   StreamingFrameAction,
   type StreamingFrameOptions,
+  logDebug,
+  logError,
   toDataQueryError,
 } from '@grafana/runtime';
 
@@ -154,7 +156,7 @@ export class LiveDataStream<T = unknown> {
   };
 
   private onError = (err: unknown) => {
-    console.log('LiveQuery [error]', { err }, this.deps.channelId);
+    logError(err instanceof Error ? err : new Error(String(err)), { channelId: this.deps.channelId });
     this.stream.next({
       type: InternalStreamMessageType.Error,
       error: toDataQueryError(err),
@@ -163,7 +165,7 @@ export class LiveDataStream<T = unknown> {
   };
 
   private onComplete = () => {
-    console.log('LiveQuery [complete]', this.deps.channelId);
+    logDebug('Live channel stream completed', { channelId: this.deps.channelId });
     this.shutdown();
   };
 

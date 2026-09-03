@@ -27,6 +27,7 @@ import {
   type StreamingFrameOptions,
   type BackendDataSourceResponse,
   getBackendSrv,
+  logDebug,
 } from '@grafana/runtime';
 
 import { type StreamingResponseData } from '../data/utils';
@@ -126,7 +127,7 @@ export class CentrifugeService implements CentrifugeSrv {
   };
 
   private onServerSideMessage = (context: ServerPublicationContext) => {
-    console.log('Publication from server-side channel', context);
+    logDebug('Received publication from server-side channel', { channel: context.channel });
   };
 
   private onError = (context: ErrorContext) => {

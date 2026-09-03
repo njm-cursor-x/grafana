@@ -19,7 +19,7 @@ import {
   StreamingDataFrame,
 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
-import { config, getGrafanaLiveSrv } from '@grafana/runtime';
+import { config, getGrafanaLiveSrv, logDebug, logWarning } from '@grafana/runtime';
 import { Alert, stylesFactory, JSONFormatter, CustomScrollbar } from '@grafana/ui';
 
 import { TablePanel } from '../table/TablePanel';
@@ -71,8 +71,6 @@ export class LivePanel extends PureComponent<Props, State> {
         this.setState({ status: event, changed: Date.now() });
       } else if (isLiveChannelMessageEvent(event)) {
         this.setState({ message: event.message, changed: Date.now() });
-      } else {
-        console.log('ignore', event);
       }
     },
   };
@@ -87,7 +85,7 @@ export class LivePanel extends PureComponent<Props, State> {
   async loadChannel() {
     const addr = this.props.options?.channel;
     if (!isValidLiveChannelAddress(addr)) {
-      console.log('INVALID', addr);
+      logWarning('LivePanel: invalid live channel address');
       this.unsubscribe();
       this.setState({
         addr: undefined,
@@ -96,13 +94,12 @@ export class LivePanel extends PureComponent<Props, State> {
     }
 
     if (isEqual(addr, this.state.addr)) {
-      console.log('Same channel', this.state.addr);
       return;
     }
 
     const live = getGrafanaLiveSrv();
     if (!live) {
-      console.log('INVALID', addr);
+      logWarning('LivePanel: Grafana Live service is not available');
       this.unsubscribe();
       this.setState({
         addr: undefined,
@@ -111,7 +108,7 @@ export class LivePanel extends PureComponent<Props, State> {
     }
     this.unsubscribe();
 
-    console.log('LOAD', addr);
+    logDebug('LivePanel: loading live channel', { scope: addr.scope, namespace: addr.namespace, path: addr.path });
 
     // Subscribe to new events
     try {

@@ -12,6 +12,7 @@ import {
   ByNamesMatcherMode,
 } from '@grafana/data';
 import { type ReduceTransformerOptions } from '@grafana/data/internal';
+import { logDebug } from '@grafana/runtime';
 
 import { type Options } from './panelcfg.gen';
 
@@ -23,7 +24,7 @@ import { type Options } from './panelcfg.gen';
 export const tableMigrationHandler = (panel: PanelModel<Options>): Partial<Options> => {
   // Table was saved as an angular table, lets just swap to the 'table-old' panel
   if (!panel.pluginVersion && 'columns' in panel) {
-    console.log('Was angular table', panel);
+    logDebug('Table migration: panel was saved as an angular table');
   }
 
   // ensure overrides array exists before applying rest of overrides
