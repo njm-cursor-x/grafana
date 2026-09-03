@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from 'react';
 import * as React from 'react';
 
-import { type GrafanaTheme2 } from '@grafana/data';
+import { writeStructuredLog, type GrafanaTheme2 } from '@grafana/data';
 
 import { useStyles2 } from '../../themes/ThemeContext';
 import { InlineToast } from '../InlineToast/InlineToast';
@@ -137,7 +137,7 @@ export const VizTooltipRow = ({
         setShowCopySuccess(true);
       }
     } catch (err) {
-      console.error('Unable to copy to clipboard', err);
+      writeStructuredLog('grafana-ui', 'error', 'Unable to copy to clipboard', err);
     }
 
     textarea.remove();

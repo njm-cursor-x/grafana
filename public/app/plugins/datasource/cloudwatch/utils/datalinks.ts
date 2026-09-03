@@ -7,7 +7,7 @@ import {
   type ScopedVars,
   type TimeRange,
 } from '@grafana/data';
-import { config } from '@grafana/runtime';
+import { logStructured, config } from '@grafana/runtime';
 import { getDataSourceInstanceSettings } from '@grafana/runtime/unstable';
 
 import { type AwsUrl, encodeUrl } from '../aws_url';
@@ -68,12 +68,12 @@ async function createInternalXrayLink(datasourceUid: string, region: string): Pr
   try {
     ds = await getDataSourceInstanceSettings(datasourceUid);
   } catch (e) {
-    console.error('Could not load linked X-Ray data source', e);
+    logStructured('plugins.datasource', 'error', 'Could not load linked X-Ray data source', e);
     return undefined;
   }
 
   if (!ds) {
-    console.error(
+    logStructured('plugins.datasource', 'error',
       `Could not find linked X-Ray data source with uid: ${datasourceUid}, it was probably deleted after it was linked`
     );
     return undefined;

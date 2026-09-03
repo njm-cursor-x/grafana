@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { omitBy, pickBy, isNil, isNumber, isString } from 'lodash';
 
 import {
@@ -283,7 +284,7 @@ function graphToTimeseriesOptions(angular: any): {
             });
             break;
           default:
-            console.log('Ignore override migration:', seriesOverride.alias, p, v);
+            logStructured('plugins.panel', 'info', 'Ignore override migration:', seriesOverride.alias, p, v);
         }
       }
       if (dashOverride) {

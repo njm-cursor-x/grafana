@@ -1,3 +1,4 @@
+import { writeStructuredLog } from '../../utils/structuredLog';
 import { getFieldDisplayName } from '../../field/fieldState';
 import { stringToJsRegex } from '../../text/string';
 import { type DataFrame, type Field, FieldType, TIME_SERIES_VALUE_FIELD_NAME } from '../../types/dataFrame';
@@ -201,7 +202,7 @@ const patternToRegex = (pattern?: string): RegExp | undefined => {
   try {
     return stringToJsRegex(pattern);
   } catch (error) {
-    console.error(error);
+    writeStructuredLog('grafana-data', 'error', error);
     return undefined;
   }
 };

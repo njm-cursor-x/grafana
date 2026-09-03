@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { type Action } from '@reduxjs/toolkit';
 import { type Dispatch } from 'react';
 import { from, merge, of, Subscription, timer } from 'rxjs';
@@ -54,7 +55,7 @@ export function searchForLibraryPanels(args: SearchArgs): SearchDispatchResult {
         }
 
         // For real errors, log and show error to user
-        console.error('Error fetching library panels:', err);
+        logStructured('features.library-panels', 'error', 'Error fetching library panels:', err);
 
         // Update state to show empty results
         return of(searchCompleted({ ...initialLibraryPanelsViewState, page: args.page, perPage: args.perPage }));
@@ -78,7 +79,7 @@ export function deleteLibraryPanel(uid: string, args: SearchArgs) {
       await apiDeleteLibraryPanel(uid);
       searchForLibraryPanels(args)(dispatch);
     } catch (e) {
-      console.error(e);
+      logStructured('features.library-panels', 'error', e);
     }
   };
 }

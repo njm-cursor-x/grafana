@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { getCenter } from 'ol/extent';
 import { type Geometry, Point } from 'ol/geom';
 
@@ -227,7 +228,7 @@ export async function getGazetteer(path?: string): Promise<Gazetteer> {
       const data = await response.json();
       lookup = loadGazetteer(path, data);
     } catch (err) {
-      console.warn('Error loading placename lookup', path, err);
+      logStructured('features.geo', 'warn', 'Error loading placename lookup', path, err);
       lookup = {
         path,
         error: 'Error loading URL',

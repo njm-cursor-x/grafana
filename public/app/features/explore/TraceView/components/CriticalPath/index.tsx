@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { logStructured } from '@grafana/runtime';
 import memoizeOne from 'memoize-one';
 
 import { type TraceSpan, type CriticalPathSection, type Trace } from '../types/trace';
@@ -104,7 +105,7 @@ function criticalPathForTrace(trace: Trace) {
       criticalPath = computeCriticalPath(sanitizedSpanMap, rootSpanId, criticalPath);
     } catch (error) {
       /* eslint-disable no-console */
-      console.log('error while computing critical path for a trace', error);
+      logStructured('features.explore', 'info', 'error while computing critical path for a trace', error);
     }
   }
   return criticalPath;

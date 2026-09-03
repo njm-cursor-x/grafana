@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { isEqual } from 'lodash';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -165,7 +166,7 @@ export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
     const gridItem = panel.parent;
 
     if (!(gridItem instanceof DashboardGridItem)) {
-      console.error('Cannot update layout: panel parent is not a DashboardGridItem');
+      logStructured('features.dashboard-scene', 'error', 'Cannot update layout: panel parent is not a DashboardGridItem');
       return;
     }
 
@@ -259,7 +260,7 @@ export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
     const newState = sceneUtils.cloneSceneObjectState(gridItem.state);
 
     if (!(panel.parent instanceof DashboardGridItem)) {
-      console.error('Cannot update state of panel', panel, gridItem);
+      logStructured('features.dashboard-scene', 'error', 'Cannot update state of panel', panel, gridItem);
       return;
     }
 

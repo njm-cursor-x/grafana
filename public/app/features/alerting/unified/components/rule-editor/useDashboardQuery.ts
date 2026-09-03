@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import memoizeOne from 'memoize-one';
 import { useEffect, useState } from 'react';
 
@@ -36,11 +37,11 @@ export function useDashboardQuery(dashboardUid?: string) {
           } else if (isDashboardV2Resource(dashboardDTO)) {
             setDashboard(dashboardDTO);
           } else {
-            console.error('Something went wrong, unexpected dashboard format');
+            logStructured('features.alerting', 'error', 'Something went wrong, unexpected dashboard format');
           }
         })
         .catch((error) => {
-          console.error('Failed to fetch dashboard', error);
+          logStructured('features.alerting', 'error', 'Failed to fetch dashboard', error);
         })
         .finally(() => {
           setIsFetching(false);

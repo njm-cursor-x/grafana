@@ -1,4 +1,4 @@
-import { type PanelPlugin } from '@grafana/data';
+import { writeStructuredLog, type PanelPlugin } from '@grafana/data';
 
 import { config } from '../config';
 
@@ -25,7 +25,7 @@ export async function loadPluginCss(options: PluginCssOptions): Promise<System.M
     const cssPath = config.bootData.user.theme === 'light' ? options.light : options.dark;
     return window.System.import(cssPath);
   } catch (err) {
-    console.error(err);
+    writeStructuredLog('grafana-runtime', 'error', err);
   }
 }
 

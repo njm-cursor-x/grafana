@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { useMemo } from 'react';
 import uPlot from 'uplot';
 
@@ -120,7 +121,7 @@ export const useAnnotationClustering = ({ annotations, clusteringMode, plotWidth
       }
     } else if (clusteringMode === ClusteringMode.Hover) {
       // Have the tooltip be clustered, but not the annotations: https://github.com/grafana/grafana/issues/119436
-      console.warn('Hover mode not implemented');
+      logStructured('plugins.panel', 'warn', 'Hover mode not implemented');
     }
 
     // Sort clustered frames

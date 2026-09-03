@@ -9,7 +9,7 @@ import {
 } from '@grafana/data';
 import { type FilterFieldsByNameTransformerOptions } from '@grafana/data/internal';
 import { t } from '@grafana/i18n';
-import { getTemplateSrv } from '@grafana/runtime';
+import { logStructured, getTemplateSrv } from '@grafana/runtime';
 import { Input, FilterPill, InlineFieldRow, InlineField, InlineSwitch, Select } from '@grafana/ui';
 
 interface FilterByNameTransformerEditorProps extends TransformerUIProps<FilterFieldsByNameTransformerOptions> {}
@@ -94,7 +94,7 @@ export class FilterByNameTransformerEditor extends React.PureComponent<
           }
         }
       } catch (error) {
-        console.error(error);
+        logStructured('features.transformers', 'error', error);
       }
     }
 

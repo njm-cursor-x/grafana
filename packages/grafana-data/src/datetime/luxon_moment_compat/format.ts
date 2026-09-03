@@ -1,3 +1,4 @@
+import { writeStructuredLog } from '../../utils/structuredLog';
 import type { DateTime } from './luxon';
 
 const LOWER_MERIDIEM_FORMAT = "'__mls__'a'__mle__'";
@@ -121,7 +122,7 @@ export function formatWithOrdinal(luxonDateTime: DateTime, momentFormat: string)
   // https://github.com/moment/luxon/discussions/1041
   // https://github.com/moment/luxon/issues/499#issuecomment-865017957
   // https://github.com/facebook/hermes/issues/1601
-  // console.log(luxonDateTime.offsetNameShort);
+  // writeStructuredLog('grafana-data', 'info', luxonDateTime.offsetNameShort);
   let formatted = luxonDateTime.toFormat(luxonFormat);
 
   if (hasOrdinal) {

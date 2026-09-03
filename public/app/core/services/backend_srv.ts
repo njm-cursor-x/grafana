@@ -26,7 +26,7 @@ import {
 } from 'rxjs/operators';
 
 import { AppEvents, DataQueryErrorType, deprecationWarning, generateUUID } from '@grafana/data';
-import {
+import { logStructured,
   type BackendSrv as BackendService,
   type BackendSrvRequest,
   config,
@@ -116,7 +116,7 @@ export class BackendSrv implements BackendService {
       const result = await fp.get();
       this.deviceID = result.visitorId;
     } catch (error) {
-      console.error(error);
+      logStructured('core.services', 'error', error);
     }
   }
 
@@ -241,7 +241,7 @@ export class BackendSrv implements BackendService {
             observer.complete();
           }) // runs in background
           .catch((e) => {
-            console.log(requestId, 'catch', e);
+            logStructured('core.services', 'info', requestId, 'catch', e);
             observer.error(e);
           }); // from abort
       },

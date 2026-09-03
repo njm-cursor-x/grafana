@@ -16,7 +16,7 @@ import {
   type PluginMeta,
   urlUtil,
 } from '@grafana/data';
-import { reportInteraction, config } from '@grafana/runtime';
+import { logStructured, reportInteraction, config } from '@grafana/runtime';
 import { getAppPluginMetas } from '@grafana/runtime/internal';
 import { getPluginSettings } from '@grafana/runtime/unstable';
 import { Modal } from '@grafana/ui';
@@ -50,7 +50,7 @@ export function handleErrorsInFn(fn: Function, errorMessagePrefix = '') {
       return fn(...args);
     } catch (e) {
       if (e instanceof Error) {
-        console.warn(`${errorMessagePrefix}${e.message}`);
+        logStructured('features.plugins', 'warn', `${errorMessagePrefix}${e.message}`);
       }
     }
   };

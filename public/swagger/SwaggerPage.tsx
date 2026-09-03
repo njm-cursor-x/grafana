@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { Global } from '@emotion/react';
 import { OpenFeatureProvider } from '@openfeature/react-sdk';
 import getDefaultMonacoLanguages from 'lib/monaco-languages';
@@ -58,7 +59,7 @@ export const Page = () => {
   const namespace = useAsync(async () => {
     const response = await fetch('api/frontend/settings');
     if (!response.ok) {
-      console.warn('No settings found');
+      logStructured('grafana.frontend', 'warn', 'No settings found');
       return 'default';
     }
     const val = await response.json();
@@ -68,7 +69,7 @@ export const Page = () => {
   useAsync(async () => {
     const response = await fetch('api/user');
     if (!response.ok) {
-      console.warn('No user found, show login button');
+      logStructured('grafana.frontend', 'warn', 'No user found, show login button');
       return;
     }
     const val = await response.json();

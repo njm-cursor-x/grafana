@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -198,7 +199,7 @@ export const useSyncStarredItemsInNav = () => {
         setSearchFailed(false);
       })
       .catch((err) => {
-        console.error('Failed to sync starred items to nav', err);
+        logStructured('features.stars', 'error', 'Failed to sync starred items to nav', err);
         // Resolve the loading state rather than showing it forever
         setHasSynced(true);
         setSearchFailed(true);

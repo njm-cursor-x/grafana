@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { useEffect, useState } from 'react';
 
 import { type ScopeNode } from '@grafana/data';
@@ -21,7 +22,7 @@ export function useScopeNode(scopeNodeId?: string) {
         const node = await scopesSelectorService.getScopeNode(scopeNodeId);
         setNode(node);
       } catch (error) {
-        console.error('Failed to load node', error);
+        logStructured('features.scopes', 'error', 'Failed to load node', error);
       } finally {
         setIsLoading(false);
       }

@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { noop } from 'lodash';
 import { type FormEvent } from 'react';
 import { useAsync } from 'react-use';
@@ -106,7 +107,7 @@ export function GroupByVariableEditor(props: GroupByVariableEditorProps) {
 
 export function getGroupByVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof GroupByVariable)) {
-    console.warn('getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
+    logStructured('features.dashboard-scene', 'warn', 'getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
     return [];
   }
 

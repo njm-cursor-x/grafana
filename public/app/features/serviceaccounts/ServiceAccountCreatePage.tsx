@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { OrgRole } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
-import { config, getBackendSrv, locationService } from '@grafana/runtime';
+import { logStructured, config, getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Input, Field, FieldSet } from '@grafana/ui';
 import { Form } from 'app/core/components/Form/Form';
 import { Page } from 'app/core/components/Page/Page';
@@ -68,7 +68,7 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
           setRoleOptions(options);
         }
       } catch (e) {
-        console.error('Error loading options', e); // TODO: handle error
+        logStructured('features.serviceaccounts', 'error', 'Error loading options', e); // TODO: handle error
       }
     }
     if (contextSrv.licensedAccessControlEnabled()) {
@@ -101,7 +101,7 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
           await updateUserRoles(pendingRoles, newAccount.id, newAccount.orgId);
         }
       } catch (e) {
-        console.error(e); // TODO: handle error
+        logStructured('features.serviceaccounts', 'error', e); // TODO: handle error
       }
       locationService.push(`/org/serviceaccounts/${response.uid}`);
     },

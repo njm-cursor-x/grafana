@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { type ChangeEvent } from 'react';
 
 import { PageLayoutType } from '@grafana/data';
@@ -158,7 +159,7 @@ export class GeneralSettingsEditView
       const liveNow = this.getLiveNowTimer();
       enable ? liveNow.enable() : liveNow.disable();
     } catch (err) {
-      console.error(err);
+      logStructured('features.dashboard-scene', 'error', err);
     }
   };
 

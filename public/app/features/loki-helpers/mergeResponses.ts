@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import {
   closestIdx,
   type DataFrame,
@@ -100,7 +101,7 @@ function mergeFrames(dest: DataFrame, source: DataFrame) {
   const sourceIdField = source.fields.find((field) => field.type === FieldType.string && field.name === 'id');
 
   if (!destTimeField || !sourceTimeField) {
-    console.error(new Error(`Time fields not found in the data frames`));
+    logStructured('features.loki-helpers', 'error', new Error(`Time fields not found in the data frames`));
     return;
   }
 

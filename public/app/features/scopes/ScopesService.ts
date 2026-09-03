@@ -2,7 +2,7 @@ import { isEqual } from 'lodash';
 import { BehaviorSubject, type Observable, combineLatest, type Subscription } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 
-import { type LocationService, type ScopesContextValue, type ScopesContextValueState } from '@grafana/runtime';
+import { logStructured, type LocationService, type ScopesContextValue, type ScopesContextValueState } from '@grafana/runtime';
 
 import { type ScopesApiClient } from './ScopesApiClient';
 import { type ScopesDashboardsService } from './dashboards/ScopesDashboardsService';
@@ -102,7 +102,7 @@ export class ScopesService implements ScopesContextValue {
           const tree = this.selectorService.state.tree;
           if (derivedNodeId && tree) {
             this.selectorService.resolvePathToRoot(derivedNodeId, tree, firstApplied.scopeId).catch((error) => {
-              console.error('Failed to pre-load node path from defaultPath', error);
+              logStructured('features.scopes', 'error', 'Failed to pre-load node path from defaultPath', error);
             });
           }
         }
@@ -112,7 +112,7 @@ export class ScopesService implements ScopesContextValue {
     // Preload scope node (which loads parent too)
     if (scopeNodeId) {
       this.selectorService.resolvePathToRoot(scopeNodeId, this.selectorService.state.tree!).catch((error) => {
-        console.error('Failed to pre-load node path', error);
+        logStructured('features.scopes', 'error', 'Failed to pre-load node path', error);
       });
     }
 
@@ -294,7 +294,7 @@ export class ScopesService implements ScopesContextValue {
               // calls elsewhere in this file so a rejection from either
               // fetchDefaultScope or the changeScopes chain above is logged
               // instead of surfacing as an unhandled rejection.
-              console.error('Failed to apply default scope:', err);
+              logStructured('features.scopes', 'error', 'Failed to apply default scope:', err);
             });
         }
         // Defer the URL write when scope metadata has not loaded yet.

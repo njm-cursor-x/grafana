@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import debounce from 'debounce-promise';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -253,7 +254,7 @@ export function useDeepSearchResults({ searchQuery, show, enabled }: UseDeepSear
         // The vector backend may be unconfigured (501) or the feature toggle
         // off (404) — callers gate on the toggle via the enabled flag, so
         // degrade to an empty column but log for anyone calling without the gate
-        console.error('Deep search failed. The vector search backend may be unavailable.', error);
+        logStructured('features.commandPalette', 'error', 'Deep search failed. The vector search backend may be unavailable.', error);
       }
 
       // Skip state updates when the effect has been cleaned up, and only keep

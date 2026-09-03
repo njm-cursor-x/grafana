@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { useEffect, useState } from 'react';
 
 import { type SqlFunctionSignature } from '../SqlEditor/signatureHelp';
@@ -23,7 +24,7 @@ export function useFunctionSignatures(enabled: boolean): SqlFunctionSignature[] 
         }
       })
       .catch((error) => {
-        console.warn('Failed to load SQL function signatures for signature help', error);
+        logStructured('features.expressions', 'warn', 'Failed to load SQL function signatures for signature help', error);
       });
 
     return () => {

@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { from, type Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -26,13 +27,13 @@ export class LegacyAnnotationQueryRunner implements AnnotationQueryRunner {
     }
 
     if (datasource?.annotationQuery === undefined) {
-      console.warn('datasource does not have an annotation query');
+      logStructured('features.query', 'warn', 'datasource does not have an annotation query');
       return of([]);
     }
 
     const annotationQuery = datasource.annotationQuery({ range, rangeRaw: range.raw, annotation, dashboard });
     if (annotationQuery === undefined) {
-      console.warn('datasource does not have an annotation query');
+      logStructured('features.query', 'warn', 'datasource does not have an annotation query');
       return of([]);
     }
 

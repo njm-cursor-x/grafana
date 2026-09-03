@@ -1,3 +1,4 @@
+import { writeStructuredLog } from '@grafana/data';
 import { createMonitoringLogger, logWarning, type MonitoringLogger } from '../../utils/logging';
 
 import { Loggers, type LoggerDefaults, type LoggerSource } from './loggers';
@@ -14,7 +15,7 @@ export function initializeLoggersRegistry() {
 
 export function addLogger(source: LoggerSource, defaults?: LoggerDefaults): void {
   if (loggersRegistry[source]) {
-    console.warn(`LoggerRegistry: a logger with the source:${source} already exists, keeping existing entry.`);
+    writeStructuredLog('grafana-runtime', 'warn', `LoggerRegistry: a logger with the source:${source} already exists, keeping existing entry.`);
     return;
   }
 
@@ -27,7 +28,7 @@ export function getLogger(source: LoggerSource): MonitoringLogger {
 
     // avoid having to mock logger in tests because of the warning message
     if (process.env.NODE_ENV !== 'test') {
-      console.warn(message);
+      writeStructuredLog('grafana-runtime', 'warn', message);
       logWarning(message, { source: 'grafana/runtime.logging.registry', logger: source });
     }
 

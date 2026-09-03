@@ -1,6 +1,6 @@
 import { lastValueFrom } from 'rxjs';
 
-import { getBackendSrv, isFetchError } from '@grafana/runtime';
+import { logStructured, getBackendSrv, isFetchError } from '@grafana/runtime';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction } from 'app/types/accessControl';
 import { type Settings, type UpdateSettingsQuery } from 'app/types/settings';
@@ -78,7 +78,7 @@ export function saveSettings(data: UpdateSettingsQuery): ThunkResult<Promise<boo
         dispatch(resetError());
         return true;
       } catch (error) {
-        console.log(error);
+        logStructured('features.auth-config', 'info', error);
         if (isFetchError(error)) {
           error.isHandled = true;
           const updateErr: SettingsError = {

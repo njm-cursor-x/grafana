@@ -1,6 +1,6 @@
 import { locationUtil, type UrlQueryMap } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { config, getBackendSrv, isFetchError, locationService } from '@grafana/runtime';
+import { logStructured, config, getBackendSrv, isFetchError, locationService } from '@grafana/runtime';
 import { FlagKeys, getFeatureFlagClient, UserStorage } from '@grafana/runtime/internal';
 import { getDataSourceInstanceSettings } from '@grafana/runtime/unstable';
 import { sceneGraph } from '@grafana/scenes';
@@ -512,7 +512,7 @@ abstract class DashboardScenePageStateManagerBase<T>
       });
 
       if (!isFetchError(err)) {
-        console.error('Error loading dashboard:', err);
+        logStructured('features.dashboard-scene', 'error', 'Error loading dashboard:', err);
       }
 
       // If the error is a DashboardVersionError, we want to throw it so that the error boundary is triggered

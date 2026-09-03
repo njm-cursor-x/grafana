@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { css } from '@emotion/css';
 import { useEffect, useState, type JSX } from 'react';
 
@@ -39,7 +40,7 @@ export function ServiceAccountProfile({ serviceAccount, timeZone, onChange }: Pr
           setRoleOptions(options);
         }
       } catch (e) {
-        console.error('Error loading options for service account');
+        logStructured('features.serviceaccounts', 'error', 'Error loading options for service account');
       }
     }
     if (contextSrv.licensedAccessControlEnabled()) {

@@ -1,3 +1,4 @@
+import { writeStructuredLog } from '../../utils/structuredLog';
 import { escapeStringForRegex, stringStartsAsRegEx, stringToJsRegex } from '../../text/string';
 import { type DataFrame } from '../../types/dataFrame';
 import { type FrameMatcherInfo } from '../../types/transformations';
@@ -19,7 +20,7 @@ const refIdMatcher: FrameMatcherInfo<string> = {
         regex = stringToJsRegex(pattern);
       } catch (error) {
         if (error instanceof Error) {
-          console.warn(error.message);
+          writeStructuredLog('grafana-data', 'warn', error.message);
         }
       }
     }

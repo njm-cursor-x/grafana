@@ -1,4 +1,4 @@
-import {
+import { logStructured,
   type JourneyHandle,
   type JourneyMeta,
   type JourneyRegistry,
@@ -150,7 +150,7 @@ export class JourneyRegistryImpl implements JourneyRegistry {
     }
     for (const [type] of this.metadata) {
       if (!this.registeredTriggers.has(type)) {
-        console.warn(
+        logStructured('core.services', 'warn',
           `[JourneyRegistry] Registry entry "${type}" has no triggers registered. ` +
             `Did you forget to import its wiring module?`
         );

@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import * as React from 'react';
 
 import { type PluginMeta } from '@grafana/data';
@@ -67,6 +68,6 @@ const updatePluginSettingsAndReload = async (id: string, data: Partial<PluginMet
     // Reloading the page as the plugin meta changes made here wouldn't be propagated throughout the app.
     window.location.reload();
   } catch (e) {
-    console.error('Error while updating the plugin', e);
+    logStructured('features.plugins', 'error', 'Error while updating the plugin', e);
   }
 };

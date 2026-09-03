@@ -1,7 +1,7 @@
 import { hash } from 'immutable';
 import { LRUCache } from 'lru-cache';
 
-import { generateUUID } from '@grafana/data';
+import { writeStructuredLog, generateUUID } from '@grafana/data';
 import { type LogContext } from '@grafana/faro-web-sdk';
 
 import { getLogger } from '../services/logging/registry';
@@ -168,7 +168,7 @@ function logError({ error, key }: LogErrorArgs): void {
     const contexts = { ...additional, key, originMessage, originStack };
     logger.logDebug(traced.message, contexts);
   } catch (error) {
-    console.error(error);
+    writeStructuredLog('grafana-runtime', 'error', error);
   }
 }
 

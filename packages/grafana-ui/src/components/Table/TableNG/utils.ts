@@ -3,7 +3,7 @@ import { type CSSProperties } from 'react';
 import tinycolor from 'tinycolor2';
 import { type Count, varPreLine } from 'uwrap';
 
-import {
+import { writeStructuredLog,
   FieldType,
   type Field,
   fieldReducers,
@@ -1812,7 +1812,7 @@ export function parseStyleJson(rawValue: unknown): CSSProperties | void {
       }
     } catch (e) {
       if (!warnedAboutStyleJsonSet.has(rawValue)) {
-        console.error(`encountered invalid cell style JSON: ${rawValue}`, e);
+        writeStructuredLog('grafana-ui', 'error', `encountered invalid cell style JSON: ${rawValue}`, e);
         warnedAboutStyleJsonSet.add(rawValue);
       }
     }

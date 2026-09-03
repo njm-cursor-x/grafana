@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { type Subscription } from 'rxjs';
 
 import { SceneObjectBase, type SceneObjectState } from '@grafana/scenes';
@@ -32,7 +33,7 @@ export class DefaultControlsBehavior extends SceneObjectBase<SceneObjectState> {
     this._variablesSub = loadDefaultVariables$(shared$).subscribe({
       next: (vars) => dashboard.setDefaultVariables(vars),
       error: (err) => {
-        console.warn('Failed to load default variables', err);
+        logStructured('features.dashboard-scene', 'warn', 'Failed to load default variables', err);
         dashboard.setState({ defaultVariablesLoading: false });
       },
       complete: () => dashboard.setState({ defaultVariablesLoading: false }),
@@ -41,7 +42,7 @@ export class DefaultControlsBehavior extends SceneObjectBase<SceneObjectState> {
     this._linksSub = loadDefaultLinks$(shared$).subscribe({
       next: (links) => dashboard.setDefaultLinks(links),
       error: (err) => {
-        console.warn('Failed to load default links', err);
+        logStructured('features.dashboard-scene', 'warn', 'Failed to load default links', err);
         dashboard.setState({ defaultLinksLoading: false });
       },
       complete: () => dashboard.setState({ defaultLinksLoading: false }),

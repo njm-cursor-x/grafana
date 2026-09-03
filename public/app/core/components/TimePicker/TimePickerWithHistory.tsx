@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { uniqBy } from 'lodash';
 
 import {
@@ -136,7 +137,7 @@ function convertToISOString(value: DateTime | string): string {
   }
 
   if (!value?.toISOString) {
-    throw console.error('Invalid DateTime object passed to convertToISOString');
+    throw logStructured('core.components', 'error', 'Invalid DateTime object passed to convertToISOString');
   }
 
   return value.toISOString();

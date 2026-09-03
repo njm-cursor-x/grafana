@@ -1,4 +1,4 @@
-import { getBackendSrv, locationService } from '@grafana/runtime';
+import { logStructured, getBackendSrv, locationService } from '@grafana/runtime';
 import { accessControlQueryParam } from 'app/core/utils/accessControl';
 import { type ServiceAccountDTO } from 'app/types/serviceaccount';
 import { type ThunkResult } from 'app/types/store';
@@ -21,7 +21,7 @@ export function loadServiceAccount(saUid: string): ThunkResult<void> {
       const response = await getBackendSrv().get(`${BASE_URL}/${saUid}`, accessControlQueryParam());
       dispatch(serviceAccountLoaded(response));
     } catch (error) {
-      console.error(error);
+      logStructured('features.serviceaccounts', 'error', error);
     } finally {
       dispatch(serviceAccountFetchEnd());
     }
@@ -69,7 +69,7 @@ export function loadServiceAccountTokens(saUid: string): ThunkResult<void> {
       const response = await getBackendSrv().get(`${BASE_URL}/${saUid}/tokens`);
       dispatch(serviceAccountTokensLoaded(response));
     } catch (error) {
-      console.error(error);
+      logStructured('features.serviceaccounts', 'error', error);
     }
   };
 }

@@ -1,6 +1,6 @@
 import { useCombobox, type UseComboboxStateChangeTypes } from 'downshift';
 
-import { isIconName, type SelectableValue } from '@grafana/data';
+import { writeStructuredLog, isIconName, type SelectableValue } from '@grafana/data';
 
 import { type ComboboxOption } from './types';
 
@@ -40,11 +40,11 @@ export const selectableValueToComboboxOption = <T extends string | number>(
   v: SelectableValue<T>
 ): ComboboxOption<T> | undefined => {
   if (v == null || v.value == null) {
-    console.warn('selectableValueToComboboxOption: value is null or undefined', v);
+    writeStructuredLog('grafana-ui', 'warn', 'selectableValueToComboboxOption: value is null or undefined', v);
     return undefined;
   }
   if (v.icon != null && !isIconName(v.icon)) {
-    console.warn('selectableValueToComboboxOption: icon is not a valid icon name', v.icon);
+    writeStructuredLog('grafana-ui', 'warn', 'selectableValueToComboboxOption: icon is not a valid icon name', v.icon);
     return undefined;
   }
   return {

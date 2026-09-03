@@ -1,4 +1,5 @@
 // Libraries
+import { writeStructuredLog } from '../utils/structuredLog';
 import { isArray } from 'lodash';
 
 import { fieldIndexComparer } from '../field/fieldComparers';
@@ -214,7 +215,7 @@ export function toDataFrame(data: any): DataFrame {
     return arrayToDataFrame(data);
   }
 
-  console.warn('Can not convert', data);
+  writeStructuredLog('grafana-data', 'warn', 'Can not convert', data);
   throw new Error('Unsupported data format');
 }
 

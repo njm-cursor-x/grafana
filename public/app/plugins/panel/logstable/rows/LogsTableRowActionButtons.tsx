@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { css } from '@emotion/css';
 import { useCallback } from 'react';
 
@@ -64,7 +65,7 @@ export function LogsTableRowActionButtons(props: Props) {
                 if (logId) {
                   return buildLinkToLog(logId) ?? '';
                 } else {
-                  console.error('failed to copy log line link!');
+                  logStructured('plugins.panel', 'error', 'failed to copy log line link!');
                 }
                 return '';
               }}

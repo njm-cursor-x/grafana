@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { css, cx } from '@emotion/css';
 import { type FC, useCallback, useMemo } from 'react';
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
@@ -183,7 +184,7 @@ function useCombinedLabels(
               opsValues = result.values.map((value) => value.name);
             }
           } catch (error) {
-            console.error('Failed to fetch label values for key:', key, error);
+            logStructured('features.alerting', 'error', 'Failed to fetch label values for key:', key, error);
           }
         }
 

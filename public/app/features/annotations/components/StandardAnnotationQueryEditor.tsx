@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { memo, useCallback, useEffect, useRef, useState, type ReactElement } from 'react';
 import { lastValueFrom } from 'rxjs';
 
@@ -211,7 +212,7 @@ export default memo(function StandardAnnotationQueryEditor({
       skipNextVerificationRef.current = true;
       onChange(preparedAnnotation);
     } catch (error) {
-      console.error('Failed to replace annotation query:', error);
+      logStructured('features.annotations', 'error', 'Failed to replace annotation query:', error);
       // On error, reset the replacing state but don't change the annotation
     }
   };

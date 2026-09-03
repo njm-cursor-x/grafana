@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import saveAs from 'file-saver';
 import { countBy, chain } from 'lodash';
 import { type MouseEvent } from 'react';
@@ -400,10 +401,10 @@ export function getLogLevelInfo(dataFrame: DataFrame, allDataFrames: DataFrame[]
   const valueField = fieldCache.getFirstFieldOfType(FieldType.number);
 
   if (!timeField) {
-    console.error('Time field missing in data frame');
+    logStructured('features.logs', 'error', 'Time field missing in data frame');
   }
   if (!valueField) {
-    console.error('Value field missing in data frame');
+    logStructured('features.logs', 'error', 'Value field missing in data frame');
   }
 
   const level = valueField ? getFieldDisplayName(valueField, dataFrame, allDataFrames) : 'logs';

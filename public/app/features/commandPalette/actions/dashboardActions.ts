@@ -2,7 +2,7 @@ import debounce from 'debounce-promise';
 import { useEffect, useRef, useState } from 'react';
 
 import { t } from '@grafana/i18n';
-import { config } from '@grafana/runtime';
+import { logStructured, config } from '@grafana/runtime';
 import { useFlagGrafanaCmdkHybridSearch, useFlagDashboardVectorSearch } from '@grafana/runtime/internal';
 import { contextSrv } from 'app/core/services/context_srv';
 import { getRecentlyViewedDashboards } from 'app/features/browse-dashboards/api/recentlyViewed';
@@ -124,7 +124,7 @@ async function getHybridDashboardActions(searchQuery: string): Promise<CommandPa
   try {
     hits = await searchDashboardsHybrid(searchQuery, { limit: MAX_HYBRID_SEARCH_RESULTS });
   } catch (error) {
-    console.error('Hybrid dashboard search failed, falling back to the classic search.', error);
+    logStructured('features.commandPalette', 'error', 'Hybrid dashboard search failed, falling back to the classic search.', error);
     return getClassicSearchResultActions(searchQuery, ['dashboard']);
   }
 
@@ -135,7 +135,7 @@ async function getHybridDashboardActions(searchQuery: string): Promise<CommandPa
   try {
     locationInfo = await getGrafanaSearcher().getLocationInfo();
   } catch (error) {
-    console.error('Failed to load folder info for hybrid search results.', error);
+    logStructured('features.commandPalette', 'error', 'Failed to load folder info for hybrid search results.', error);
   }
 
   return hits.map((hit) => {

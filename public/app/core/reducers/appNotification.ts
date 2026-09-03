@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { createSelector, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import { store } from '@grafana/data';
@@ -121,7 +122,7 @@ function serializeNotifications(notifs: Record<string, StoredNotification>) {
   try {
     store.set(STORAGE_KEY, JSON.stringify(reducedNotifs));
   } catch (err) {
-    console.error('Unable to persist notifications to local storage');
-    console.error(err);
+    logStructured('core.reducers', 'error', 'Unable to persist notifications to local storage');
+    logStructured('core.reducers', 'error', err);
   }
 }

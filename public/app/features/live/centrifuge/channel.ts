@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import {
   type Subscription,
   type JoinContext,
@@ -81,7 +82,7 @@ export class CentrifugeLiveChannel<T = any> {
           this.sendStatus();
         }
       } catch (err) {
-        console.log('publish error', this.addr, err);
+        logStructured('features.live', 'info', 'publish error', this.addr, err);
         this.currentStatus.error = err;
         this.currentStatus.timestamp = Date.now();
         this.sendStatus();

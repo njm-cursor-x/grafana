@@ -13,7 +13,7 @@ import {
   type GrafanaTheme2,
 } from '@grafana/data';
 import { ConfigSection, DataSourceDescription } from '@grafana/plugin-ui';
-import { getAppEvents, usePluginInteractionReporter, config } from '@grafana/runtime';
+import { logStructured, getAppEvents, usePluginInteractionReporter, config } from '@grafana/runtime';
 import { getDataSourceInstance } from '@grafana/runtime/unstable';
 import { Alert, Input, type FieldProps, Field, Divider, useStyles2 } from '@grafana/ui';
 
@@ -220,7 +220,7 @@ function useDatasource(props: Props) {
           setDatasource(ds);
         }
       })
-      .catch((err) => console.error('Could not load CloudWatch data source instance', err));
+      .catch((err) => logStructured('plugins.datasource', 'error', 'Could not load CloudWatch data source instance', err));
 
     return () => {
       cancelled = true;

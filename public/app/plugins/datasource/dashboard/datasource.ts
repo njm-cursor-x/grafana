@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { type Observable, debounce, debounceTime, defer, filter, finalize, first, interval, map, of } from 'rxjs';
 
 import {
@@ -313,7 +314,7 @@ export class DashboardDatasource extends DataSourceApi<DashboardQuery> {
         options: { value: filter.value },
       });
     } catch (error) {
-      console.warn('Failed to create value matcher for filter:', filter, error);
+      logStructured('plugins.datasource', 'warn', 'Failed to create value matcher for filter:', filter, error);
       return null;
     }
   }

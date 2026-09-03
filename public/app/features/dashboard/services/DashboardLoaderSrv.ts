@@ -1,5 +1,5 @@
 import { AppEvents, dateMath, type UrlQueryMap, type UrlQueryValue } from '@grafana/data';
-import { config, getBackendSrv, isFetchError, locationService } from '@grafana/runtime';
+import { logStructured, config, getBackendSrv, isFetchError, locationService } from '@grafana/runtime';
 import { type Spec as DashboardV2Spec } from '@grafana/schema/apis/dashboard.grafana.app/v2';
 import { backendSrv } from 'app/core/services/backend_srv';
 import impressionSrv from 'app/core/services/impression_srv';
@@ -75,7 +75,7 @@ abstract class DashboardLoaderSrvBase<T> implements DashboardLoaderSrvLike<T> {
           };
         },
         (err) => {
-          console.error('Script dashboard error ' + err);
+          logStructured('features.dashboard', 'error', 'Script dashboard error ' + err);
           appEvents.emit(AppEvents.alertError, [
             'Script Error',
             'Please make sure it exists and returns a valid dashboard',
@@ -177,7 +177,7 @@ export class DashboardLoaderSrv extends DashboardLoaderSrvBase<DashboardDTO> {
           return await api.getDashboardDTO(uid, params);
         } catch (e) {
           if (isFetchError(e) && !(e instanceof DashboardVersionError)) {
-            console.error('Failed to load dashboard', e);
+            logStructured('features.dashboard', 'error', 'Failed to load dashboard', e);
             e.isHandled = true;
             if (e.status === 404) {
               appEvents.emit(AppEvents.alertError, ['Dashboard not found']);
@@ -242,7 +242,7 @@ export class DashboardLoaderSrvV2 extends DashboardLoaderSrvBase<DashboardWithAc
           return await api.getDashboardDTO(uid, params);
         } catch (e) {
           if (isFetchError(e) && !(e instanceof DashboardVersionError)) {
-            console.error('Failed to load dashboard', e);
+            logStructured('features.dashboard', 'error', 'Failed to load dashboard', e);
             e.isHandled = true;
             if (e.status === 404) {
               appEvents.emit(AppEvents.alertError, ['Dashboard not found']);

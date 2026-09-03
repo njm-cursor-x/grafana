@@ -1,3 +1,4 @@
+import { writeStructuredLog } from '../utils/structuredLog';
 import { type ComponentType } from 'react';
 
 import { type KeyValue } from './data';
@@ -268,7 +269,7 @@ export class GrafanaPlugin<T extends PluginMeta = PluginMeta> {
    * @deprecated -- this is no longer necessary and will be removed
    */
   setChannelSupport() {
-    console.warn('[deprecation] plugin is using ignored option: setChannelSupport', this.meta);
+    writeStructuredLog('grafana-data', 'warn', '[deprecation] plugin is using ignored option: setChannelSupport', this.meta);
     return this;
   }
 

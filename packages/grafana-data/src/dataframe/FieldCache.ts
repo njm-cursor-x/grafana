@@ -1,3 +1,4 @@
+import { writeStructuredLog } from '../utils/structuredLog';
 import { type DataFrame, type Field, FieldType } from '../types/dataFrame';
 
 import { guessFieldTypeForField } from './guessFieldType';
@@ -36,7 +37,7 @@ export class FieldCache {
       });
 
       if (this.fieldByName[field.name]) {
-        console.warn('Duplicate field names in DataFrame: ', field.name);
+        writeStructuredLog('grafana-data', 'warn', 'Duplicate field names in DataFrame: ', field.name);
       } else {
         this.fieldByName[field.name] = { ...field, index: i };
       }

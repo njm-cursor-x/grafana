@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { customAlphabet } from 'nanoid';
 import { type Unsubscribable } from 'rxjs';
 
@@ -159,7 +160,7 @@ export const safeStringifyValue = (value: unknown, space?: number) => {
   try {
     return JSON.stringify(value, null, space);
   } catch (error) {
-    console.error(error);
+    logStructured('core.utils', 'error', error);
   }
 
   return '';
@@ -232,7 +233,7 @@ export async function ensureQueries(
         try {
           await getDataSourceInstance(query.datasource.uid);
         } catch {
-          console.error(`One of the queries has a datasource that is no longer available and was removed.`);
+          logStructured('core.utils', 'error', `One of the queries has a datasource that is no longer available and was removed.`);
           validDS = false;
         }
       }

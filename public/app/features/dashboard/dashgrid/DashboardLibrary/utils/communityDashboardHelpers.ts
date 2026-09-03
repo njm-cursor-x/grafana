@@ -1,6 +1,6 @@
 import { type PanelModel } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { locationService } from '@grafana/runtime';
+import { logStructured, locationService } from '@grafana/runtime';
 import { createErrorNotification } from 'app/core/copy/appNotification';
 import { notifyApp } from 'app/core/reducers/appNotification';
 import { interpolateV1Dashboard } from 'app/features/manage-dashboards/import/utils/inputs';
@@ -165,7 +165,7 @@ function canPanelContainJS(panel: PanelModel): boolean {
   try {
     panelJson = JSON.stringify(panelWithoutSanitizedFields);
   } catch (e) {
-    console.warn('Failed to stringify panel', e);
+    logStructured('features.dashboard', 'warn', 'Failed to stringify panel', e);
     return true;
   }
 
@@ -196,7 +196,7 @@ function canPanelContainJS(panel: PanelModel): boolean {
 
   const hasSuspiciousValue = valuePatterns.some((pattern) => {
     if (pattern.test(panelJson)) {
-      console.warn('Panel contains JavaScript code in value');
+      logStructured('features.dashboard', 'warn', 'Panel contains JavaScript code in value');
       return true;
     }
     return false;
@@ -204,7 +204,7 @@ function canPanelContainJS(panel: PanelModel): boolean {
 
   const hasSuspiciousKey = keyPatterns.some((pattern) => {
     if (pattern.test(panelJson)) {
-      console.warn('Panel contains JavaScript code in key');
+      logStructured('features.dashboard', 'warn', 'Panel contains JavaScript code in key');
       return true;
     }
     return false;
@@ -320,7 +320,7 @@ export async function onUseCommunityDashboard({
       }
     }
   } catch (err) {
-    console.error('Error loading community dashboard:', err);
+    logStructured('features.dashboard', 'error', 'Error loading community dashboard:', err);
     dispatch(
       notifyApp(
         createErrorNotification(t('dashboard-library.community-error-title', 'Error loading community dashboard'))

@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import * as React from 'react';
 import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -200,7 +201,7 @@ export const AnnotationsPlugin = ({
                   try {
                     ctx.fillStyle = colorManipulator.alpha(color, regionOpacity ?? 0.1);
                   } catch (e) {
-                    console.error(`Invalid color: ${color}.`, e);
+                    logStructured('plugins.panel', 'error', `Invalid color: ${color}.`, e);
                     ctx.fillStyle = colorManipulator.alpha(DEFAULT_ANNOTATION_COLOR_HEX8, regionOpacity ?? 0.1);
                   }
 

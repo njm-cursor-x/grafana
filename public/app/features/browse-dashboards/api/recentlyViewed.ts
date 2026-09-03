@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import impressionSrv from 'app/core/services/impression_srv';
 import { getGrafanaSearcher } from 'app/features/search/service/searcher';
 import { type DashboardQueryResult } from 'app/features/search/service/types';
@@ -31,7 +32,7 @@ export async function getRecentlyViewedDashboards(maxItems = 5): Promise<Dashboa
     // Defensive: never return more than the caller asked for
     return dashboards.slice(0, maxItems);
   } catch (error) {
-    console.error('Failed to load recently viewed dashboards', error);
+    logStructured('features.browse-dashboards', 'error', 'Failed to load recently viewed dashboards', error);
     return [];
   }
 }

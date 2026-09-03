@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { uniq } from 'lodash';
 
 import {
@@ -117,7 +118,7 @@ export async function loadAndInitDatasource(
       instance.init();
     } catch (err) {
       // TODO: should probably be handled better
-      console.error(err);
+      logStructured('features.explore', 'error', err);
     }
   }
 

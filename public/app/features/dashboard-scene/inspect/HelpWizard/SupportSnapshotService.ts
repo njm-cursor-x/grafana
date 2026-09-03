@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import saveAs from 'file-saver';
 
 import { dateTimeFormat, formattedValueToString, getValueFormat, type SelectableValue } from '@grafana/data';
@@ -84,7 +85,7 @@ export class SupportSnapshotService extends StateManagerBase<SupportSnapshotStat
         const dash = transformSaveModelToScene({ dashboard: snapshot, meta: { isEmbedded: true } });
         scene = dash.state.body; // skip the wrappers
       } catch (ex) {
-        console.log('Error creating scene:', ex);
+        logStructured('features.dashboard-scene', 'info', 'Error creating scene:', ex);
       }
     }
 

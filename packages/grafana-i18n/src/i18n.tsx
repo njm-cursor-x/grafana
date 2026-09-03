@@ -6,6 +6,7 @@ import { initReactI18next, setDefaults, setI18n, Trans as I18NextTrans, getI18n 
 
 import { DEFAULT_LANGUAGE, PSEUDO_LOCALE } from './constants';
 import { LANGUAGES } from './languages';
+import { logI18nError } from './structuredLog';
 import { type ResourceLoader, type Resources, type TFunction, type TransProps, type TransType } from './types';
 
 let tFunc: I18NextTFunction<string[], undefined> | undefined;
@@ -49,7 +50,7 @@ export async function loadNamespacedResources(namespace: string, language: strin
         const resources = await loader(resolvedLanguage);
         addResourceBundle(resolvedLanguage, namespace, resources);
       } catch (error) {
-        console.error(`Error loading resources for namespace ${namespace} and language: ${resolvedLanguage}`, error);
+        logI18nError(`Error loading resources for namespace ${namespace} and language: ${resolvedLanguage}`, error);
       }
     })
   );

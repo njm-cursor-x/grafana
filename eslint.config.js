@@ -178,6 +178,7 @@ module.exports = [
 
     rules: {
       'no-duplicate-case': 'error',
+      'no-console': 'error',
       '@grafana/no-border-radius-literal': 'error',
       '@grafana/no-unreduced-motion': 'error',
       '@grafana/no-restricted-img-srcs': 'error',
@@ -691,6 +692,25 @@ module.exports = [
           ],
         }),
       ],
+    },
+  },
+  {
+    name: 'grafana/structured-console-allowlist',
+    files: [
+      '**/*.{test,spec}.{ts,tsx,js,jsx}',
+      '**/*.{story,stories}.{ts,tsx,js,jsx}',
+      '**/scripts/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-api-clients/src/generator/**/*.{ts,tsx}',
+      'public/test/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-data/src/utils/structuredLog.ts',
+      'packages/grafana-i18n/src/structuredLog.ts',
+      'packages/grafana-ui/src/utils/logger.ts',
+      'public/app/core/utils/debugLog.ts',
+      'public/app/features/dashboard/services/performanceUtils.ts',
+      'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+    ],
+    rules: {
+      'no-console': 'off',
     },
   },
 

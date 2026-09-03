@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { logStructured } from '@grafana/runtime';
 import { uniq as _uniq } from 'lodash';
 
 import { type Trace } from '../types/trace';
@@ -110,7 +111,7 @@ export function processLinkPattern(pattern: any): ProcessedLinkPattern | null {
     };
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Ignoring invalid link pattern: ${error}`, pattern);
+    logStructured('features.explore', 'error', `Ignoring invalid link pattern: ${error}`, pattern);
     return null;
   }
 }

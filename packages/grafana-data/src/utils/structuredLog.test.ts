@@ -3,10 +3,10 @@ import { createStructuredLogRecord, writeStructuredLog } from './structuredLog';
 describe('structured logging', () => {
   it('creates a record with a string message and additional arguments', () => {
     expect(createStructuredLogRecord('warn', 'features.plugins', ['Plugin failed', { pluginId: 'clock' }])).toEqual({
+      pluginId: 'clock',
       level: 'warn',
       msg: 'Plugin failed',
       source: 'features.plugins',
-      args: [{ pluginId: 'clock' }],
     });
   });
 
@@ -26,13 +26,13 @@ describe('structured logging', () => {
   it('writes one structured object to the matching console method', () => {
     const spy = jest.spyOn(console, 'info').mockImplementation();
 
-    writeStructuredLog('info', 'features.dashboard', 'Dashboard loaded', { uid: 'abc' });
+    writeStructuredLog('features.dashboard', 'info', 'Dashboard loaded', { uid: 'abc' });
 
     expect(spy).toHaveBeenCalledWith({
+      uid: 'abc',
       level: 'info',
       msg: 'Dashboard loaded',
       source: 'features.dashboard',
-      args: [{ uid: 'abc' }],
     });
   });
 });

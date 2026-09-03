@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { from, type Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -57,7 +58,7 @@ export class CloudWatchVariableSupport extends CustomVariableSupport<CloudWatchD
           return this.handleAccountsQuery(query);
       }
     } catch (error) {
-      console.error(`Could not run CloudWatchMetricFindQuery ${query}`, error);
+      logStructured('plugins.datasource', 'error', `Could not run CloudWatchMetricFindQuery ${query}`, error);
       return [];
     }
   }

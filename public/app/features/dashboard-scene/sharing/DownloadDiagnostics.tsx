@@ -4,7 +4,7 @@ import { useAsyncFn } from 'react-use';
 
 import { type GrafanaTheme2 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
-import { isFetchError, logError } from '@grafana/runtime';
+import { logStructured, isFetchError, logError } from '@grafana/runtime';
 import {
   sceneGraph,
   type SceneComponentProps,
@@ -195,7 +195,7 @@ function DownloadDiagnosticsRenderer({ model }: SceneComponentProps<DownloadDiag
       dashboardModel = dashboard?.getSaveModel();
       panelModel = dashboard ? findPanelSaveModel(dashboardModel, panel, dashboard) : undefined;
     } catch (error) {
-      console.warn(SAVE_MODEL_FAILURE_MESSAGE, error);
+      logStructured('features.dashboard-scene', 'warn', SAVE_MODEL_FAILURE_MESSAGE, error);
       logError(error instanceof Error ? error : new Error(SAVE_MODEL_FAILURE_MESSAGE), {
         panelKey: panel.state.key ?? '',
         dashboardUid: dashboard?.state.uid ?? '',
@@ -219,7 +219,7 @@ function DownloadDiagnosticsRenderer({ model }: SceneComponentProps<DownloadDiag
       JSON.stringify(captured);
       panelData = captured;
     } catch (error) {
-      console.warn(PANEL_DATA_FAILURE_MESSAGE, error);
+      logStructured('features.dashboard-scene', 'warn', PANEL_DATA_FAILURE_MESSAGE, error);
       logError(error instanceof Error ? error : new Error(PANEL_DATA_FAILURE_MESSAGE), {
         panelKey: panel.state.key ?? '',
       });

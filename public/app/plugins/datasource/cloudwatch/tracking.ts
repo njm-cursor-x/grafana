@@ -1,5 +1,5 @@
 import { type DashboardLoadedEvent } from '@grafana/data';
-import { config, reportInteraction } from '@grafana/runtime';
+import { logStructured, config, reportInteraction } from '@grafana/runtime';
 
 import {
   type CloudWatchLogsQuery,
@@ -146,7 +146,7 @@ export const onDashboardLoadedHandler = ({
 
     reportInteraction('grafana_ds_cloudwatch_dashboard_loaded', e);
   } catch (error) {
-    console.error('error in cloudwatch tracking handler', error);
+    logStructured('plugins.datasource', 'error', 'error in cloudwatch tracking handler', error);
   }
 };
 

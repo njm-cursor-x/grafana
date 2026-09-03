@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { css } from '@emotion/css';
 import { type ComponentType, memo } from 'react';
 import { connect, type ConnectedProps } from 'react-redux';
@@ -59,7 +60,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
   const mapStateToProps = (state: StoreState, ownProps: OwnProps) => {
     const { rootStateKey } = ownProps.variable;
     if (!rootStateKey) {
-      console.error('OptionPickerFactory: variable has no rootStateKey');
+      logStructured('features.variables', 'error', 'OptionPickerFactory: variable has no rootStateKey');
       return {
         picker: initialOptionPickerState,
       };
@@ -94,7 +95,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
 
     function onHideOptions() {
       if (!variable.rootStateKey) {
-        console.error('Variable has no rootStateKey');
+        logStructured('features.variables', 'error', 'Variable has no rootStateKey');
         return;
       }
       commitChangesToVariable(variable.rootStateKey, onVariableChange);
@@ -124,7 +125,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
 
     function onNavigate(key: NavigationKey, clearOthers: boolean) {
       if (!variable.rootStateKey) {
-        console.error('Variable has no rootStateKey');
+        logStructured('features.variables', 'error', 'Variable has no rootStateKey');
         return;
       }
       navigateOptions(variable.rootStateKey, key, clearOthers);

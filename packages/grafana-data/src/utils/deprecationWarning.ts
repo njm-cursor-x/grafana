@@ -1,3 +1,4 @@
+import { writeStructuredLog } from './structuredLog';
 import { type KeyValue } from '../types/data';
 
 // Avoid writing the warning message more than once every 10s
@@ -11,7 +12,7 @@ export const deprecationWarning = (file: string, oldName: string, newName?: stri
   const now = Date.now();
   const last = history[message];
   if (!last || now - last > 10000) {
-    console.warn(message);
+    writeStructuredLog('grafana-data', 'warn', message);
     history[message] = now;
   }
 };

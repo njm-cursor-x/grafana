@@ -2,7 +2,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 import { PluginExtensionPoints } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { renderLimitedComponents } from '@grafana/runtime';
+import { logStructured, renderLimitedComponents } from '@grafana/runtime';
 import { ToolbarButton } from '@grafana/ui';
 import { useGetCurrentOrgQuotaQuery } from 'app/api/clients/legacy';
 import { SETUPGUIDE_PLUGIN_ID } from 'app/core/constants';
@@ -61,7 +61,7 @@ function InviteUserButton() {
         performInviteUserClick('top_bar_right', 'invite-user-top-bar');
       }
     } catch (error) {
-      console.error('Failed to handle invite/upgrade user click:', error);
+      logStructured('core.components', 'error', 'Failed to handle invite/upgrade user click:', error);
     }
   };
 

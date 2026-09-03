@@ -15,7 +15,7 @@ import {
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
-import { getDataSourceSrv, locationService } from '@grafana/runtime';
+import { logStructured, getDataSourceSrv, locationService } from '@grafana/runtime';
 import { type DataQuery } from '@grafana/schema';
 import { Button, InlineFormLabel, Modal, ScrollContainer, Stack, stylesFactory } from '@grafana/ui';
 import { PluginHelp } from 'app/core/components/PluginHelp/PluginHelp';
@@ -123,7 +123,7 @@ export class QueryGroup extends PureComponent<Props, State> {
         defaultDataSource,
       });
     } catch (error) {
-      console.error('failed to load data source', error);
+      logStructured('features.query', 'error', 'failed to load data source', error);
     }
   }
 

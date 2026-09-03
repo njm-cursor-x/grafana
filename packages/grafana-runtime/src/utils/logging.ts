@@ -14,8 +14,8 @@ function pushLog(message: string, level: LogLevel, contexts?: LogContext, logToC
   }
   if (logToConsole) {
     writeStructuredLog(
-      level === LogLevel.DEBUG ? 'debug' : level === LogLevel.WARN ? 'warn' : 'info',
       contexts?.source ?? 'grafana/runtime',
+      level === LogLevel.DEBUG ? 'debug' : level === LogLevel.WARN ? 'warn' : 'info',
       message,
       contexts
     );
@@ -27,7 +27,7 @@ function pushError(error: Error, contexts?: LogContext, logToConsole = true) {
     faro.api.pushError(error, { context: contexts });
   }
   if (logToConsole) {
-    writeStructuredLog('error', contexts?.source ?? 'grafana/runtime', error, contexts);
+    writeStructuredLog(contexts?.source ?? 'grafana/runtime', 'error', error, contexts);
   }
 }
 
@@ -79,7 +79,10 @@ export function logStructured(source: string, level: StructuredLogLevel, ...valu
 
   if (level === 'error') {
     const error = values.find((value): value is Error => value instanceof Error) ?? new Error(record.msg);
-    pushError(error, context);
+    if (config.grafanaJavascriptAgent.enabled) {
+      faro.api.pushError(error, { context });
+    }
+    writeStructuredLog(source, level, ...values);
     return;
   }
 
@@ -87,7 +90,7 @@ export function logStructured(source: string, level: StructuredLogLevel, ...valu
   if (config.grafanaJavascriptAgent.enabled) {
     faro.api.pushLog([record.msg], { level: logLevel, context });
   }
-  writeStructuredLog(level, source, ...values);
+  writeStructuredLog(source, level, ...values);
 }
 
 function safeStringify(value: unknown): string {
@@ -197,7 +200,7 @@ export function createMonitoringLogger(
     logMeasurement: (type: string, measurement: MeasurementValues, contexts?: LogContext) => {
       logMeasurement(type, measurement, createFullContext(contexts));
       if (logToConsole) {
-        writeStructuredLog('info', source, type, measurement, createFullContext(contexts));
+        writeStructuredLog(source, 'info', type, measurement, createFullContext(contexts));
       }
     },
   };

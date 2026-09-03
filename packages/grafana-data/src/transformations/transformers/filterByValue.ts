@@ -1,3 +1,4 @@
+import { writeStructuredLog } from '../../utils/structuredLog';
 import { map } from 'rxjs/operators';
 
 import { getFieldDisplayName } from '../../field/fieldState';
@@ -139,7 +140,7 @@ const createFilterValueMatchers = (
     const fieldIndex = fieldIndexByName[filter.fieldName] ?? -1;
 
     if (fieldIndex < 0) {
-      console.warn(`[FilterByValue] Could not find index for field name: ${filter.fieldName}`);
+      writeStructuredLog('grafana-data', 'warn', `[FilterByValue] Could not find index for field name: ${filter.fieldName}`);
       return noop;
     }
 

@@ -16,7 +16,7 @@ import {
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
-import { config, isFetchError, locationSearchToObject } from '@grafana/runtime';
+import { logStructured, config, isFetchError, locationSearchToObject } from '@grafana/runtime';
 import { refetchPluginSettings } from '@grafana/runtime/internal';
 import { getLogger, getPluginSettings } from '@grafana/runtime/unstable';
 import { Alert, ErrorWithStack } from '@grafana/ui';
@@ -274,7 +274,7 @@ async function loadAppPlugin(pluginId: string, dispatch: React.Dispatch<AnyActio
     );
     const error = err instanceof Error ? err : new Error(getMessageFromError(err));
     getLogger('features.plugins').logError(error);
-    console.error(error);
+    logStructured('features.plugins', 'error', error);
   }
 }
 

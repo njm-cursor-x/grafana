@@ -1,6 +1,7 @@
 export type StructuredLogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface StructuredLogRecord {
+  [key: string]: unknown;
   level: StructuredLogLevel;
   msg: string;
   source: string;
@@ -17,11 +18,21 @@ export function createStructuredLogRecord(
   const [first, ...rest] = values;
   const error = values.find((value): value is Error => value instanceof Error);
   const msg = error?.message ?? (typeof first === 'string' ? first : String(first ?? ''));
-  const args = (error === first ? rest : values.slice(typeof first === 'string' ? 1 : 0)).filter(
+  const additionalValues = (error === first ? rest : values.slice(typeof first === 'string' ? 1 : 0)).filter(
     (value) => value !== error
+  );
+  const context = Object.assign(
+    {},
+    ...additionalValues.filter(
+      (value): value is Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value)
+    )
+  );
+  const args = additionalValues.filter(
+    (value) => value === null || typeof value !== 'object' || Array.isArray(value)
   );
 
   return {
+    ...context,
     level,
     msg,
     source,
@@ -30,7 +41,7 @@ export function createStructuredLogRecord(
   };
 }
 
-export function writeStructuredLog(level: StructuredLogLevel, source: string, ...values: unknown[]): void {
+export function writeStructuredLog(source: string, level: StructuredLogLevel, ...values: unknown[]): void {
   const record = createStructuredLogRecord(level, source, values);
 
   switch (level) {

@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { css } from '@emotion/css';
 import { type FC } from 'react';
 import { Controller, type DeepMap, type FieldError, useFormContext } from 'react-hook-form';
@@ -319,7 +320,7 @@ const OptionInput: FC<Props & { id: string }> = ({
       );
 
     default:
-      console.error('Element not supported', option.element);
+      logStructured('features.alerting', 'error', 'Element not supported', option.element);
       return null;
   }
 };

@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { isEmpty } from 'lodash';
 import { type ReactElement, useId, useMemo } from 'react';
 
@@ -96,7 +97,7 @@ function useLogFilters(
 
   return useMemo(() => {
     if (data && data?.series.length > 1) {
-      console.warn('LogViewFilter does not support multiple series in query result.');
+      logStructured('features.plugins', 'warn', 'LogViewFilter does not support multiple series in query result.');
     }
 
     const frame = data?.series[0];

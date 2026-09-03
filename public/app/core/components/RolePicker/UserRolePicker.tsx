@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useMemo } from 'react';
 
@@ -90,7 +91,7 @@ export const UserRolePicker = ({
           },
         }).unwrap();
       } catch (error) {
-        console.error('Error updating user roles', error);
+        logStructured('core.components', 'error', 'Error updating user roles', error);
       }
     } else if (onApplyRoles) {
       onApplyRoles(newRoles, userId, orgId);

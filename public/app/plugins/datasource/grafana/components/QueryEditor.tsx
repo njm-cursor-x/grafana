@@ -8,7 +8,7 @@ import {
   type DataQueryRequest,
   type Field,
 } from '@grafana/data';
-import { config } from '@grafana/runtime';
+import { logStructured, config } from '@grafana/runtime';
 import { InlineField, Select, Alert, Input, InlineFieldRow, Stack, InlineLabel } from '@grafana/ui';
 import { getManagedChannelInfo } from 'app/features/live/info';
 
@@ -138,7 +138,7 @@ export const QueryEditor = memo(function QueryEditor(props: Props) {
         try {
           buffer = rangeUtil.intervalToSeconds(txt) * 1000;
         } catch (err) {
-          console.warn('ERROR', err);
+          logStructured('plugins.datasource', 'warn', 'ERROR', err);
         }
       }
       onChange({

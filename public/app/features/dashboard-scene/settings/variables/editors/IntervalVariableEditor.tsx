@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { noop } from 'lodash';
 import { type ChangeEvent, type FormEvent } from 'react';
 
@@ -65,7 +66,7 @@ export function IntervalVariableEditor({ variable, onRunQuery, inline }: Interva
 
 export function getIntervalVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof IntervalVariable)) {
-    console.warn('getIntervalVariableOptions: variable is not an IntervalVariable');
+    logStructured('features.dashboard-scene', 'warn', 'getIntervalVariableOptions: variable is not an IntervalVariable');
     return [];
   }
 

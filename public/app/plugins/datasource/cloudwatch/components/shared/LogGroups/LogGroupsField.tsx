@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { EditorField, EditorRow } from '@grafana/plugin-ui';
-import { config } from '@grafana/runtime';
+import { logStructured, config } from '@grafana/runtime';
 import { Box, Stack } from '@grafana/ui';
 
 import { type LogGroup, type LogGroupClass, LogsQueryLanguage, type LogsQueryScope } from '../../../dataquery.gen';
@@ -92,7 +92,7 @@ export const LogGroupsField = ({
           onChange([...logGroups, ...variables.map((v) => ({ name: v, arn: v }))]);
         })
         .catch((err) => {
-          console.error(err);
+          logStructured('plugins.datasource', 'error', err);
         });
     }
   }, [datasource, legacyLogGroupNames, logGroups, onChange, region, loadingLogGroupsStarted]);
