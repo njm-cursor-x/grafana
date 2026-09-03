@@ -19,8 +19,11 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 
 	"github.com/grafana/grafana-plugin-sdk-go/data/utils/jsoniter"
+	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/storage/unified/resourcepb"
 )
+
+var tableLogger = log.New("unified-storage.resource-table")
 
 // Convert the the protobuf model into k8s (will decode each value)
 func toK8s(x *resourcepb.ResourceTable) (metav1.Table, error) {
@@ -609,5 +612,5 @@ func AssertTableSnapshot(t *testing.T, path string, table *resourcepb.ResourceTa
 	// nolint:gosec
 	err = os.WriteFile(path, actual, 0600)
 	require.NoError(t, err)
-	fmt.Printf("Updated table snapshot: %s\n", path)
+	tableLogger.Info("Updated table snapshot", "path", path)
 }

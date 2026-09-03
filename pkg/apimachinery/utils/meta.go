@@ -15,7 +15,10 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 
 	common "github.com/grafana/grafana/pkg/apimachinery/apis/common/v0alpha1"
+	"github.com/grafana/grafana/pkg/infra/log"
 )
+
+var metaLogger = log.New("app-platform.meta")
 
 // LabelKeyGetHistory is used to select object history for an given resource
 const LabelKeyGetHistory = "grafana.app/get-history"
@@ -904,7 +907,7 @@ func (m *grafanaMetaAccessor) GetSecureValues() (vals common.InlineSecureValues,
 func (m *grafanaMetaAccessor) SetSecureValues(vals common.InlineSecureValues) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Printf("ERR: %v", r)
+			metaLogger.Error("Failed to write secure values", "reason", r)
 			err = fmt.Errorf("error writing secure values")
 		}
 	}()

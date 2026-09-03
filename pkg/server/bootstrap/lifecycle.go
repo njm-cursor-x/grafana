@@ -17,6 +17,8 @@ import (
 // SIGINT/SIGTERM before the process gives up waiting on the server.
 const shutdownTimeout = 30 * time.Second
 
+var lifecycleLogger = log.New("server.lifecycle")
+
 // gserver is the small surface bootstrap needs from a running server or module
 // server to drive graceful shutdown. Both *server.Server and
 // *server.ModuleServer satisfy it.
@@ -38,13 +40,13 @@ func listenToSystemSignals(ctx context.Context, s gserver) {
 		select {
 		case <-sighupChan:
 			if err := log.Reload(); err != nil {
-				fmt.Fprintf(os.Stderr, "Failed to reload loggers: %s\n", err)
+				lifecycleLogger.Error("Failed to reload loggers", "error", err)
 			}
 		case sig := <-signalChan:
 			ctx, cancel := context.WithTimeout(ctx, shutdownTimeout)
 			defer cancel()
 			if err := s.Shutdown(ctx, fmt.Sprintf("System signal: %s", sig)); err != nil {
-				fmt.Fprintf(os.Stderr, "Timed out waiting for server to shut down\n")
+				lifecycleLogger.Error("Timed out waiting for server to shut down", "error", err)
 			}
 			return
 		}
@@ -56,10 +58,10 @@ func listenToSystemSignals(ctx context.Context, s gserver) {
 func checkPrivileges() {
 	elevated, err := process.IsRunningWithElevatedPrivileges()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error checking server process execution privilege. error: %s\n", err.Error())
+		lifecycleLogger.Error("Error checking server process execution privilege", "error", err)
 	}
 	if elevated {
-		fmt.Println("Grafana server is running with elevated privileges. This is not recommended")
+		lifecycleLogger.Warn("Grafana server is running with elevated privileges. This is not recommended")
 	}
 }
 
