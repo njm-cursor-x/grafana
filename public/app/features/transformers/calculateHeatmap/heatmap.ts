@@ -17,7 +17,6 @@ import {
 } from '@grafana/data';
 import { isLikelyAscendingVector } from '@grafana/data/internal';
 import { t } from '@grafana/i18n';
-import { logStructured } from '@grafana/runtime';
 import {
   ScaleDistribution,
   type ScaleDistributionConfig,

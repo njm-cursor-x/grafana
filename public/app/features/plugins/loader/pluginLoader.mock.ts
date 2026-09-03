@@ -1,8 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { logStructured } from '@grafana/runtime';
-
 const mockSystemModule = `System.register(['./dependencyA'], function (_export, _context) {
   "use strict";
 
@@ -19,7 +17,7 @@ const mockSystemModule = `System.register(['./dependencyA'], function (_export, 
 
 const mockAmdModule = `define([], function() {
   return function() {
-    logStructured('features.plugins', 'info', 'AMD module loaded');
+    console.log('AMD module loaded');
     var pluginPath = "/public/plugins/";
   }
 });`;
