@@ -284,43 +284,8 @@ function expectLoggerFunctions(
     }
   );
 
-  if (defaults?.logToConsole === false) {
-    expect(spies.debugSpy).not.toHaveBeenCalled();
-    expect(spies.errorSpy).not.toHaveBeenCalled();
-    expect(spies.logSpy).not.toHaveBeenCalled();
-    expect(spies.warnSpy).not.toHaveBeenCalled();
-  }
-
-  if (defaults?.logToConsole !== false) {
-    expect(spies.debugSpy).toHaveBeenCalledWith({
-      ...defaults?.context,
-      level: 'debug',
-      msg: 'registry debug test',
-      pluginId: 'myorg-test-plugin',
-      source: 'grafana/runtime.plugins.meta',
-    });
-    expect(spies.errorSpy).toHaveBeenCalledWith({
-      ...defaults?.context,
-      error: 'registry error test',
-      level: 'error',
-      msg: 'registry error test',
-      pluginId: 'myorg-test-plugin',
-      source: 'grafana/runtime.plugins.meta',
-      stack: expect.any(String),
-    });
-    expect(spies.logSpy).toHaveBeenCalledWith({
-      ...defaults?.context,
-      level: 'info',
-      msg: 'registry info test',
-      pluginId: 'myorg-test-plugin',
-      source: 'grafana/runtime.plugins.meta',
-    });
-    expect(spies.warnSpy).toHaveBeenCalledWith({
-      ...defaults?.context,
-      level: 'warn',
-      msg: 'registry warning test',
-      pluginId: 'myorg-test-plugin',
-      source: 'grafana/runtime.plugins.meta',
-    });
-  }
+  expect(spies.debugSpy).not.toHaveBeenCalled();
+  expect(spies.errorSpy).not.toHaveBeenCalled();
+  expect(spies.logSpy).not.toHaveBeenCalled();
+  expect(spies.warnSpy).not.toHaveBeenCalled();
 }

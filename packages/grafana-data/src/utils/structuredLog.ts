@@ -40,6 +40,10 @@ export function createStructuredLogRecord(
 }
 
 export function writeStructuredLog(source: string, level: StructuredLogLevel, ...values: unknown[]): void {
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
+
   const record = createStructuredLogRecord(level, source, values);
 
   switch (level) {

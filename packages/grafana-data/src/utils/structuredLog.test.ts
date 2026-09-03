@@ -24,6 +24,8 @@ describe('structured logging', () => {
   });
 
   it('writes one structured object to the matching console method', () => {
+    const environment = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
     const spy = jest.spyOn(console, 'log').mockImplementation();
 
     writeStructuredLog('features.dashboard', 'info', 'Dashboard loaded', { uid: 'abc' });
@@ -34,5 +36,6 @@ describe('structured logging', () => {
       msg: 'Dashboard loaded',
       source: 'features.dashboard',
     });
+    process.env.NODE_ENV = environment;
   });
 });
