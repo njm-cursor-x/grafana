@@ -157,7 +157,7 @@ describe('logging registry', () => {
         }
       });
 
-      it('should return a logger without default context and console output', () => {
+      it('should return a logger without default context', () => {
         if (throws) {
           expect(true).toBe(true);
           return;
@@ -284,8 +284,24 @@ function expectLoggerFunctions(
     }
   );
 
-  expect(spies.debugSpy).not.toHaveBeenCalled();
-  expect(spies.errorSpy).not.toHaveBeenCalled();
-  expect(spies.logSpy).not.toHaveBeenCalled();
-  expect(spies.warnSpy).not.toHaveBeenCalled();
+  if (process.env.NODE_ENV === 'test' || defaults?.logToConsole === false) {
+    expect(spies.debugSpy).not.toHaveBeenCalled();
+    expect(spies.errorSpy).not.toHaveBeenCalled();
+    expect(spies.logSpy).not.toHaveBeenCalled();
+    expect(spies.warnSpy).not.toHaveBeenCalled();
+    return;
+  }
+
+  expect(spies.debugSpy).toHaveBeenCalledWith(
+    expect.objectContaining({ level: 'debug', msg: 'registry debug test', source: 'grafana/runtime.plugins.meta' })
+  );
+  expect(spies.errorSpy).toHaveBeenCalledWith(
+    expect.objectContaining({ level: 'error', msg: 'registry error test', source: 'grafana/runtime.plugins.meta' })
+  );
+  expect(spies.logSpy).toHaveBeenCalledWith(
+    expect.objectContaining({ level: 'info', msg: 'registry info test', source: 'grafana/runtime.plugins.meta' })
+  );
+  expect(spies.warnSpy).toHaveBeenCalledWith(
+    expect.objectContaining({ level: 'warn', msg: 'registry warning test', source: 'grafana/runtime.plugins.meta' })
+  );
 }

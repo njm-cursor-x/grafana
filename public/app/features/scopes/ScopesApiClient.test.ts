@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { MOCK_NODES, MOCK_SCOPES } from '@grafana/test-utils/unstable';
 import { scopeAPIv0alpha1 } from 'app/api/clients/scope/v0alpha1';
 
@@ -41,6 +42,11 @@ jest.mock('app/api/clients/scope/v0alpha1', () => ({
 
 jest.mock('app/store/store', () => ({
   dispatch: jest.fn((action) => action),
+}));
+
+jest.mock('@grafana/runtime', () => ({
+  ...jest.requireActual('@grafana/runtime'),
+  logStructured: jest.fn(),
 }));
 
 jest.mock('@grafana/runtime/internal', () => ({
@@ -101,14 +107,18 @@ describe('ScopesApiClient', () => {
       };
       const mockSubscription = createMockSubscription({ data: errorResponse });
       (scopeAPIv0alpha1.endpoints.getScope.initiate as jest.Mock).mockReturnValue(mockSubscription);
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       const result = await apiClient.fetchScope(nonExistentScopeName);
 
       // Validate: returns undefined for non-existent scope
       expect(result).toBeUndefined();
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
+      expect(logStructured).toHaveBeenCalledWith(
+        'features.scopes',
+        'error',
+        'Failed to fetch %s:',
+        `scope: ${nonExistentScopeName}`,
+        errorResponse.message
+      );
     });
   });
 
@@ -151,8 +161,6 @@ describe('ScopesApiClient', () => {
       (scopeAPIv0alpha1.endpoints.getScope.initiate as jest.Mock)
         .mockReturnValueOnce(mockSubscriptions[0])
         .mockReturnValueOnce(mockSubscriptions[1]);
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
 
       const result = await apiClient.fetchMultipleScopes(scopeNames);
 
@@ -160,10 +168,16 @@ describe('ScopesApiClient', () => {
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(expectedScope);
       expect(result[0].metadata.name).toBe('grafana');
-      // Validate: console.warn is called when some scopes fail
-      expect(consoleWarnSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
-      consoleWarnSpy.mockRestore();
+      expect(logStructured).toHaveBeenCalledWith(
+        'features.scopes',
+        'warn',
+        'Failed to fetch',
+        1,
+        'of',
+        2,
+        'scope(s). Requested IDs:',
+        'grafana, non-existent'
+      );
     });
 
     it('should return empty array when no scopes provided', async () => {
