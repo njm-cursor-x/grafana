@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash';
 
 import { logWarning } from '@grafana/runtime';
-
 import { notFoundItem } from 'app/features/canvas/elements/notFound';
 import { type DimensionContext } from 'app/features/dimensions/context';
 import { HorizontalConstraint, type Placement, VerticalConstraint } from 'app/plugins/panel/canvas/panelcfg.gen';

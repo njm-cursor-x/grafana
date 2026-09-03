@@ -108,7 +108,11 @@ export class LivePanel extends PureComponent<Props, State> {
     }
     this.unsubscribe();
 
-    logDebug('LivePanel: loading live channel', { scope: addr.scope, namespace: addr.namespace, path: addr.path });
+    logDebug('LivePanel: loading live channel', {
+      scope: addr.scope,
+      namespace: addr.namespace ?? '',
+      path: addr.path ?? '',
+    });
 
     // Subscribe to new events
     try {
