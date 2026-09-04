@@ -1,0 +1,65 @@
+{
+  "name": "Kyoto",
+  "id": "kyoto",
+  "colors": {
+    "mode": "light",
+    "border": {
+      "weak": "rgba(196, 59, 50, 0.14)",
+      "medium": "rgba(196, 59, 50, 0.24)",
+      "strong": "rgba(196, 59, 50, 0.36)"
+    },
+    "text": {
+      "primary": "#3F3A32",
+      "secondary": "#5F584C",
+      "disabled": "rgba(0, 0, 0, 0.45)",
+      "link": "#C43B32",
+      "maxContrast": "#000000"
+    },
+    "primary": {
+      "main": "#C43B32"
+    },
+    "accent": {
+      "main": "#C43B32"
+    },
+    "secondary": {
+      "main": "#FFFFFF",
+      "text": "#5F584C",
+      "border": "rgba(196, 59, 50, 0.20)",
+      "contrastText": "#3F3A32"
+    },
+    "background": {
+      "canvas": "#F2EDE4",
+      "page": "#F7F3EA",
+      "primary": "#FBFAF6",
+      "secondary": "#E5DFD2",
+      "elevated": "#FBFAF6"
+    },
+    "action": {
+      "hover": "rgba(196, 59, 50, 0.10)",
+      "selected": "rgba(196, 59, 50, 0.18)",
+      "selectedBorder": "#C43B32",
+      "focus": "rgba(196, 59, 50, 0.10)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(0, 0, 0, 0.45)",
+      "disabledBackground": "rgba(196, 59, 50, 0.06)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #C43B32 0%, #A6322A 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #C43B32 0.01%, #A6322A 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.03,
+    "tonalOffset": 0.15
+  },
+  "visualization": {
+    "palette": [
+      "#C43B32",
+      "#5B7A4E",
+      "#D4B483",
+      "#2F4A3C",
+      "#A84840",
+      "#7A9A6A"
+    ]
+  }
+}

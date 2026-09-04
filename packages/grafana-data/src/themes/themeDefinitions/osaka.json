@@ -1,0 +1,64 @@
+{
+  "name": "Osaka",
+  "id": "osaka",
+  "colors": {
+    "mode": "dark",
+    "border": {
+      "weak": "rgba(255, 45, 149, 0.12)",
+      "medium": "rgba(255, 45, 149, 0.22)",
+      "strong": "rgba(255, 45, 149, 0.35)"
+    },
+    "text": {
+      "primary": "#F3E6F4",
+      "secondary": "#C9A8D0",
+      "disabled": "rgba(255, 255, 255, 0.45)",
+      "link": "#FF2D95",
+      "maxContrast": "#FFFFFF"
+    },
+    "primary": {
+      "main": "#FF2D95"
+    },
+    "accent": {
+      "main": "#FF2D95"
+    },
+    "secondary": {
+      "main": "#3A1A48",
+      "text": "#C9A8D0",
+      "border": "rgba(255, 45, 149, 0.20)"
+    },
+    "background": {
+      "canvas": "#140818",
+      "page": "#1C0C24",
+      "primary": "#2A1236",
+      "secondary": "#3A1A48",
+      "elevated": "#3A1A48"
+    },
+    "action": {
+      "hover": "rgba(255, 45, 149, 0.16)",
+      "selected": "rgba(255, 45, 149, 0.12)",
+      "selectedBorder": "#FF2D95",
+      "focus": "rgba(255, 45, 149, 0.16)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(255, 255, 255, 0.45)",
+      "disabledBackground": "rgba(255, 45, 149, 0.08)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #FF2D95 0%, #D8267E 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #FF2D95 0.01%, #D8267E 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.05,
+    "tonalOffset": 0.2
+  },
+  "visualization": {
+    "palette": [
+      "#FF2D95",
+      "#2EE6D6",
+      "#FFC857",
+      "#8B5CFF",
+      "#FF6BB5",
+      "#1AB8AA"
+    ]
+  }
+}

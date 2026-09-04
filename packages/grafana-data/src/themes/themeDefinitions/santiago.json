@@ -1,0 +1,65 @@
+{
+  "name": "Santiago",
+  "id": "santiago",
+  "colors": {
+    "mode": "light",
+    "border": {
+      "weak": "rgba(184, 74, 58, 0.14)",
+      "medium": "rgba(184, 74, 58, 0.24)",
+      "strong": "rgba(184, 74, 58, 0.36)"
+    },
+    "text": {
+      "primary": "#4A3A32",
+      "secondary": "#6E5A4E",
+      "disabled": "rgba(0, 0, 0, 0.45)",
+      "link": "#B84A3A",
+      "maxContrast": "#000000"
+    },
+    "primary": {
+      "main": "#B84A3A"
+    },
+    "accent": {
+      "main": "#B84A3A"
+    },
+    "secondary": {
+      "main": "#FFFFFF",
+      "text": "#6E5A4E",
+      "border": "rgba(184, 74, 58, 0.20)",
+      "contrastText": "#4A3A32"
+    },
+    "background": {
+      "canvas": "#F3E6D8",
+      "page": "#F8EEE4",
+      "primary": "#FFF7F0",
+      "secondary": "#EAD9C8",
+      "elevated": "#FFF7F0"
+    },
+    "action": {
+      "hover": "rgba(184, 74, 58, 0.10)",
+      "selected": "rgba(184, 74, 58, 0.18)",
+      "selectedBorder": "#B84A3A",
+      "focus": "rgba(184, 74, 58, 0.10)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(0, 0, 0, 0.45)",
+      "disabledBackground": "rgba(184, 74, 58, 0.06)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #B84A3A 0%, #9C3E31 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #B84A3A 0.01%, #9C3E31 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.03,
+    "tonalOffset": 0.15
+  },
+  "visualization": {
+    "palette": [
+      "#B84A3A",
+      "#2F6F6A",
+      "#C4A574",
+      "#5C7A9A",
+      "#8B5A3C",
+      "#3D8A84"
+    ]
+  }
+}

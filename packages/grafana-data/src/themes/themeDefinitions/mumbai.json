@@ -1,0 +1,65 @@
+{
+  "name": "Mumbai",
+  "id": "mumbai",
+  "colors": {
+    "mode": "light",
+    "border": {
+      "weak": "rgba(217, 119, 6, 0.14)",
+      "medium": "rgba(217, 119, 6, 0.24)",
+      "strong": "rgba(217, 119, 6, 0.36)"
+    },
+    "text": {
+      "primary": "#4A3728",
+      "secondary": "#6B5340",
+      "disabled": "rgba(0, 0, 0, 0.45)",
+      "link": "#D97706",
+      "maxContrast": "#000000"
+    },
+    "primary": {
+      "main": "#D97706"
+    },
+    "accent": {
+      "main": "#D97706"
+    },
+    "secondary": {
+      "main": "#FFFFFF",
+      "text": "#6B5340",
+      "border": "rgba(217, 119, 6, 0.20)",
+      "contrastText": "#4A3728"
+    },
+    "background": {
+      "canvas": "#F6EBD8",
+      "page": "#FAF3E6",
+      "primary": "#FFF9EF",
+      "secondary": "#EBDBC0",
+      "elevated": "#FFF9EF"
+    },
+    "action": {
+      "hover": "rgba(217, 119, 6, 0.10)",
+      "selected": "rgba(217, 119, 6, 0.18)",
+      "selectedBorder": "#D97706",
+      "focus": "rgba(217, 119, 6, 0.10)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(0, 0, 0, 0.45)",
+      "disabledBackground": "rgba(217, 119, 6, 0.06)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #D97706 0%, #B86505 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #D97706 0.01%, #B86505 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.03,
+    "tonalOffset": 0.15
+  },
+  "visualization": {
+    "palette": [
+      "#D97706",
+      "#0F766E",
+      "#C2410C",
+      "#1D4E89",
+      "#E8A020",
+      "#2A9A90"
+    ]
+  }
+}

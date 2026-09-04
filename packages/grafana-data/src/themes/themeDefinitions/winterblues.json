@@ -1,0 +1,64 @@
+{
+  "name": "Winter Blues",
+  "id": "winterblues",
+  "colors": {
+    "mode": "dark",
+    "border": {
+      "weak": "rgba(91, 163, 217, 0.12)",
+      "medium": "rgba(91, 163, 217, 0.22)",
+      "strong": "rgba(91, 163, 217, 0.35)"
+    },
+    "text": {
+      "primary": "#E6EEF5",
+      "secondary": "#A8C5D9",
+      "disabled": "rgba(255, 255, 255, 0.45)",
+      "link": "#5BA3D9",
+      "maxContrast": "#FFFFFF"
+    },
+    "primary": {
+      "main": "#5BA3D9"
+    },
+    "accent": {
+      "main": "#5BA3D9"
+    },
+    "secondary": {
+      "main": "#1E3F5C",
+      "text": "#A8C5D9",
+      "border": "rgba(91, 163, 217, 0.20)"
+    },
+    "background": {
+      "canvas": "#0B1C2C",
+      "page": "#102536",
+      "primary": "#16304A",
+      "secondary": "#1E3F5C",
+      "elevated": "#1E3F5C"
+    },
+    "action": {
+      "hover": "rgba(91, 163, 217, 0.16)",
+      "selected": "rgba(91, 163, 217, 0.12)",
+      "selectedBorder": "#5BA3D9",
+      "focus": "rgba(91, 163, 217, 0.16)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(255, 255, 255, 0.45)",
+      "disabledBackground": "rgba(91, 163, 217, 0.08)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #5BA3D9 0%, #4D8AB8 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #5BA3D9 0.01%, #4D8AB8 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.05,
+    "tonalOffset": 0.2
+  },
+  "visualization": {
+    "palette": [
+      "#5BA3D9",
+      "#A8C5D9",
+      "#3E7CA8",
+      "#7FB8E0",
+      "#2A5A7A",
+      "#C5D8E8"
+    ]
+  }
+}

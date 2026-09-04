@@ -2,15 +2,27 @@ import { Registry, type RegistryItem } from '../utils/Registry';
 
 import { createTheme, NewThemeOptionsSchema } from './createTheme';
 import aubergine from './themeDefinitions/aubergine.json';
+import autumn from './themeDefinitions/autumn.json';
+import berlin from './themeDefinitions/berlin.json';
 import debug from './themeDefinitions/debug.json';
+import desert from './themeDefinitions/desert.json';
 import desertbloom from './themeDefinitions/desertbloom.json';
 import deut_prot_dark from './themeDefinitions/deut_prot_dark.json';
 import deut_prot_light from './themeDefinitions/deut_prot_light.json';
 import gildedgrove from './themeDefinitions/gildedgrove.json';
 import gloom from './themeDefinitions/gloom.json';
+import kyoto from './themeDefinitions/kyoto.json';
+import london from './themeDefinitions/london.json';
 import mars from './themeDefinitions/mars.json';
 import matrix from './themeDefinitions/matrix.json';
+import mumbai from './themeDefinitions/mumbai.json';
+import newyork from './themeDefinitions/newyork.json';
+import osaka from './themeDefinitions/osaka.json';
+import paris from './themeDefinitions/paris.json';
+import reykjavik from './themeDefinitions/reykjavik.json';
+import rio from './themeDefinitions/rio.json';
 import sapphiredusk from './themeDefinitions/sapphiredusk.json';
+import santiago from './themeDefinitions/santiago.json';
 import synthwave from './themeDefinitions/synthwave.json';
 import tritanopia_dark from './themeDefinitions/tritanopia_dark.json';
 import tritanopia_light from './themeDefinitions/tritanopia_light.json';
@@ -18,6 +30,7 @@ import tron from './themeDefinitions/tron.json';
 import victorian from './themeDefinitions/victorian.json';
 import visual_refresh_dark from './themeDefinitions/visual_refresh_dark.json';
 import visual_refresh_light from './themeDefinitions/visual_refresh_light.json';
+import winterblues from './themeDefinitions/winterblues.json';
 import zen from './themeDefinitions/zen.json';
 import { type GrafanaTheme2 } from './types';
 
@@ -30,15 +43,27 @@ const compareThemeNames = new Intl.Collator().compare;
 
 const extraThemes: { [key: string]: unknown } = {
   aubergine,
+  autumn,
+  berlin,
   debug,
+  desert,
   desertbloom,
   deut_prot_dark,
   deut_prot_light,
   gildedgrove,
   gloom,
+  kyoto,
+  london,
   mars,
   matrix,
+  mumbai,
+  newyork,
+  osaka,
+  paris,
+  reykjavik,
+  rio,
   sapphiredusk,
+  santiago,
   synthwave,
   tritanopia_dark,
   tritanopia_light,
@@ -46,6 +71,7 @@ const extraThemes: { [key: string]: unknown } = {
   victorian,
   visual_refresh_dark,
   visual_refresh_light,
+  winterblues,
   zen,
 };
 

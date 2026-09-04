@@ -1,0 +1,64 @@
+{
+  "name": "Rio",
+  "id": "rio",
+  "colors": {
+    "mode": "dark",
+    "border": {
+      "weak": "rgba(244, 196, 48, 0.12)",
+      "medium": "rgba(244, 196, 48, 0.22)",
+      "strong": "rgba(244, 196, 48, 0.35)"
+    },
+    "text": {
+      "primary": "#EAF6F1",
+      "secondary": "#A8D0C0",
+      "disabled": "rgba(255, 255, 255, 0.45)",
+      "link": "#F4C430",
+      "maxContrast": "#FFFFFF"
+    },
+    "primary": {
+      "main": "#F4C430"
+    },
+    "accent": {
+      "main": "#F4C430"
+    },
+    "secondary": {
+      "main": "#1C463A",
+      "text": "#A8D0C0",
+      "border": "rgba(244, 196, 48, 0.20)"
+    },
+    "background": {
+      "canvas": "#071A16",
+      "page": "#0C241E",
+      "primary": "#14352C",
+      "secondary": "#1C463A",
+      "elevated": "#1C463A"
+    },
+    "action": {
+      "hover": "rgba(244, 196, 48, 0.16)",
+      "selected": "rgba(244, 196, 48, 0.12)",
+      "selectedBorder": "#F4C430",
+      "focus": "rgba(244, 196, 48, 0.16)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(255, 255, 255, 0.45)",
+      "disabledBackground": "rgba(244, 196, 48, 0.08)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #F4C430 0%, #CFA628 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #F4C430 0.01%, #CFA628 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.05,
+    "tonalOffset": 0.2
+  },
+  "visualization": {
+    "palette": [
+      "#F4C430",
+      "#2E8B57",
+      "#3D9AD1",
+      "#E85D4C",
+      "#F0D060",
+      "#48A070"
+    ]
+  }
+}
