@@ -1,5 +1,5 @@
 import { type AdHocVariableFilter, type TypedVariableModel } from '@grafana/data';
-import { config, getDataSourceSrv } from '@grafana/runtime';
+import { logStructured, config, getDataSourceSrv } from '@grafana/runtime';
 import {
   AdHocFiltersVariable,
   ConstantVariable,
@@ -80,7 +80,7 @@ export function createVariablesForDashboard(oldModel: DashboardModel, defaultVar
       try {
         return createSceneVariableFromVariableModel(v);
       } catch (err) {
-        console.error(err);
+        logStructured('features.dashboard-scene', 'error', err);
         return null;
       }
     })
@@ -93,7 +93,7 @@ export function createVariablesForDashboard(oldModel: DashboardModel, defaultVar
       try {
         return createSceneVariableFromVariableModelV2(v);
       } catch (err) {
-        console.error(err);
+        logStructured('features.dashboard-scene', 'error', err);
         return null;
       }
     })
@@ -139,7 +139,7 @@ export function createVariablesForSnapshot(oldModel: DashboardModel) {
         // for other variable types we are using the SnapshotVariable
         return createSnapshotVariable(v);
       } catch (err) {
-        console.error(err);
+        logStructured('features.dashboard-scene', 'error', err);
         return null;
       }
     })

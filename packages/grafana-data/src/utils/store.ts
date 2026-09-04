@@ -1,3 +1,4 @@
+import { writeStructuredLog } from './structuredLog';
 /* eslint-disable @grafana/no-direct-local-storage-access */
 type StoreValue = string | number | boolean | null;
 type StoreSubscriber = () => void;
@@ -75,7 +76,11 @@ export class Store {
       try {
         ret = JSON.parse(json);
       } catch (error) {
-        console.error(`Error parsing store object: ${key}. Returning default: ${def}. [${error}]`);
+        writeStructuredLog(
+          'grafana-data',
+          'error',
+          `Error parsing store object: ${key}. Returning default: ${def}. [${error}]`
+        );
       }
     }
     return ret;

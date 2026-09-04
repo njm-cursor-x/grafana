@@ -2,6 +2,7 @@ import { getCenter } from 'ol/extent';
 import { type Geometry, Point } from 'ol/geom';
 
 import { type DataFrame, type Field, FieldType, type KeyValue, toDataFrame } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 import { frameFromGeoJSON } from '../format/geojson';
 import { pointFieldFromLonLat, pointFieldFromGeohash } from '../format/utils';
@@ -227,7 +228,7 @@ export async function getGazetteer(path?: string): Promise<Gazetteer> {
       const data = await response.json();
       lookup = loadGazetteer(path, data);
     } catch (err) {
-      console.warn('Error loading placename lookup', path, err);
+      logStructured('features.geo', 'warn', 'Error loading placename lookup', path, err);
       lookup = {
         path,
         error: 'Error loading URL',

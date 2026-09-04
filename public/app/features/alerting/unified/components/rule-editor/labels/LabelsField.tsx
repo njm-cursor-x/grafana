@@ -5,6 +5,7 @@ import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from
 import { AlertLabels } from '@grafana/alerting/unstable';
 import { type GrafanaTheme2, type SelectableValue } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { Button, type ComboboxOption, Field, InlineLabel, Input, Space, Stack, Text, useStyles2 } from '@grafana/ui';
 
 import { labelsApi } from '../../../api/labelsApi';
@@ -183,7 +184,7 @@ function useCombinedLabels(
               opsValues = result.values.map((value) => value.name);
             }
           } catch (error) {
-            console.error('Failed to fetch label values for key:', key, error);
+            logStructured('features.alerting', 'error', 'Failed to fetch label values for key:', key, error);
           }
         }
 

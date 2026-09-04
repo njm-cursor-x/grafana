@@ -2,7 +2,7 @@ import { css } from '@emotion/css';
 import { useCallback } from 'react';
 import Calendar, { type CalendarType } from 'react-calendar';
 
-import { type GrafanaTheme2, dateTimeParse, type DateTime, type TimeZone } from '@grafana/data';
+import { writeStructuredLog, type GrafanaTheme2, dateTimeParse, type DateTime, type TimeZone } from '@grafana/data';
 import { t } from '@grafana/i18n';
 
 import { useStyles2 } from '../../../themes/ThemeContext';
@@ -70,7 +70,7 @@ function useOnCalendarChange(onChange: (from: DateTime, to: DateTime) => void, t
   return useCallback<NonNullable<React.ComponentProps<typeof Calendar>['onChange']>>(
     (value) => {
       if (!Array.isArray(value)) {
-        return console.error('onCalendarChange: should be run in selectRange={true}');
+        return writeStructuredLog('grafana-ui', 'error', 'onCalendarChange: should be run in selectRange={true}');
       }
 
       if (value[0] && value[1]) {

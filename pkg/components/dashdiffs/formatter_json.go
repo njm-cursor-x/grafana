@@ -8,6 +8,8 @@ import (
 	"sort"
 
 	diff "github.com/yudai/gojsondiff"
+
+	"github.com/grafana/grafana/pkg/infra/log"
 )
 
 type ChangeType int
@@ -22,6 +24,8 @@ const (
 )
 
 var (
+	formatterLogger = log.New("dashdiffs.formatter")
+
 	// changeTypeToSymbol is used for populating the terminating character in
 	// the diff
 	changeTypeToSymbol = map[ChangeType]string{
@@ -156,7 +160,7 @@ func (f *JSONFormatter) Format(diff diff.Diff) (result string, err error) {
 	b := &bytes.Buffer{}
 	err = f.tpl.ExecuteTemplate(b, "JSONDiffWrapper", f.Lines)
 	if err != nil {
-		fmt.Printf("%v\n", err)
+		formatterLogger.Error("Failed to format dashboard diff", "error", err)
 		return "", err
 	}
 

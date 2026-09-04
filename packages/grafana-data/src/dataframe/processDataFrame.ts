@@ -18,6 +18,7 @@ import {
 import { type DataQueryResponseData } from '../types/datasource';
 import { type GraphSeriesXY, type GraphSeriesValue } from '../types/graph';
 import { type PanelData } from '../types/panel';
+import { writeStructuredLog } from '../utils/structuredLog';
 
 import { arrayToDataFrame } from './ArrayDataFrame';
 import { dataFrameFromJSON } from './DataFrameJSON';
@@ -214,7 +215,7 @@ export function toDataFrame(data: any): DataFrame {
     return arrayToDataFrame(data);
   }
 
-  console.warn('Can not convert', data);
+  writeStructuredLog('grafana-data', 'warn', 'Can not convert', data);
   throw new Error('Unsupported data format');
 }
 

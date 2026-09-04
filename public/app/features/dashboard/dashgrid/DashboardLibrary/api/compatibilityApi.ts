@@ -1,5 +1,5 @@
 import { getAPINamespace } from '@grafana/api-clients';
-import { getBackendSrv } from '@grafana/runtime';
+import { logStructured, getBackendSrv } from '@grafana/runtime';
 import { type DashboardJson } from 'app/features/manage-dashboards/types';
 
 /**
@@ -105,8 +105,8 @@ export interface CompatibilityCheckResult {
  *   [{ uid: "prometheus-uid", type: "prometheus" }]
  * );
  *
- * console.log(`Compatibility: ${result.compatibilityScore}%`);
- * console.log(`Missing metrics: ${result.datasourceResults[0].missingMetrics}`);
+ * logStructured('features.dashboard', 'info', `Compatibility: ${result.compatibilityScore}%`);
+ * logStructured('features.dashboard', 'info', `Missing metrics: ${result.datasourceResults[0].missingMetrics}`);
  * ```
  */
 export async function checkDashboardCompatibility(
@@ -138,7 +138,7 @@ export async function checkDashboardCompatibility(
     return response;
   } catch (error) {
     // Log error for debugging
-    console.error('Dashboard compatibility check failed:', error);
+    logStructured('features.dashboard', 'error', 'Dashboard compatibility check failed:', error);
 
     // Re-throw original error for caller to handle
     throw error;

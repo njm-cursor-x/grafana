@@ -1,4 +1,4 @@
-import { config, registerEchoBackend, setEchoSrv } from '@grafana/runtime';
+import { logStructured, config, registerEchoBackend, setEchoSrv } from '@grafana/runtime';
 import { reportMetricPerformanceMark } from 'app/core/utils/metrics';
 
 import { contextSrv } from '../context_srv';
@@ -28,49 +28,49 @@ export async function initEchoSrv() {
   try {
     await initPerformanceBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Performance backend', error);
+    logStructured('core.services', 'error', 'Error initializing EchoSrv Performance backend', error);
   }
 
   try {
     await initFaroBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Faro backend', error);
+    logStructured('core.services', 'error', 'Error initializing EchoSrv Faro backend', error);
   }
 
   try {
     await initGoogleAnalyticsBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv GoogleAnalytics backend', error);
+    logStructured('core.services', 'error', 'Error initializing EchoSrv GoogleAnalytics backend', error);
   }
 
   try {
     await initGoogleAnalaytics4Backend();
   } catch (error) {
-    console.error('Error initializing EchoSrv GoogleAnalaytics4 backend', error);
+    logStructured('core.services', 'error', 'Error initializing EchoSrv GoogleAnalaytics4 backend', error);
   }
 
   try {
     await initRudderstackBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Rudderstack backend', error);
+    logStructured('core.services', 'error', 'Error initializing EchoSrv Rudderstack backend', error);
   }
 
   try {
     await initAzureAppInsightsBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv AzureAppInsights backend', error);
+    logStructured('core.services', 'error', 'Error initializing EchoSrv AzureAppInsights backend', error);
   }
 
   try {
     await initPostHogBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv PostHog backend', error);
+    logStructured('core.services', 'error', 'Error initializing EchoSrv PostHog backend', error);
   }
 
   try {
     await initConsoleBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Console backend', error);
+    logStructured('core.services', 'error', 'Error initializing EchoSrv Console backend', error);
   }
 }
 

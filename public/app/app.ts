@@ -22,6 +22,7 @@ import {
 import { DEFAULT_LANGUAGE } from '@grafana/i18n';
 import { initializeI18n, loadNamespacedResources } from '@grafana/i18n/internal';
 import {
+  logStructured,
   HistoryWrapper,
   locationService,
   setBackendSrv,
@@ -171,7 +172,7 @@ export class GrafanaApp {
         try {
           await initOpenFeature();
         } catch (err) {
-          console.error('Failed to initialize OpenFeature provider', err);
+          logStructured('grafana.frontend', 'error', 'Failed to initialize OpenFeature provider', err);
         }
       }
 
@@ -343,7 +344,7 @@ export class GrafanaApp {
       try {
         cleanupOldExpandedFolders();
       } catch (err) {
-        console.warn('Failed to clean up old expanded folders', err);
+        logStructured('grafana.frontend', 'warn', 'Failed to clean up old expanded folders', err);
       }
 
       this.context = {
@@ -373,7 +374,7 @@ export class GrafanaApp {
 
       await postInitTasks();
     } catch (error) {
-      console.error('Failed to start Grafana', error);
+      logStructured('grafana.frontend', 'error', 'Failed to start Grafana', error);
       window.__grafana_load_failed(error);
     } finally {
       stopMeasure('frontend_app_init');

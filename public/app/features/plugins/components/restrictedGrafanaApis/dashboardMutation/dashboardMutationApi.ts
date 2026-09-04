@@ -12,6 +12,7 @@
  */
 
 import type { DashboardMutationAPI } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { DashboardMutationClient } from 'app/features/dashboard-scene/mutation-api/DashboardMutationClient';
 import { provideMutationClientFactory } from 'app/features/dashboard-scene/mutation-api/clientBridge';
 import type { MutationClient, MutationRequest } from 'app/features/dashboard-scene/mutation-api/types';
@@ -33,7 +34,7 @@ provideMutationClientFactory((sceneObject, resource) => {
       _client = new DashboardMutationClient(sceneObject as DashboardScene);
     }
   } catch (error) {
-    console.error('Failed to register Dashboard Mutation API:', error);
+    logStructured('features.plugins', 'error', 'Failed to register Dashboard Mutation API:', error);
   }
 
   return () => {

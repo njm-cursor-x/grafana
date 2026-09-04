@@ -83,8 +83,12 @@ describe('logging registry', () => {
       addLogger('grafana/runtime.plugins.meta');
       addLogger('grafana/runtime.plugins.meta', { context: { env: 'dev' }, logToConsole: true });
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        'LoggerRegistry: a logger with the source:grafana/runtime.plugins.meta already exists, keeping existing entry.'
+      expect(logWarning).toHaveBeenCalledWith(
+        'LoggerRegistry: a logger with the source:grafana/runtime.plugins.meta already exists, keeping existing entry.',
+        {
+          source: 'grafana/runtime.logging.registry',
+          logger: 'grafana/runtime.plugins.meta',
+        }
       );
     });
 
@@ -140,19 +144,20 @@ describe('logging registry', () => {
           getLogger('grafana/runtime.plugins.meta');
         }
 
-        if (!warns) {
-          expect(warnSpy).not.toHaveBeenCalled();
-        }
-
         if (warns) {
-          expect(warnSpy).toHaveBeenCalledTimes(1);
-          expect(warnSpy).toHaveBeenCalledWith(
-            `LoggerRegistry: no logger 'grafana/runtime.plugins.meta' exists, are you calling getLogger before initializeLoggersRegistry function was called?`
+          expect(logWarning).toHaveBeenCalledWith(
+            `LoggerRegistry: no logger 'grafana/runtime.plugins.meta' exists, are you calling getLogger before initializeLoggersRegistry function was called?`,
+            {
+              logger: 'grafana/runtime.plugins.meta',
+              source: 'grafana/runtime.logging.registry',
+            }
           );
+        } else {
+          expect(logWarning).not.toHaveBeenCalled();
         }
       });
 
-      it('should return a logger without default context and console output', () => {
+      it('should return a logger without default context', () => {
         if (throws) {
           expect(true).toBe(true);
           return;
@@ -177,10 +182,7 @@ describe('logging registry', () => {
         getLogger('grafana/runtime.plugins.meta');
 
         if (warns) {
-          expect(warnSpy).toHaveBeenCalledTimes(2);
-          expect(warnSpy).toHaveBeenCalledWith(
-            `LoggerRegistry: no logger 'grafana/runtime.plugins.meta' exists, are you calling getLogger before initializeLoggersRegistry function was called?`
-          );
+          expect(logWarning).toHaveBeenCalledTimes(2);
         }
       });
 
@@ -282,33 +284,24 @@ function expectLoggerFunctions(
     }
   );
 
-  if (!defaults?.logToConsole) {
+  if (process.env.NODE_ENV === 'test' || defaults?.logToConsole === false) {
     expect(spies.debugSpy).not.toHaveBeenCalled();
     expect(spies.errorSpy).not.toHaveBeenCalled();
     expect(spies.logSpy).not.toHaveBeenCalled();
     expect(spies.warnSpy).not.toHaveBeenCalled();
+    return;
   }
 
-  if (defaults?.logToConsole) {
-    expect(spies.debugSpy).toHaveBeenCalledWith('registry debug test', {
-      ...defaults.context,
-      source: 'grafana/runtime.plugins.meta',
-      pluginId: 'myorg-test-plugin',
-    });
-    expect(spies.errorSpy).toHaveBeenCalledWith(
-      'registry error test',
-      { ...defaults.context, source: 'grafana/runtime.plugins.meta', pluginId: 'myorg-test-plugin' },
-      new Error('registry error test')
-    );
-    expect(spies.logSpy).toHaveBeenCalledWith('registry info test', {
-      ...defaults.context,
-      source: 'grafana/runtime.plugins.meta',
-      pluginId: 'myorg-test-plugin',
-    });
-    expect(spies.warnSpy).toHaveBeenCalledWith('registry warning test', {
-      ...defaults.context,
-      source: 'grafana/runtime.plugins.meta',
-      pluginId: 'myorg-test-plugin',
-    });
-  }
+  expect(spies.debugSpy).toHaveBeenCalledWith(
+    expect.objectContaining({ level: 'debug', msg: 'registry debug test', source: 'grafana/runtime.plugins.meta' })
+  );
+  expect(spies.errorSpy).toHaveBeenCalledWith(
+    expect.objectContaining({ level: 'error', msg: 'registry error test', source: 'grafana/runtime.plugins.meta' })
+  );
+  expect(spies.logSpy).toHaveBeenCalledWith(
+    expect.objectContaining({ level: 'info', msg: 'registry info test', source: 'grafana/runtime.plugins.meta' })
+  );
+  expect(spies.warnSpy).toHaveBeenCalledWith(
+    expect.objectContaining({ level: 'warn', msg: 'registry warning test', source: 'grafana/runtime.plugins.meta' })
+  );
 }

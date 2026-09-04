@@ -14,7 +14,10 @@ export function initializeLoggersRegistry() {
 
 export function addLogger(source: LoggerSource, defaults?: LoggerDefaults): void {
   if (loggersRegistry[source]) {
-    console.warn(`LoggerRegistry: a logger with the source:${source} already exists, keeping existing entry.`);
+    logWarning(`LoggerRegistry: a logger with the source:${source} already exists, keeping existing entry.`, {
+      source: 'grafana/runtime.logging.registry',
+      logger: source,
+    });
     return;
   }
 
@@ -27,7 +30,6 @@ export function getLogger(source: LoggerSource): MonitoringLogger {
 
     // avoid having to mock logger in tests because of the warning message
     if (process.env.NODE_ENV !== 'test') {
-      console.warn(message);
       logWarning(message, { source: 'grafana/runtime.logging.registry', logger: source });
     }
 

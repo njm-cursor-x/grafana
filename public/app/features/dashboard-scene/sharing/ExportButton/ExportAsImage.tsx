@@ -5,7 +5,7 @@ import { useAsyncFn } from 'react-use';
 
 import { type GrafanaTheme2 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
-import { config } from '@grafana/runtime';
+import { logStructured, config } from '@grafana/runtime';
 import { type SceneComponentProps, SceneObjectBase } from '@grafana/scenes';
 import { Alert, Button, TextLink, useStyles2 } from '@grafana/ui';
 import { DashboardInteractions } from 'app/features/dashboard-scene/utils/interactions';
@@ -48,7 +48,7 @@ function ExportAsImageRenderer({ model }: SceneComponentProps<ExportAsImage>) {
 
       return result.blob;
     } catch (error) {
-      console.error('Error exporting image:', error);
+      logStructured('features.dashboard-scene', 'error', 'Error exporting image:', error);
       DashboardInteractions.generateDashboardImageClicked({
         scale: config.rendererDefaultImageScale || 1,
         shareResource: 'dashboard',

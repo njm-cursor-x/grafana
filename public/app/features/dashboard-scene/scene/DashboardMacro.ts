@@ -1,3 +1,4 @@
+import { logStructured } from '@grafana/runtime';
 import { type FormatVariable, type SceneObject, sceneUtils } from '@grafana/scenes';
 
 import { getDashboardSceneFor } from '../utils/utils';
@@ -39,7 +40,7 @@ export function registerDashboardMacro() {
 
     return () => unregister();
   } catch (e) {
-    console.error('Error registering dashboard macro', e);
+    logStructured('features.dashboard-scene', 'error', 'Error registering dashboard macro', e);
     return () => {};
   }
 }

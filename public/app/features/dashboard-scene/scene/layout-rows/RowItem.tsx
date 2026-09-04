@@ -2,7 +2,7 @@ import React from 'react';
 
 import { locationUtil, store } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { config, locationService, logWarning } from '@grafana/runtime';
+import { logStructured, config, locationService, logWarning } from '@grafana/runtime';
 import {
   NewSceneObjectAddedEvent,
   sceneGraph,
@@ -261,7 +261,7 @@ export class RowItem
         layout.setState({ children: newChildren });
       } else {
         const warningMessage = 'Grid item has unexpected parent type';
-        console.warn(warningMessage);
+        logStructured('features.dashboard-scene', 'warn', warningMessage);
         logWarning(warningMessage);
       }
     }
@@ -276,7 +276,7 @@ export class RowItem
       layout.addGridItem(gridItem);
     } else {
       const warningMessage = 'Layout manager does not support addGridItem';
-      console.warn(warningMessage);
+      logStructured('features.dashboard-scene', 'warn', warningMessage);
       logWarning(warningMessage);
     }
     this.setIsDropTarget(false);

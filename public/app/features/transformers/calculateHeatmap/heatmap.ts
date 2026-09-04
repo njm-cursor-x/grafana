@@ -594,7 +594,7 @@ function heatmap(xs: number[], ys: number[], opts?: HeatmapOpts) {
     yBinIncr = yIncrs[Math.max(yIncrIdx, 0)];
   }
 
-  // console.log({
+  // logStructured('features.transformers', 'info', {
   //   yBinIncr,
   //   xBinIncr,
   // });

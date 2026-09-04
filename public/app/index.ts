@@ -2,9 +2,9 @@
 // Since much of Grafana depends on it in includes side effects at import time,
 // we delay loading the rest of the app using import() until the boot data is ready.
 
-import 'vendor/css/font_awesome.css';
-
 import { loadLegacyMoment } from '@grafana/data/internal/legacyMoment';
+import { logStructured } from '@grafana/runtime';
+import 'vendor/css/font_awesome.css';
 
 import { setLegacyMoment } from './core/legacyMomentShim';
 import { initPreferences } from './initPreferences';
@@ -59,7 +59,7 @@ bootstrapWindowData().catch((error) => {
   const isRedirect = error && error.redirect && typeof error.redirect === 'string';
   // If a redirect was thrown, just ignore this. The index.html will handle the redirect
   if (!isRedirect) {
-    console.error('Error bootstrapping Grafana', error);
+    logStructured('grafana.frontend', 'error', 'Error bootstrapping Grafana', error);
     window.__grafana_load_failed(error);
   }
 });

@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { type PluginMeta } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { updateAppPluginSettings } from '@grafana/runtime/unstable';
 import { Button } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
@@ -67,6 +68,6 @@ const updatePluginSettingsAndReload = async (id: string, data: Partial<PluginMet
     // Reloading the page as the plugin meta changes made here wouldn't be propagated throughout the app.
     window.location.reload();
   } catch (e) {
-    console.error('Error while updating the plugin', e);
+    logStructured('features.plugins', 'error', 'Error while updating the plugin', e);
   }
 };

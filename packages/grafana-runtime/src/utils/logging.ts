@@ -1,18 +1,38 @@
+import { createStructuredLogRecord, type StructuredLogLevel, writeStructuredLog } from '@grafana/data';
 import { faro, type LogContext, LogLevel } from '@grafana/faro-web-sdk';
 
+
 import { config } from '../config';
+
+function pushLog(message: string, level: LogLevel, contexts?: LogContext, logToConsole = true) {
+  if (config.grafanaJavascriptAgent.enabled) {
+    faro.api.pushLog([message], { level, context: contexts });
+  }
+  if (logToConsole) {
+    writeStructuredLog(
+      contexts?.source ?? 'grafana/runtime',
+      level === LogLevel.DEBUG ? 'debug' : level === LogLevel.WARN ? 'warn' : 'info',
+      message,
+      contexts
+    );
+  }
+}
+
+function pushError(error: Error, contexts?: LogContext, logToConsole = true) {
+  if (config.grafanaJavascriptAgent.enabled) {
+    faro.api.pushError(error, { context: contexts });
+  }
+  if (logToConsole) {
+    writeStructuredLog(contexts?.source ?? 'grafana/runtime', 'error', error, contexts);
+  }
+}
 
 /**
  * Log a message at INFO level
  * @public
  */
 export function logInfo(message: string, contexts?: LogContext) {
-  if (config.grafanaJavascriptAgent.enabled) {
-    faro.api.pushLog([message], {
-      level: LogLevel.INFO,
-      context: contexts,
-    });
-  }
+  pushLog(message, LogLevel.INFO, contexts);
 }
 
 /**
@@ -21,12 +41,7 @@ export function logInfo(message: string, contexts?: LogContext) {
  * @public
  */
 export function logWarning(message: string, contexts?: LogContext) {
-  if (config.grafanaJavascriptAgent.enabled) {
-    faro.api.pushLog([message], {
-      level: LogLevel.WARN,
-      context: contexts,
-    });
-  }
+  pushLog(message, LogLevel.WARN, contexts);
 }
 
 /**
@@ -35,12 +50,7 @@ export function logWarning(message: string, contexts?: LogContext) {
  * @public
  */
 export function logDebug(message: string, contexts?: LogContext) {
-  if (config.grafanaJavascriptAgent.enabled) {
-    faro.api.pushLog([message], {
-      level: LogLevel.DEBUG,
-      context: contexts,
-    });
-  }
+  pushLog(message, LogLevel.DEBUG, contexts);
 }
 
 /**
@@ -49,10 +59,41 @@ export function logDebug(message: string, contexts?: LogContext) {
  * @public
  */
 export function logError(err: Error, contexts?: LogContext) {
+  pushError(err, contexts);
+}
+
+/**
+ * Converts legacy console-style arguments into a structured console and Faro event.
+ * Prefer a source-scoped logger for new code.
+ */
+export function logStructured(source: string, level: StructuredLogLevel, ...values: unknown[]): void {
+  const record = createStructuredLogRecord(level, source, values);
+  const context: LogContext = {
+    source,
+    ...(record.args && { args: safeStringify(record.args) }),
+  };
+
+  if (level === 'error') {
+    const error = values.find((value): value is Error => value instanceof Error) ?? new Error(record.msg);
+    if (config.grafanaJavascriptAgent.enabled) {
+      faro.api.pushError(error, { context });
+    }
+    writeStructuredLog(source, level, ...values);
+    return;
+  }
+
+  const logLevel = level === 'debug' ? LogLevel.DEBUG : level === 'warn' ? LogLevel.WARN : LogLevel.INFO;
   if (config.grafanaJavascriptAgent.enabled) {
-    faro.api.pushError(err, {
-      context: contexts,
-    });
+    faro.api.pushLog([record.msg], { level: logLevel, context });
+  }
+  writeStructuredLog(source, level, ...values);
+}
+
+function safeStringify(value: unknown): string {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return '[unserializable]';
   }
 }
 
@@ -101,7 +142,7 @@ export interface MonitoringLogger {
 export function createMonitoringLogger(
   source: string,
   defaultContext?: LogContext,
-  logToConsole = false
+  logToConsole = true
 ): MonitoringLogger {
   const createFullContext = (contexts?: LogContext) => ({
     source: source,
@@ -116,11 +157,7 @@ export function createMonitoringLogger(
      * @param {LogContext} [contexts] - Optional additional context to be included.
      */
     logDebug: (message: string, contexts?: LogContext) => {
-      logDebug(message, createFullContext(contexts));
-      if (logToConsole) {
-        // eslint-disable-next-line no-console
-        console.debug(message, createFullContext(contexts));
-      }
+      pushLog(message, LogLevel.DEBUG, createFullContext(contexts), logToConsole);
     },
 
     /**
@@ -129,10 +166,7 @@ export function createMonitoringLogger(
      * @param {LogContext} [contexts] - Optional additional context to be included.
      */
     logInfo: (message: string, contexts?: LogContext) => {
-      logInfo(message, createFullContext(contexts));
-      if (logToConsole) {
-        console.log(message, createFullContext(contexts));
-      }
+      pushLog(message, LogLevel.INFO, createFullContext(contexts), logToConsole);
     },
 
     /**
@@ -141,10 +175,7 @@ export function createMonitoringLogger(
      * @param {LogContext} [contexts] - Optional additional context to be included.
      */
     logWarning: (message: string, contexts?: LogContext) => {
-      logWarning(message, createFullContext(contexts));
-      if (logToConsole) {
-        console.warn(message, createFullContext(contexts));
-      }
+      pushLog(message, LogLevel.WARN, createFullContext(contexts), logToConsole);
     },
 
     /**
@@ -153,10 +184,7 @@ export function createMonitoringLogger(
      * @param {LogContext} [contexts] - Optional additional context to be included.
      */
     logError: (error: Error, contexts?: LogContext) => {
-      logError(error, createFullContext(contexts));
-      if (logToConsole) {
-        console.error(error.message, createFullContext(contexts), error);
-      }
+      pushError(error, createFullContext(contexts), logToConsole);
     },
 
     /**
@@ -168,7 +196,7 @@ export function createMonitoringLogger(
     logMeasurement: (type: string, measurement: MeasurementValues, contexts?: LogContext) => {
       logMeasurement(type, measurement, createFullContext(contexts));
       if (logToConsole) {
-        console.log(type, measurement, createFullContext(contexts));
+        writeStructuredLog(source, 'info', type, measurement, createFullContext(contexts));
       }
     },
   };

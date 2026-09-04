@@ -8,6 +8,7 @@ import {
   type SelectableValue,
   getDataSourceRef,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { getDataSourceInstance } from '@grafana/runtime/unstable';
 import { GroupByVariable, type SceneVariable } from '@grafana/scenes';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
@@ -106,7 +107,7 @@ export function GroupByVariableEditor(props: GroupByVariableEditorProps) {
 
 export function getGroupByVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof GroupByVariable)) {
-    console.warn('getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
+    logStructured('features.dashboard-scene', 'warn', 'getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
     return [];
   }
 

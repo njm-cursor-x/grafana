@@ -1,5 +1,6 @@
 import { type Unsubscribable } from 'rxjs';
 
+import { logStructured } from '@grafana/runtime';
 import { type SceneObjectUrlSyncHandler, type SceneObjectUrlValues, type VizPanel } from '@grafana/scenes';
 
 import { openPanelEditor } from '../panel-edit/openPanelEditor';
@@ -99,7 +100,7 @@ export class DashboardSceneUrlSync implements SceneObjectUrlSyncHandler {
       const panel = findEditPanel(this._scene, values.editPanel);
 
       if (!panel) {
-        console.warn(`Panel ${values.editPanel} not found`);
+        logStructured('features.dashboard-scene', 'warn', `Panel ${values.editPanel} not found`);
         // A rebuild that dropped the panel: release the hold and force the state change that
         // writes `?editPanel=` out, or the URL keeps naming a panel the tree does not have.
         const wasHeld = this._heldEditPanelId !== undefined;

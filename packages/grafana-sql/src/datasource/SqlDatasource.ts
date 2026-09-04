@@ -2,6 +2,7 @@ import { lastValueFrom, type Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
+  writeStructuredLog,
   getDefaultTimeRange,
   type DataFrame,
   DataFrameView,
@@ -215,7 +216,7 @@ export abstract class SqlDatasource extends DataSourceWithBackend<SQLQuery, SQLO
     try {
       response = await this.runMetaQuery(interpolatedQuery, range);
     } catch (error) {
-      console.error(error);
+      writeStructuredLog('grafana-sql', 'error', error);
       throw new Error('error when executing the sql query');
     }
     return this.getResponseParser().transformMetricFindResponse(response);

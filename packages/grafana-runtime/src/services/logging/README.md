@@ -1,6 +1,6 @@
 # Logging Framework
 
-A centralized logger registry built on top of [Grafana Faro Web SDK](https://github.com/grafana/faro-web-sdk). It provides type-safe, source-scoped loggers that forward to the Faro collector, with optional console output for local debugging.
+A centralized logger registry built on top of [Grafana Faro Web SDK](https://github.com/grafana/faro-web-sdk). It provides type-safe, source-scoped loggers that forward to the Faro collector and write structured records to the browser console.
 
 ## Key concepts
 
@@ -54,10 +54,10 @@ logger.logMeasurement('page_load', { duration: 1234, ttfb: 200 }, { route: '/das
 
 ### Console output
 
-Set `logToConsole: true` in the `Loggers` entry to also write to the browser console (useful during development). This wraps each log method so it calls both Faro and the corresponding `console.*` method.
+Loggers write one structured object to the matching browser console method by default. Set `logToConsole: false` only for a source that is too noisy for the browser console.
 
 ```ts
-'grafana.area.myFeature': { logToConsole: true },
+'grafana.area.noisyFeature': { logToConsole: false },
 ```
 
 ### Default context

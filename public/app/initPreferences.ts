@@ -1,4 +1,5 @@
 import type { Preferences } from '@grafana/api-clients/rtkq/preferences/v1';
+import { logStructured } from '@grafana/runtime';
 
 export const initPreferences = async (): Promise<Preferences | undefined> => {
   const preferences = await fetchMergedPreferences();
@@ -51,7 +52,7 @@ export async function fetchMergedPreferences(): Promise<Preferences | undefined>
     }
     return await resp.json();
   } catch (err) {
-    console.warn('Failed to fetch merged preferences', err);
+    logStructured('grafana.frontend', 'warn', 'Failed to fetch merged preferences', err);
     return undefined;
   }
 }

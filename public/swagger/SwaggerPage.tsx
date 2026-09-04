@@ -7,6 +7,7 @@ import SwaggerUI from 'swagger-ui-react';
 
 import { createTheme, monacoLanguageRegistry, type SelectableValue } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { getFeatureFlagClient } from '@grafana/runtime/internal';
 import { Button, Icon, Select, Stack, UserIcon, type UserView } from '@grafana/ui';
 import { setMonacoEnv } from 'app/core/monacoEnv';
@@ -58,7 +59,7 @@ export const Page = () => {
   const namespace = useAsync(async () => {
     const response = await fetch('api/frontend/settings');
     if (!response.ok) {
-      console.warn('No settings found');
+      logStructured('grafana.frontend', 'warn', 'No settings found');
       return 'default';
     }
     const val = await response.json();
@@ -68,7 +69,7 @@ export const Page = () => {
   useAsync(async () => {
     const response = await fetch('api/user');
     if (!response.ok) {
-      console.warn('No user found, show login button');
+      logStructured('grafana.frontend', 'warn', 'No user found, show login button');
       return;
     }
     const val = await response.json();

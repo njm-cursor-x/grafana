@@ -9,6 +9,7 @@ import {
   rangeUtil,
 } from '@grafana/data';
 import { t } from '@grafana/i18n';
+import { logStructured } from '@grafana/runtime';
 import { type TimeRangePickerProps, TimeRangePicker } from '@grafana/ui';
 import { appEvents } from 'app/core/app_events';
 
@@ -136,7 +137,7 @@ function convertToISOString(value: DateTime | string): string {
   }
 
   if (!value?.toISOString) {
-    throw console.error('Invalid DateTime object passed to convertToISOString');
+    throw logStructured('core.components', 'error', 'Invalid DateTime object passed to convertToISOString');
   }
 
   return value.toISOString();

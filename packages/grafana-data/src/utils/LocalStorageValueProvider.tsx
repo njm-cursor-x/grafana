@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import * as React from 'react';
 
 import { store } from './store';
+import { writeStructuredLog } from './structuredLog';
 
 interface Props<T> {
   storageKey: string;
@@ -32,7 +33,7 @@ export const LocalStorageValueProvider = <T,>(props: Props<T>) => {
     try {
       store.setObject(storageKey, value);
     } catch (error) {
-      console.error(error);
+      writeStructuredLog('grafana-data', 'error', error);
     }
     setState({ value });
   };
@@ -41,7 +42,7 @@ export const LocalStorageValueProvider = <T,>(props: Props<T>) => {
     try {
       store.delete(storageKey);
     } catch (error) {
-      console.log(error);
+      writeStructuredLog('grafana-data', 'info', error);
     }
     setState({ value: defaultValue });
   };

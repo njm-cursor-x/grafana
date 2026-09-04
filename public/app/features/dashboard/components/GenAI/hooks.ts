@@ -3,6 +3,7 @@ import { useAsync } from 'react-use';
 import { type Subscription } from 'rxjs';
 
 import { llm } from '@grafana/llm';
+import { logStructured } from '@grafana/runtime';
 import { getLogger } from '@grafana/runtime/unstable';
 import { useAppNotification } from 'app/core/copy/appNotification';
 
@@ -69,7 +70,7 @@ export function useLLMStream(options: Options = defaultOptions): UseLLMStreamRes
         'Failed to generate content using LLM',
         'Please try again or if the problem persists, contact your organization admin.'
       );
-      console.error(e);
+      logStructured('features.dashboard', 'error', e);
       getLogger('features.dashboards.genai').logError(e, {
         messages: JSON.stringify(messages),
         model,

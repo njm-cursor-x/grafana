@@ -1713,7 +1713,7 @@ If `custom_endpoint` required authentication, you can set the API key here. Only
 
 #### `instrumentations_console_enabled`
 
-Enables the [Console instrumentation](https://grafana.com/docs/grafana-cloud/monitor-applications/frontend-observability/instrument/console-instrumentation/) for Grafana Faro, defaults to `true`.
+Enables the [Console instrumentation](https://grafana.com/docs/grafana-cloud/monitor-applications/frontend-observability/instrument/console-instrumentation/) for Grafana Faro, defaults to `false`. Grafana's structured frontend logger sends its records directly to Faro, so enabling console instrumentation can duplicate those records.
 
 #### `instrumentations_performance_enabled`
 

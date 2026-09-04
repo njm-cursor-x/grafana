@@ -2,7 +2,7 @@ import { css, cx } from '@emotion/css';
 import type * as monacoType from 'monaco-editor/esm/vs/editor/editor.api';
 import { PureComponent } from 'react';
 
-import { type GrafanaTheme2, monacoLanguageRegistry } from '@grafana/data';
+import { writeStructuredLog, type GrafanaTheme2, monacoLanguageRegistry } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 
 import { withTheme2 } from '../../themes/ThemeContext';
@@ -43,7 +43,7 @@ class UnthemedCodeEditor extends PureComponent<Props> {
       }
 
       if (!this.monaco) {
-        console.warn('Monaco instance not loaded yet');
+        writeStructuredLog('grafana-ui', 'warn', 'Monaco instance not loaded yet');
         return;
       }
 

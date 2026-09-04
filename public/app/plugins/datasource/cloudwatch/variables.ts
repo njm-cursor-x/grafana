@@ -8,6 +8,7 @@ import {
   type MetricFindValue,
   type SelectableValue,
 } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 
 import { VariableQueryEditor } from './components/VariableQueryEditor/VariableQueryEditor';
 import { ALL_ACCOUNTS_OPTION } from './components/shared/Account';
@@ -57,7 +58,7 @@ export class CloudWatchVariableSupport extends CustomVariableSupport<CloudWatchD
           return this.handleAccountsQuery(query);
       }
     } catch (error) {
-      console.error(`Could not run CloudWatchMetricFindQuery ${query}`, error);
+      logStructured('plugins.datasource', 'error', `Could not run CloudWatchMetricFindQuery ${query}`, error);
       return [];
     }
   }

@@ -3,7 +3,7 @@ import { type PointerEvent as ReactPointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 
 import { type GrafanaTheme2 } from '@grafana/data';
-import { logWarning } from '@grafana/runtime';
+import { logStructured, logWarning } from '@grafana/runtime';
 import {
   sceneGraph,
   type SceneComponentProps,
@@ -242,7 +242,7 @@ export class DashboardLayoutOrchestrator extends SceneObjectBase<DashboardLayout
             }
           } else {
             const warningMessage = 'No grid item to drag';
-            console.warn(warningMessage);
+            logStructured('features.dashboard-scene', 'warn', warningMessage);
             logWarning(warningMessage);
           }
         });

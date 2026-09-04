@@ -1,4 +1,5 @@
 import type { AppPluginConfig } from '@grafana/data';
+import { logStructured } from '@grafana/runtime';
 import { getPluginSettings } from '@grafana/runtime/unstable';
 import { contextSrv } from 'app/core/services/context_srv';
 
@@ -33,6 +34,11 @@ async function preload(config: AppPluginConfig): Promise<void> {
       return;
     }
 
-    console.error(`[Plugins] Failed to preload plugin: ${config.path} (version: ${config.version})`, error);
+    logStructured(
+      'features.plugins',
+      'error',
+      `[Plugins] Failed to preload plugin: ${config.path} (version: ${config.version})`,
+      error
+    );
   }
 }

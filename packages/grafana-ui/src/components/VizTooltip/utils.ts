@@ -1,4 +1,5 @@
 import {
+  writeStructuredLog,
   FALLBACK_COLOR,
   type Field,
   FieldType,
@@ -100,7 +101,7 @@ const stringifyValue = (value: unknown): string => {
     return JSON.stringify(value);
   } catch (error) {
     // This path shouldn't be hittable
-    console.warn('Cannot render tooltip value', { error, value });
+    writeStructuredLog('grafana-ui', 'warn', 'Cannot render tooltip value', { error, value });
     return String(value);
   }
 };

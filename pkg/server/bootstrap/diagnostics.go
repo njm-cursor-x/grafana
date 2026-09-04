@@ -24,6 +24,8 @@ const (
 	tracingFileEnvName        = "GF_DIAGNOSTICS_TRACING_FILE"
 )
 
+var diagnosticsLogger = log.New("diagnostics")
+
 // Diagnostics holds the CPU-profiling (pprof) and execution-tracing inputs the
 // bootstrap process configures at startup. Values originate from CLI flags but
 // are passed as plain data so bootstrap does not depend on the CLI layer.
@@ -137,7 +139,7 @@ func setupProfiling(profile bool, profileAddr string, profilePort uint64, blockR
 	}
 
 	if profileDiagnostics.enabled {
-		fmt.Println("diagnostics: pprof profiling enabled", "addr", profileDiagnostics.addr, "port", profileDiagnostics.port, "blockProfileRate", profileDiagnostics.blockRate, "mutexProfileRate", profileDiagnostics.mutexRate)
+		diagnosticsLogger.Info("Pprof profiling enabled", "addr", profileDiagnostics.addr, "port", profileDiagnostics.port, "blockProfileRate", profileDiagnostics.blockRate, "mutexProfileRate", profileDiagnostics.mutexRate)
 		runtime.SetBlockProfileRate(profileDiagnostics.blockRate)
 		runtime.SetMutexProfileFraction(profileDiagnostics.mutexRate)
 
@@ -162,7 +164,7 @@ func setupTracing(tracing bool, tracingFile string, logger *log.ConcreteLogger) 
 	}
 
 	if traceDiagnostics.enabled {
-		fmt.Println("diagnostics: tracing enabled", "file", traceDiagnostics.file)
+		diagnosticsLogger.Info("Tracing enabled", "file", traceDiagnostics.file)
 		f, err := os.Create(traceDiagnostics.file)
 		if err != nil {
 			panic(err)

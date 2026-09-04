@@ -73,7 +73,7 @@ class DashboardQueryRunnerImpl implements DashboardQueryRunner {
       takeUntil(this.runs.asObservable()),
       mergeAll(),
       reduce((acc: DashboardQueryRunnerWorkerResult, value: DashboardQueryRunnerWorkerResult) => {
-        // console.log({ acc: acc.annotations.length, value: value.annotations.length });
+        // logStructured('features.query', 'info', { acc: acc.annotations.length, value: value.annotations.length });
         // should we use scan or reduce here
         // reduce will only emit when all observables are completed
         // scan will emit when any observable is completed
