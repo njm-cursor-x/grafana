@@ -4,20 +4,33 @@ import { useId, useState } from 'react';
 import { createTheme, type GrafanaTheme2, type NewThemeOptions } from '@grafana/data';
 import { NewThemeOptionsSchema } from '@grafana/data/internal';
 import aubergine from '@grafana/data/themes/definitions/aubergine.json';
+import autumn from '@grafana/data/themes/definitions/autumn.json';
+import berlin from '@grafana/data/themes/definitions/berlin.json';
 import debug from '@grafana/data/themes/definitions/debug.json';
+import desert from '@grafana/data/themes/definitions/desert.json';
 import desertbloom from '@grafana/data/themes/definitions/desertbloom.json';
 import deut_prot_dark from '@grafana/data/themes/definitions/deut_prot_dark.json';
 import deut_prot_light from '@grafana/data/themes/definitions/deut_prot_light.json';
 import gildedgrove from '@grafana/data/themes/definitions/gildedgrove.json';
 import gloom from '@grafana/data/themes/definitions/gloom.json';
+import kyoto from '@grafana/data/themes/definitions/kyoto.json';
+import london from '@grafana/data/themes/definitions/london.json';
 import mars from '@grafana/data/themes/definitions/mars.json';
 import matrix from '@grafana/data/themes/definitions/matrix.json';
+import mumbai from '@grafana/data/themes/definitions/mumbai.json';
+import newyork from '@grafana/data/themes/definitions/newyork.json';
+import osaka from '@grafana/data/themes/definitions/osaka.json';
+import paris from '@grafana/data/themes/definitions/paris.json';
+import reykjavik from '@grafana/data/themes/definitions/reykjavik.json';
+import rio from '@grafana/data/themes/definitions/rio.json';
 import sapphiredusk from '@grafana/data/themes/definitions/sapphiredusk.json';
+import santiago from '@grafana/data/themes/definitions/santiago.json';
 import synthwave from '@grafana/data/themes/definitions/synthwave.json';
 import tritanopia_dark from '@grafana/data/themes/definitions/tritanopia_dark.json';
 import tritanopia_light from '@grafana/data/themes/definitions/tritanopia_light.json';
 import tron from '@grafana/data/themes/definitions/tron.json';
 import victorian from '@grafana/data/themes/definitions/victorian.json';
+import winterblues from '@grafana/data/themes/definitions/winterblues.json';
 import zen from '@grafana/data/themes/definitions/zen.json';
 import themeJsonSchema from '@grafana/data/themes/schema.generated.json';
 import { t } from '@grafana/i18n';
@@ -53,20 +66,33 @@ const themeMap: Record<string, NewThemeOptions> = {
 
 const experimentalDefinitions: Record<string, unknown> = {
   aubergine,
+  autumn,
+  berlin,
   debug,
+  desert,
   desertbloom,
   deut_prot_dark,
   deut_prot_light,
   gildedgrove,
   gloom,
+  kyoto,
+  london,
   mars,
   matrix,
+  mumbai,
+  newyork,
+  osaka,
+  paris,
+  reykjavik,
+  rio,
   sapphiredusk,
+  santiago,
   synthwave,
   tritanopia_dark,
   tritanopia_light,
   tron,
   victorian,
+  winterblues,
   zen,
 };
 

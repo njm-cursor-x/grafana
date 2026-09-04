@@ -1,0 +1,65 @@
+{
+  "name": "Desert",
+  "id": "desert",
+  "colors": {
+    "mode": "light",
+    "border": {
+      "weak": "rgba(107, 83, 68, 0.14)",
+      "medium": "rgba(107, 83, 68, 0.24)",
+      "strong": "rgba(107, 83, 68, 0.36)"
+    },
+    "text": {
+      "primary": "#33302C",
+      "secondary": "#6B5344",
+      "disabled": "rgba(0, 0, 0, 0.45)",
+      "link": "#C65D3B",
+      "maxContrast": "#000000"
+    },
+    "primary": {
+      "main": "#C65D3B"
+    },
+    "accent": {
+      "main": "#C65D3B"
+    },
+    "secondary": {
+      "main": "#FFFFFF",
+      "text": "#6B5344",
+      "border": "rgba(107, 83, 68, 0.20)",
+      "contrastText": "#33302C"
+    },
+    "background": {
+      "canvas": "#F5E6D3",
+      "page": "#FAF0E4",
+      "primary": "#FFF8F0",
+      "secondary": "#F0E0CC",
+      "elevated": "#FFF8F0"
+    },
+    "action": {
+      "hover": "rgba(107, 83, 68, 0.10)",
+      "selected": "rgba(107, 83, 68, 0.18)",
+      "selectedBorder": "#C65D3B",
+      "focus": "rgba(107, 83, 68, 0.10)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(0, 0, 0, 0.45)",
+      "disabledBackground": "rgba(107, 83, 68, 0.06)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #C65D3B 0%, #A84F32 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #C65D3B 0.01%, #A84F32 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.03,
+    "tonalOffset": 0.15
+  },
+  "visualization": {
+    "palette": [
+      "#C65D3B",
+      "#B8860B",
+      "#A0522D",
+      "#E08A3C",
+      "#8B6914",
+      "#D2691E"
+    ]
+  }
+}

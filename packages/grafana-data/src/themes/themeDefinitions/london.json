@@ -1,0 +1,64 @@
+{
+  "name": "London",
+  "id": "london",
+  "colors": {
+    "mode": "dark",
+    "border": {
+      "weak": "rgba(200, 16, 46, 0.12)",
+      "medium": "rgba(200, 16, 46, 0.22)",
+      "strong": "rgba(200, 16, 46, 0.35)"
+    },
+    "text": {
+      "primary": "#DDE1E8",
+      "secondary": "#A8B0BE",
+      "disabled": "rgba(255, 255, 255, 0.45)",
+      "link": "#C8102E",
+      "maxContrast": "#FFFFFF"
+    },
+    "primary": {
+      "main": "#C8102E"
+    },
+    "accent": {
+      "main": "#C8102E"
+    },
+    "secondary": {
+      "main": "#383E4A",
+      "text": "#A8B0BE",
+      "border": "rgba(200, 16, 46, 0.20)"
+    },
+    "background": {
+      "canvas": "#1B1E24",
+      "page": "#22262E",
+      "primary": "#2C313C",
+      "secondary": "#383E4A",
+      "elevated": "#383E4A"
+    },
+    "action": {
+      "hover": "rgba(200, 16, 46, 0.16)",
+      "selected": "rgba(200, 16, 46, 0.12)",
+      "selectedBorder": "#C8102E",
+      "focus": "rgba(200, 16, 46, 0.16)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(255, 255, 255, 0.45)",
+      "disabledBackground": "rgba(200, 16, 46, 0.08)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #C8102E 0%, #AA0D27 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #C8102E 0.01%, #AA0D27 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.05,
+    "tonalOffset": 0.2
+  },
+  "visualization": {
+    "palette": [
+      "#C8102E",
+      "#C5A572",
+      "#6B7C93",
+      "#F4F1EA",
+      "#9A1A2E",
+      "#8A9BB0"
+    ]
+  }
+}

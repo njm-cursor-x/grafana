@@ -11,6 +11,19 @@ export function getSelectableThemes() {
     'sapphiredusk',
     'tron',
     'gloom',
+    'desert',
+    'autumn',
+    'winterblues',
+    'newyork',
+    'osaka',
+    'santiago',
+    'london',
+    'paris',
+    'kyoto',
+    'reykjavik',
+    'mumbai',
+    'rio',
+    'berlin',
   ];
 
   return getBuiltInThemes(allowedExtraThemes);

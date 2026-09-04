@@ -1,0 +1,64 @@
+{
+  "name": "New York",
+  "id": "newyork",
+  "colors": {
+    "mode": "dark",
+    "border": {
+      "weak": "rgba(247, 181, 0, 0.12)",
+      "medium": "rgba(247, 181, 0, 0.22)",
+      "strong": "rgba(247, 181, 0, 0.35)"
+    },
+    "text": {
+      "primary": "#E8E6E1",
+      "secondary": "#B8B6B0",
+      "disabled": "rgba(255, 255, 255, 0.45)",
+      "link": "#F7B500",
+      "maxContrast": "#FFFFFF"
+    },
+    "primary": {
+      "main": "#F7B500"
+    },
+    "accent": {
+      "main": "#F7B500"
+    },
+    "secondary": {
+      "main": "#2E2E2E",
+      "text": "#B8B6B0",
+      "border": "rgba(247, 181, 0, 0.20)"
+    },
+    "background": {
+      "canvas": "#121212",
+      "page": "#1A1A1A",
+      "primary": "#242424",
+      "secondary": "#2E2E2E",
+      "elevated": "#2E2E2E"
+    },
+    "action": {
+      "hover": "rgba(247, 181, 0, 0.16)",
+      "selected": "rgba(247, 181, 0, 0.12)",
+      "selectedBorder": "#F7B500",
+      "focus": "rgba(247, 181, 0, 0.16)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(255, 255, 255, 0.45)",
+      "disabledBackground": "rgba(247, 181, 0, 0.08)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #F7B500 0%, #D19900 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #F7B500 0.01%, #D19900 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.05,
+    "tonalOffset": 0.2
+  },
+  "visualization": {
+    "palette": [
+      "#F7B500",
+      "#4A90D9",
+      "#C4C4C4",
+      "#E23D28",
+      "#F0C040",
+      "#6BA3D9"
+    ]
+  }
+}

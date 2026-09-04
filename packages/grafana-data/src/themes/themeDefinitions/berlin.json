@@ -1,0 +1,64 @@
+{
+  "name": "Berlin",
+  "id": "berlin",
+  "colors": {
+    "mode": "dark",
+    "border": {
+      "weak": "rgba(240, 212, 0, 0.12)",
+      "medium": "rgba(240, 212, 0, 0.22)",
+      "strong": "rgba(240, 212, 0, 0.35)"
+    },
+    "text": {
+      "primary": "#EDEDED",
+      "secondary": "#B0B0B0",
+      "disabled": "rgba(255, 255, 255, 0.45)",
+      "link": "#F0D400",
+      "maxContrast": "#FFFFFF"
+    },
+    "primary": {
+      "main": "#F0D400"
+    },
+    "accent": {
+      "main": "#F0D400"
+    },
+    "secondary": {
+      "main": "#303030",
+      "text": "#B0B0B0",
+      "border": "rgba(240, 212, 0, 0.20)"
+    },
+    "background": {
+      "canvas": "#161616",
+      "page": "#1C1C1C",
+      "primary": "#262626",
+      "secondary": "#303030",
+      "elevated": "#303030"
+    },
+    "action": {
+      "hover": "rgba(240, 212, 0, 0.16)",
+      "selected": "rgba(240, 212, 0, 0.12)",
+      "selectedBorder": "#F0D400",
+      "focus": "rgba(240, 212, 0, 0.16)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(255, 255, 255, 0.45)",
+      "disabledBackground": "rgba(240, 212, 0, 0.08)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #F0D400 0%, #CCB400 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #F0D400 0.01%, #CCB400 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.05,
+    "tonalOffset": 0.2
+  },
+  "visualization": {
+    "palette": [
+      "#F0D400",
+      "#E30613",
+      "#6E6E6E",
+      "#3D7EA6",
+      "#F5E040",
+      "#8A8A8A"
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "name": "Reykjavik",
+  "id": "reykjavik",
+  "colors": {
+    "mode": "dark",
+    "border": {
+      "weak": "rgba(61, 220, 151, 0.12)",
+      "medium": "rgba(61, 220, 151, 0.22)",
+      "strong": "rgba(61, 220, 151, 0.35)"
+    },
+    "text": {
+      "primary": "#E4EEF2",
+      "secondary": "#A8C5D0",
+      "disabled": "rgba(255, 255, 255, 0.45)",
+      "link": "#3DDC97",
+      "maxContrast": "#FFFFFF"
+    },
+    "primary": {
+      "main": "#3DDC97"
+    },
+    "accent": {
+      "main": "#3DDC97"
+    },
+    "secondary": {
+      "main": "#243640",
+      "text": "#A8C5D0",
+      "border": "rgba(61, 220, 151, 0.20)"
+    },
+    "background": {
+      "canvas": "#0C1418",
+      "page": "#121C22",
+      "primary": "#1A2830",
+      "secondary": "#243640",
+      "elevated": "#243640"
+    },
+    "action": {
+      "hover": "rgba(61, 220, 151, 0.16)",
+      "selected": "rgba(61, 220, 151, 0.12)",
+      "selectedBorder": "#3DDC97",
+      "focus": "rgba(61, 220, 151, 0.16)",
+      "hoverOpacity": 0.08,
+      "disabledText": "rgba(255, 255, 255, 0.45)",
+      "disabledBackground": "rgba(61, 220, 151, 0.08)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #3DDC97 0%, #33BB80 100%)",
+      "brandVertical": "linear-gradient(0.01deg, #3DDC97 0.01%, #33BB80 99.99%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.05,
+    "tonalOffset": 0.2
+  },
+  "visualization": {
+    "palette": [
+      "#3DDC97",
+      "#7EC8E3",
+      "#C9A227",
+      "#4B6FA8",
+      "#2BB87A",
+      "#A0D8EC"
+    ]
+  }
+}
