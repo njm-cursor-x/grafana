@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 
 import { type DataQuery, store } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
+import { mockLogger } from '@grafana/test-utils/unstable';
 import { SortOrder } from 'app/core/utils/richHistoryTypes';
 
 import RichHistoryIndexedDBStorage from './RichHistoryIndexedDBStorage';
@@ -752,36 +753,38 @@ describe('migrateToIndexedDB', () => {
   });
 
   it('should abandon migration after max attempts: warn, do not mark complete, do not over-increment', async () => {
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    try {
-      store.setObject(RICH_HISTORY_KEY, [validEntry1]);
+    const logger = mockLogger('features.query-history.indexed-db');
+    store.setObject(RICH_HISTORY_KEY, [validEntry1]);
 
-      // Set attempts to the cap so the next call abandons.
-      await indexedDBStorage.setMetadata('migrationAttempts', 3);
+    // Set attempts to the cap so the next call abandons.
+    await indexedDBStorage.setMetadata('migrationAttempts', 3);
 
-      await migrateToIndexedDB(indexedDBStorage);
+    await migrateToIndexedDB(indexedDBStorage);
 
-      // Should have fired abandoned telemetry with the capped attempt count.
-      expect(reportInteraction).toHaveBeenCalledWith('grafana_query_history_migration_abandoned', {
-        attempts: 3,
-      });
+    // Should have fired abandoned telemetry with the capped attempt count.
+    expect(reportInteraction).toHaveBeenCalledWith('grafana_query_history_migration_abandoned', {
+      attempts: 3,
+    });
 
-      // Should warn (not a UI notification).
-      expect(warnSpy).toHaveBeenCalled();
+    expect(logger.logWarning).toHaveBeenCalledWith(
+      'Query history migration to IndexedDB did not succeed after the maximum number of attempts',
+      expect.objectContaining({
+        operation: 'migrateToIndexedDB',
+        attempts: '3',
+        maxAttempts: '3',
+      })
+    );
 
-      // Should NOT be marked complete — leaves recovery open for a future fixed build / support reset.
-      const complete = await indexedDBStorage.getMetadata('migrationComplete');
-      expect(complete).toBeUndefined();
+    // Should NOT be marked complete — leaves recovery open for a future fixed build / support reset.
+    const complete = await indexedDBStorage.getMetadata('migrationComplete');
+    expect(complete).toBeUndefined();
 
-      // Counter must not grow past the cap.
-      const attempts = await indexedDBStorage.getMetadata('migrationAttempts');
-      expect(attempts).toBe(3);
+    // Counter must not grow past the cap.
+    const attempts = await indexedDBStorage.getMetadata('migrationAttempts');
+    expect(attempts).toBe(3);
 
-      // Data should NOT have been migrated.
-      const result = await indexedDBStorage.getRichHistory(queryFilters());
-      expect(result.total).toBe(0);
-    } finally {
-      warnSpy.mockRestore();
-    }
+    // Data should NOT have been migrated.
+    const result = await indexedDBStorage.getRichHistory(queryFilters());
+    expect(result.total).toBe(0);
   });
 });

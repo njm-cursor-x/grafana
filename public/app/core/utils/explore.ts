@@ -235,13 +235,10 @@ export async function ensureQueries(
         try {
           await getDataSourceInstance(query.datasource.uid);
         } catch {
-          getLogger('core.explore').logError(
-            new Error('Query removed because its datasource is no longer available'),
-            {
-              operation: 'ensureQueries',
-              datasourceUid: query.datasource.uid ?? '',
-            }
-          );
+          getLogger('core.explore').logError(new Error('Query removed because its datasource is no longer available'), {
+            operation: 'ensureQueries',
+            datasourceUid: query.datasource.uid ?? '',
+          });
           validDS = false;
         }
       }
