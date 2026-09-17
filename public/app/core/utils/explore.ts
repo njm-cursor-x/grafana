@@ -24,7 +24,8 @@ import {
   urlUtil,
   generateUUID,
 } from '@grafana/data';
-import { getDataSourceInstance } from '@grafana/runtime/unstable';
+import { TracedError } from '@grafana/runtime';
+import { getDataSourceInstance, getLogger } from '@grafana/runtime/unstable';
 import { RefreshPicker } from '@grafana/ui';
 import { ExpressionDatasourceUID } from 'app/features/expressions/types';
 import { type QueryOptions, type QueryTransaction } from 'app/types/explore';
@@ -159,7 +160,9 @@ export const safeStringifyValue = (value: unknown, space?: number) => {
   try {
     return JSON.stringify(value, null, space);
   } catch (error) {
-    console.error(error);
+    getLogger('core.explore').logError(new TracedError('Failed to stringify value', error), {
+      operation: 'safeStringifyValue',
+    });
   }
 
   return '';
@@ -232,7 +235,13 @@ export async function ensureQueries(
         try {
           await getDataSourceInstance(query.datasource.uid);
         } catch {
-          console.error(`One of the queries has a datasource that is no longer available and was removed.`);
+          getLogger('core.explore').logError(
+            new Error('Query removed because its datasource is no longer available'),
+            {
+              operation: 'ensureQueries',
+              datasourceUid: query.datasource.uid ?? '',
+            }
+          );
           validDS = false;
         }
       }

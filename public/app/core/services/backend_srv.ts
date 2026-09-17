@@ -32,7 +32,9 @@ import {
   config,
   type FetchError,
   type FetchResponse,
+  TracedError,
 } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { appEvents } from 'app/core/app_events';
 import { getConfig } from 'app/core/config';
 import { getSessionExpiry, hasRotatableSession } from 'app/core/utils/auth';
@@ -116,7 +118,9 @@ export class BackendSrv implements BackendService {
       const result = await fp.get();
       this.deviceID = result.visitorId;
     } catch (error) {
-      console.error(error);
+      getLogger('core.backend-srv').logError(new TracedError('Failed to initialize Grafana device ID', error), {
+        operation: 'initGrafanaDeviceID',
+      });
     }
   }
 
@@ -241,7 +245,10 @@ export class BackendSrv implements BackendService {
             observer.complete();
           }) // runs in background
           .catch((e) => {
-            console.log(requestId, 'catch', e);
+            getLogger('core.backend-srv').logError(new TracedError('Chunked request failed', e), {
+              operation: 'chunked',
+              requestId,
+            });
             observer.error(e);
           }); // from abort
       },

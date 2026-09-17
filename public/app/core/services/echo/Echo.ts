@@ -7,7 +7,9 @@ import {
   EchoEventType,
   MAX_PAGE_URL_LENGTH,
   TRUNCATION_MARKER,
+  TracedError,
 } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 import { contextSrv } from '../context_srv';
 
@@ -76,7 +78,9 @@ export class Echo implements EchoSrv {
             try {
               cb(payload.properties ?? {});
             } catch (err) {
-              console.error(`[Echo] onInteraction subscriber error for "${payload.interactionName}":`, err);
+              getLogger('core.echo').logError(new TracedError('onInteraction subscriber error', err), {
+                interactionName: payload.interactionName,
+              });
             }
           }
         }

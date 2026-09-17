@@ -1,6 +1,7 @@
 import { type Observable, Subject } from 'rxjs';
 
 import { type BackendSrvRequest } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 
 export interface QueueState extends Record<string, { state: FetchStatus; options: BackendSrvRequest }> {}
 
@@ -90,8 +91,10 @@ export class FetchQueue {
       []
     );
 
-    console.log('FetchQueue noOfStarted', update.noOfInProgress);
-    console.log('FetchQueue noOfNotStarted', update.noOfPending);
-    console.log('FetchQueue state', entriesWithoutOptions);
+    getLogger('core.backend-srv').logDebug('FetchQueue state', {
+      noOfInProgress: String(update.noOfInProgress),
+      noOfPending: String(update.noOfPending),
+      state: JSON.stringify(entriesWithoutOptions),
+    });
   };
 }

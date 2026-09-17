@@ -1,6 +1,7 @@
 import { type Span, SpanStatusCode } from '@opentelemetry/api';
 
 import { config, getJourneyTracker } from '@grafana/runtime';
+import { mockLogger } from '@grafana/test-utils/unstable';
 
 import { JourneyTrackerImpl } from './JourneyTrackerImpl';
 
@@ -676,7 +677,7 @@ describe('JourneyTrackerImpl', () => {
   // -------------------------------------------------------------------------
 
   it('should isolate throwing onEnd callbacks so later ones still run', () => {
-    const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+    const logger = mockLogger('core.journeys');
     const handle = tracker.startJourney('dashboard_save');
 
     const throwingCb = jest.fn(() => {
@@ -692,12 +693,7 @@ describe('JourneyTrackerImpl', () => {
     expect(throwingCb).toHaveBeenCalledTimes(1);
     // Critical: the second callback (e.g. Echo unsubscribe) must still run.
     expect(cleanupCb).toHaveBeenCalledTimes(1);
-    expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[JourneyTracker] onEnd callback error'),
-      expect.any(Error)
-    );
-
-    errorSpy.mockRestore();
+    expect(logger.logError).toHaveBeenCalledWith(expect.any(Error), { journeyType: 'dashboard_save' });
   });
 });
 

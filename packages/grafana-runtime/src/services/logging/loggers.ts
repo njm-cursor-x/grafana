@@ -17,7 +17,18 @@ export const Loggers = {
   'features.correlations': {},
   'features.dashboards.genai': {},
   'features.query-history.local-storage': {},
+  'features.query-history.indexed-db': {},
   'core.crash-detection': {},
+  'core.app': {},
+  'core.backend-srv': {},
+  'core.context-srv': {},
+  'core.fetch': {},
+  'core.echo': {},
+  'core.metrics': {},
+  'core.explore': {},
+  'core.short-links': {},
+  'core.notifications': {},
+  'core.journeys': {},
   'extensions.auth-config.scim': { context: { module: 'SCIM' } },
 } satisfies Record<string, LoggerDefaults>;
 

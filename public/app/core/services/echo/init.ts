@@ -1,4 +1,5 @@
-import { config, registerEchoBackend, setEchoSrv } from '@grafana/runtime';
+import { config, registerEchoBackend, setEchoSrv, TracedError } from '@grafana/runtime';
+import { getLogger } from '@grafana/runtime/unstable';
 import { reportMetricPerformanceMark } from 'app/core/utils/metrics';
 
 import { contextSrv } from '../context_srv';
@@ -28,49 +29,59 @@ export async function initEchoSrv() {
   try {
     await initPerformanceBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Performance backend', error);
+    logEchoInitError('performance', error);
   }
 
   try {
     await initFaroBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Faro backend', error);
+    logEchoInitError('faro', error);
   }
 
   try {
     await initGoogleAnalyticsBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv GoogleAnalytics backend', error);
+    logEchoInitError('google-analytics', error);
   }
 
   try {
     await initGoogleAnalaytics4Backend();
   } catch (error) {
-    console.error('Error initializing EchoSrv GoogleAnalaytics4 backend', error);
+    logEchoInitError('google-analytics-4', error);
   }
 
   try {
     await initRudderstackBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Rudderstack backend', error);
+    logEchoInitError('rudderstack', error);
   }
 
   try {
     await initAzureAppInsightsBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv AzureAppInsights backend', error);
+    logEchoInitError('azure-app-insights', error);
   }
 
   try {
     await initPostHogBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv PostHog backend', error);
+    logEchoInitError('posthog', error);
   }
 
   try {
     await initConsoleBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Console backend', error);
+    logEchoInitError('console', error);
+  }
+}
+
+function logEchoInitError(backend: string, error: unknown) {
+  try {
+    getLogger('core.echo').logError(new TracedError('Error initializing EchoSrv backend', error), { backend });
+  } catch {
+    // Faro may not be initialized yet (it is itself an Echo backend).
+    // eslint-disable-next-line no-console
+    console.error(`Error initializing EchoSrv ${backend} backend`, error);
   }
 }
 
