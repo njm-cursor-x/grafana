@@ -39,7 +39,13 @@ jest.mock('@grafana/runtime', () => {
 });
 
 function setLocation(pathname: string) {
-  Object.defineProperty(window, 'location', { value: { pathname }, writable: true });
+  // Keep href so isolateModules re-evaluating GrafanaBootConfig (via getLogger)
+  // can read window.location.href. Pathname-only stubs crash config.ts.
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    writable: true,
+    value: { pathname, href: `http://localhost${pathname}` },
+  });
   locationSubject.next({ pathname });
 }
 
