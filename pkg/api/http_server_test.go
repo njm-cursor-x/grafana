@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/grafana/grafana/pkg/api/webassets"
+	"github.com/grafana/grafana/pkg/infra/log/logtest"
 	"github.com/grafana/grafana/pkg/services/featuremgmt"
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/web"
@@ -450,4 +451,36 @@ func TestHTTPServer_mapStaticBuildDir(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCustomErrorLogger_UsesInfraLog(t *testing.T) {
+	t.Run("TLS handshake EOF is debug", func(t *testing.T) {
+		fake := &logtest.Fake{}
+		w := &customErrorLogger{log: fake}
+		msg := []byte("http: TLS handshake error from 127.0.0.1:1234: EOF\n")
+		n, err := w.Write(msg)
+		require.NoError(t, err)
+		require.Equal(t, len(msg), n)
+		require.Equal(t, 1, fake.DebugLogs.Calls)
+		require.Zero(t, fake.ErrorLogs.Calls)
+		assert.Contains(t, fake.DebugLogs.Message, "TLS handshake error")
+		assert.NotContains(t, fake.DebugLogs.Message, "\n")
+	})
+
+	t.Run("other http server errors are structured", func(t *testing.T) {
+		fake := &logtest.Fake{}
+		w := &customErrorLogger{log: fake}
+		msg := []byte("http: accept error: connection reset by peer\n")
+		n, err := w.Write(msg)
+		require.NoError(t, err)
+		require.Equal(t, len(msg), n)
+		require.Equal(t, 1, fake.ErrorLogs.Calls)
+		assert.Equal(t, "HTTP server error", fake.ErrorLogs.Message)
+		require.GreaterOrEqual(t, len(fake.ErrorLogs.Ctx), 2)
+		assert.Equal(t, "err", fake.ErrorLogs.Ctx[0])
+		errVal, ok := fake.ErrorLogs.Ctx[1].(string)
+		require.True(t, ok)
+		assert.Contains(t, errVal, "connection reset by peer")
+		assert.NotContains(t, errVal, "\n")
+	})
 }

@@ -7,20 +7,25 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"github.com/grafana/grafana/pkg/apimachinery/errutil"
 	"github.com/grafana/grafana/pkg/infra/db/dbtest"
 	"github.com/grafana/grafana/pkg/infra/localcache"
 	"github.com/grafana/grafana/pkg/infra/log"
+	"github.com/grafana/grafana/pkg/infra/log/logtest"
 	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/plugins/backendplugin"
 	pluginClient "github.com/grafana/grafana/pkg/plugins/manager/client"
 	"github.com/grafana/grafana/pkg/plugins/manager/registry"
+	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/datasources"
 	fakeDatasources "github.com/grafana/grafana/pkg/services/datasources/fakes"
 	"github.com/grafana/grafana/pkg/services/dsquerierclient"
@@ -33,6 +38,7 @@ import (
 	secretstest "github.com/grafana/grafana/pkg/services/secrets/fakes"
 	"github.com/grafana/grafana/pkg/services/user"
 	"github.com/grafana/grafana/pkg/setting"
+	"github.com/grafana/grafana/pkg/web"
 	"github.com/grafana/grafana/pkg/web/webtest"
 )
 
@@ -310,4 +316,45 @@ func (f *fakePluginBackend) QueryData(ctx context.Context, req *backend.QueryDat
 
 func (f *fakePluginBackend) IsDecommissioned() bool {
 	return false
+}
+
+type captureLogger struct {
+	logtest.Fake
+}
+
+func (c *captureLogger) FromContext(_ context.Context) log.Logger {
+	return c
+}
+
+func TestQueryMetricsV2_LogsStructuredError(t *testing.T) {
+	qs := query.NewFakeQueryService(t)
+	qs.On("QueryData", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+		Return((*backend.QueryDataResponse)(nil), errors.New("query backend unavailable"))
+
+	logger := &captureLogger{}
+	hs := &HTTPServer{
+		log:              logger,
+		queryDataService: qs,
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/ds/query", strings.NewReader(reqValid))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer test-secret")
+	c := &contextmodel.ReqContext{
+		Context: &web.Context{
+			Req:  req,
+			Resp: web.NewResponseWriter(req.Method, httptest.NewRecorder()),
+		},
+		SignedInUser: &user.SignedInUser{UserID: 1, OrgID: 1},
+	}
+
+	resp := hs.QueryMetricsV2(c)
+	require.Equal(t, http.StatusInternalServerError, resp.Status())
+	require.Equal(t, 1, logger.ErrorLogs.Calls)
+	assert.Equal(t, "Query data failed", logger.ErrorLogs.Message)
+	require.GreaterOrEqual(t, len(logger.ErrorLogs.Ctx), 2)
+	assert.Equal(t, "err", logger.ErrorLogs.Ctx[0])
+	joined := fmt.Sprintf("%v %v", logger.ErrorLogs.Message, logger.ErrorLogs.Ctx)
+	assert.NotContains(t, joined, "test-secret")
+	assert.NotContains(t, joined, "Authorization")
 }

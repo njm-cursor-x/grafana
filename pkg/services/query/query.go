@@ -151,7 +151,7 @@ func (s *ServiceImpl) executeConcurrentQueries(ctx context.Context, user identit
 	recoveryFn := func(queries []*simplejson.Json) {
 		if r := recover(); r != nil {
 			var err error
-			s.log.Error("query datasource panic", "error", r, "stack", log.Stack(1))
+			s.log.Error("query datasource panic", "err", r, "stack", log.Stack(1))
 			if theErr, ok := r.(error); ok {
 				err = theErr
 			} else if theErrString, ok := r.(string); ok {
@@ -207,7 +207,7 @@ func (s *ServiceImpl) executeConcurrentQueries(ctx context.Context, user identit
 					if !slices.Contains(reqCtx.Resp.Header().Values(k), val) {
 						reqCtx.Resp.Header().Add(k, val)
 					} else {
-						s.log.Warn("skipped duplicate response header", "header", k, "value", val)
+						s.log.Warn("skipped duplicate response header", "header", k)
 					}
 				}
 			}

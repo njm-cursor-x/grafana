@@ -12,7 +12,11 @@ import (
 	mysql "github.com/dolthub/go-mysql-server/sql"
 	"github.com/dolthub/go-mysql-server/sql/types"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
+
+	"github.com/grafana/grafana/pkg/infra/log"
 )
+
+var frameTableLogger = log.New("expr.sql")
 
 // FrameTable fulfills the mysql.Table interface for a data.Frame.
 type FrameTable struct {
@@ -185,7 +189,7 @@ func convertDataType(fieldType data.FieldType) mysql.Type {
 	case data.FieldTypeJSON, data.FieldTypeNullableJSON: //nolint:staticcheck
 		return types.JSON
 	default:
-		fmt.Printf("------- Unsupported field type: %v", fieldType)
+		frameTableLogger.Warn("unsupported field type, defaulting to JSON", "fieldType", fieldType)
 		return types.JSON
 	}
 }
