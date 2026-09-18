@@ -44,7 +44,7 @@ func listenToSystemSignals(ctx context.Context, s gserver) {
 			ctx, cancel := context.WithTimeout(ctx, shutdownTimeout)
 			defer cancel()
 			if err := s.Shutdown(ctx, fmt.Sprintf("System signal: %s", sig)); err != nil {
-				fmt.Fprintf(os.Stderr, "Timed out waiting for server to shut down\n")
+				log.New("server").Error("Timed out waiting for server to shut down", "err", err)
 			}
 			return
 		}
