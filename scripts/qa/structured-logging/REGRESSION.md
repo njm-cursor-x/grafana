@@ -58,17 +58,17 @@ Expected keys: `msg`, `logger`, plus `level` / `t`. Error lines should include `
 | --- | --- | --- | --- |
 | Full CI unit/integration green | **BLOCKED** | This environment cannot run Grafana CI. `go.work` requires Go **1.26.6**; toolchain download from `proxy.golang.org` fails (`EOF`). No Docker. Frontend #26 and CI #27 were `mergeable_state: unstable` at QA start. Re-run after PM integrates lanes. | CI to keep gates green; Backend/Frontend for package tests |
 | e2e smoke: login → open dashboard → query panel → save | **BLOCKED** (spec added; not executed against a live UI) | Spec: `e2e-playwright/smoke-tests-suite/structured-logging-smoke.spec.ts` (testdata query + save toast). Login UI: existing `e2e-playwright/unauthenticated/login.spec.ts`. Playwright `--project smoke` attempted; webServer runs `yarn e2e:plugin:build` via Corepack, which could not fetch `repo.yarnpkg.com` (TLS ECONNRESET). `localhost:3000` / `3001` health = connection refused. `make run` needs Go 1.26.6. Closest substitute: QA node tests + Frontend logger Jest (16/16 PASS). Manual steps in §3. | QA owns the spec. Runtime: machine with `make run` + `yarn start`. Product regressions → Frontend/Backend |
-| Manual: JSON logging, datasource error, UI unchanged, log parses | **PARTIAL** | Fixture parse **PASS**. Live Grafana JSON **BLOCKED**. Observability sample JSONL **PASS** for `msg`/`logger` (9/9); one error line lacks `err` (see §2). | Backend for live JSON emit; Observability for Loki/Drilldown and the missing `err` field |
+| Manual: JSON logging, datasource error, UI unchanged, log parses | **PARTIAL** | Fixture parse **PASS**. Live Grafana JSON **BLOCKED**. Observability #23 (`54465905fa6`) sample JSONL **PASS** including `--require-err-on-error` (10/10; all `level=error` lines have `err`). | Backend for live JSON emit; Observability for live Loki/Drilldown |
 | Frontend build / eslint `no-console` for `public/app` | **PASS** on Frontend #26; **absent** on epic-only | On Frontend #26: `eslint.config.js` has `grafana/no-console-public-app`; `eslint public/app --quiet --max-warnings 0` exit 0 (~89s). Critical-path files (logger, AppWrapper, app.ts, LoginCtrl, DashboardLoaderSrv, runRequest, QueryRunner, index.ts) also exit 0. Epic-only: 411 remaining `console.*` (rule not present). Frontend leftover: **331** `no-console` suppressions in `public/app` (201 files) — eslint is green via suppressions, not because production `console.*` is gone. | Frontend for remaining suppressed call sites; CI for baseline after Backend merge |
 
 ## 2) Log parse checks
 
 | Check | Result | Evidence | Owner if fail |
 | --- | --- | --- | --- |
-| QA fixture JSONL parses with `msg`, `logger`, `err` on errors | **PASS** | `make qa-structured-logging-test`: 12/12. `parse-json-logs.mjs --file scripts/qa/structured-logging/fixtures/valid.jsonl --require-err-on-error --fail-on-secret`: **6/6** | QA |
+| QA fixture JSONL parses with `msg`, `logger`, `err` on errors | **PASS** | `make qa-structured-logging-test`: 13/13 after Observability re-check. `parse-json-logs.mjs --file scripts/qa/structured-logging/fixtures/valid.jsonl --require-err-on-error --fail-on-secret`: **6/6** | QA |
 | Opaque string is rejected | **PASS** | Unit test + `invalid-mixed.jsonl` (1 opaque + 1 missing fields → 1/3 ok) | QA |
 | Unredacted `Bearer test-secret` is flagged | **PASS** (parser); live emit not run | Parser unit test. Security `secretredact` isolated `go test` **PASS** (4 tests, stdlib-only, `GOTOOLCHAIN=local`). Backend `./pkg/infra/log` tests **BLOCKED** (Go 1.26.6). | Security (Faro/backend leakage tests); Backend (`pkg/infra/log` JSON encode) |
-| Observability sample JSONL | **PASS** (default); **FAIL** with `--require-err-on-error` | `devenv/docker/blocks/structured-logging/fixtures/sample-structured.jsonl`: 9/9 JSON objects with `msg`+`logger`. Line 8 `Alert rule evaluation failed` (`logger=ngalert.eval`, `level=error`) has **no `err`**. Warn-only unless `--require-err-on-error`. | Observability (add `err` on that fixture error line) |
+| Observability sample JSONL | **PASS** (re-check 2026-09-18, #23 `54465905fa6`) | Default and `--require-err-on-error --fail-on-secret`: **10/10**. Four error lines all have `err`, including `Alert rule evaluation failed` / `logger=ngalert.eval` → `err=failed to execute query: context deadline exceeded`. Snapshot: `scripts/qa/structured-logging/fixtures/observability-sample.jsonl`. | Observability |
 
 ### Sample redacted lines (expected shape)
 
@@ -77,11 +77,11 @@ Expected keys: `msg`, `logger`, plus `level` / `t`. Error lines should include `
 {"t":"2026-09-18T15:00:40.000000000Z","level":"error","msg":"Query data failed","logger":"query_data","err":"Authorization: [REDACTED]"}
 ```
 
-Observability fixture (redacted, live Loki not running):
+Observability fixture re-check (#23 `54465905fa6`, redacted; live Loki not running):
 
 ```json
-{"t":"2026-09-18T15:00:00.000000000Z","level":"info","msg":"HTTP Server Listen","logger":"http.server","source":"backend","address":"0.0.0.0:3000"}
-{"t":"2026-09-18T15:00:25.000000000Z","level":"error","msg":"Failed to query datasource","logger":"tsdb.loki","source":"backend","err":"context deadline exceeded"}
+{"t":"2026-09-18T15:00:25.000000000Z","level":"error","msg":"Query data failed","logger":"query_data","err":"query backend unavailable"}
+{"t":"2026-09-18T15:00:40.000000000Z","level":"error","msg":"Alert rule evaluation failed","logger":"ngalert.eval","err":"failed to execute query: context deadline exceeded","rule":"HighErrorRate"}
 ```
 
 Dashboard title / query-like strings are **fields**, not format-string sinks.
@@ -124,11 +124,16 @@ node node_modules/.bin/eslint public/app --quiet --max-warnings 0
 node scripts/check-structured-logging.mjs                     # PASS (288 files, 517 hits)
 node --test scripts/check-structured-logging.test.mjs         # 9/9 PASS
 
-# Observability #23 fixture
+# Observability #23 fixture (re-check after 54465905fa6)
+git fetch origin chore/structured-logging-observability
 git show origin/chore/structured-logging-observability:devenv/docker/blocks/structured-logging/fixtures/sample-structured.jsonl \
-  | node scripts/qa/structured-logging/parse-json-logs.mjs --stdin
-  # 9/9 ok, 1 warning (error line missing err)
-  # --require-err-on-error → FAIL line 8 missing=err
+  | node scripts/qa/structured-logging/parse-json-logs.mjs --stdin --require-err-on-error --fail-on-secret
+  # 10/10 lines ok  opaque=0 failed=0 secretHits=0 warnings=0  EXIT 0
+node scripts/qa/structured-logging/parse-json-logs.mjs \
+  --file scripts/qa/structured-logging/fixtures/observability-sample.jsonl \
+  --require-err-on-error --fail-on-secret
+  # 10/10 lines ok  EXIT 0
+  # error lines with err: Query data failed; HTTP server error; request failed; Alert rule evaluation failed
 
 # Security #24 secretredact (copied to a stdlib-only module)
 GOTOOLCHAIN=local go test -count=1 -v .                       # 4/4 PASS
@@ -167,7 +172,7 @@ After Backend+Frontend (Frontend baseline): check-structured-logging FAIL
 | Frontend #26 | **PASS** for eslint gate + logger tests; **PARTIAL** vs “no console.* in public/app” | Faro wrapper Jest 16/16. `eslint public/app --quiet` 0. 331 `no-console` suppressions remain. |
 | CI #27 | **PASS** on its own branch; **FAIL** after Backend+Frontend without baseline refresh | Checker unit tests 9/9. Conflicts with Frontend copies of the same scripts. **CI** should take Frontend’s refreshed baseline then re-run `--update-baseline` after Backend print removals. |
 | Security #24 | **PASS** for isolated redaction tests; **conflict** with Backend | `secretredact` 4/4 PASS. Duplicate `pkg/infra/log/redact.go` vs Backend. PM/Security+Backend must pick one implementation. |
-| Observability #23 | **PASS** for JSON fixture parse; **WARN** missing `err` on one error line; live Loki **BLOCKED** (no Docker) | Default parse 9/9. Add `err` on `Alert rule evaluation failed`. |
+| Observability #23 | **PASS** (re-check) for JSON fixture `--require-err-on-error`; live Loki still **BLOCKED** (no Docker) | 10/10 after `54465905fa6`. `Alert rule evaluation failed` now has `err`. |
 | QA | **this PR** | Checklist, parse script, smoke spec, evidence. e2e not executed live. |
 
 **HITL:** do not merge this PR or the epic to `main`.

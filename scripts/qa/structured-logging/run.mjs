@@ -39,6 +39,11 @@ function parseLogSources() {
   const bundled = join(here, 'fixtures/valid.jsonl');
   files.push({ label: 'qa fixture', path: bundled });
 
+  const obsSnapshot = join(here, 'fixtures/observability-sample.jsonl');
+  if (existsSync(obsSnapshot)) {
+    files.push({ label: 'observability fixture snapshot', path: obsSnapshot });
+  }
+
   const observability = join(ROOT, 'devenv/docker/blocks/structured-logging/fixtures/sample-structured.jsonl');
   if (existsSync(observability)) {
     files.push({ label: 'observability fixture', path: observability });
@@ -67,7 +72,7 @@ function main() {
 
   section('JSON log parse');
   for (const source of parseLogSources()) {
-    const requireErr = source.label === 'qa fixture';
+    const requireErr = source.label === 'qa fixture' || source.label.includes('observability');
     const summary = inspectText(readFileSync(source.path, 'utf8'), {
       requireErrOnError: requireErr,
       failOnSecret: true,

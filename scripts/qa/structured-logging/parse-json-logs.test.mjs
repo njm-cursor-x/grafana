@@ -91,6 +91,26 @@ describe('parse-json-logs', () => {
     assert.match(formatReport(summary), /6\/6 lines ok/);
   });
 
+  it('parses the Observability snapshot with err on every error line', async () => {
+    const { readFileSync } = await import('node:fs');
+    const text = readFileSync(join(fixtureDir, 'observability-sample.jsonl'), 'utf8');
+    const summary = inspectText(text, { requireErrOnError: true, failOnSecret: true });
+
+    assert.equal(summary.total, 10);
+    assert.equal(summary.passed, 10);
+    assert.equal(summary.opaque, 0);
+    assert.equal(summary.failed, 0);
+    assert.equal(summary.secretHits, 0);
+
+    const alert = summary.results.find((r) => r.parsed?.msg === 'Alert rule evaluation failed');
+    assert.equal(alert?.parsed?.logger, 'ngalert.eval');
+    assert.equal(alert?.parsed?.err, 'failed to execute query: context deadline exceeded');
+    assert.equal(
+      summary.results.filter((r) => String(r.parsed?.level).toLowerCase() === 'error').length,
+      4
+    );
+  });
+
   it('fails the mixed fixture on opaque and missing-field lines', async () => {
     const { readFileSync } = await import('node:fs');
     const text = readFileSync(join(fixtureDir, 'invalid-mixed.jsonl'), 'utf8');
