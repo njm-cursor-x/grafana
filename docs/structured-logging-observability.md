@@ -2,65 +2,74 @@
 
 This is the **Observability lane** runbook for the structured-logging epic. It uses the **existing** Grafana devenv Loki path. It does not add a second compose stack and does not change production deploy configs.
 
-Live Drilldown against a real `grafana-server` JSON file waits on the **Backend** lane. Until that lands, use the sample JSON this path already seeds.
+Backend draft PR [#31](https://github.com/njm-cursor-x/grafana/pull/31) (`chore/structured-logging-backend`) now emits stable JSON `level` (maps go-kit `eror` → `error`) **alongside** `lvl`. Samples in this lane match that shape. Live file scrape of a Backend-built `grafana-server` is optional once that binary can be compiled.
 
 ## Prerequisites
 
 Before you begin, ensure you have the following:
 
-- Docker and the repo `make devenv` flow (see [devenv/README.md](../devenv/README.md)).
-- A Grafana instance with the gdev datasources (run `./devenv/setup.sh` from `devenv/`, then `make run`). Default login is `admin` / `admin` at `http://localhost:3000`.
-- No other devenv block already bound to port `3100` (`loki`, `loki-promtail`, `self-instrumentation`).
+- Docker and `make devenv` (see [devenv/README.md](../devenv/README.md)), **or** a Loki binary on `:3100` plus the seeder (same push API).
+- A Grafana instance with **gdev-loki** (`./devenv/setup.sh` then `make run`, or an equivalent OSS Grafana with that datasource). Default login is `admin` / `admin` at `http://localhost:3000`.
+- No other process already bound to port `3100`.
 
 ## How JSON logs get into Loki
 
-Pick the existing in-repo path that matches what you want to see.
+### 1. Sample JSON (works without Backend binary)
 
-### 1. Sample JSON (use this now)
+`make devenv sources=loki` starts Loki on `http://localhost:3100` and the `loki-data` seeder (`devenv/docker/blocks/loki/data/data.js`). That seeder POSTs JSON to `/loki/api/v1/push`.
 
-`make devenv sources=loki` starts Loki on `http://localhost:3100` and the `loki-data` seeder (`devenv/docker/blocks/loki/data/data.js`). That seeder already POSTs JSON to Loki’s push API (`/loki/api/v1/push`).
+Without Docker, run the same seeder against a local Loki:
 
-This lane adds **Grafana-shaped SAMPLE** lines on top of the existing fake `place=moon` JSON / `place=luna` logfmt streams:
+```bash
+node devenv/docker/blocks/loki/data/data.js http://127.0.0.1:3100
+```
 
 | Stream | What it is |
 | --- | --- |
-| `{source="structured-logging-sample", service_name="grafana"}` | SAMPLE backend-shaped JSON (`msg`, `logger`, `level`, `err` on errors). Labeled `sample: true`. |
+| `{source="structured-logging-sample", service_name="grafana"}` | SAMPLE Backend-shaped JSON: `t`, `lvl`, `level`, `msg`, `logger`, `err` on errors. |
 | `{place="moon", source="data"}` | Existing generic JSON used by Loki datasource tests. |
 | `{place="luna", source="data"}` | Existing logfmt test data. |
 
-The sample file [devenv/docker/blocks/loki/sample-logs/grafana-backend.sample.jsonl](../devenv/docker/blocks/loki/sample-logs/grafana-backend.sample.jsonl) is the same shape, checked in so you can read it without starting Docker.
+Checked-in format examples: [devenv/docker/blocks/loki/sample-logs/grafana-backend.sample.jsonl](../devenv/docker/blocks/loki/sample-logs/grafana-backend.sample.jsonl).
 
-### 2. File scrape of Grafana’s log (after Backend JSON)
+### 2. File scrape of Grafana’s log
 
-Two existing blocks tail `data/log` (Grafana’s file log when you `make run`):
+Existing blocks tail `data/log` when you `make run`:
 
-- **`loki-promtail`** — Promtail scrapes `../data/log` → Loki. Simplest file path.
-- **`self-instrumentation`** — Grafana Alloy scrapes the same directory, and already documents `[log.file] format = json`. Heavier (Tempo + Prometheus + Pyroscope too).
+- **`loki-promtail`** — Promtail scrapes `../data/log` → Loki. Extracts `level` (or go-kit `lvl`) and `logger`.
+- **`self-instrumentation`** — Alloy scrapes the same directory. Heavier stack.
 
-Repo defaults stay `console` / `text`. To emit JSON from a local Grafana process (does not require the Backend lane for *format*, only for call-site migrations):
+Backend-recommended local JSON (do not change `conf/defaults.ini` or production configs):
 
 ```ini
+[log]
+mode = console file
+level = info
+
+[log.console]
+format = json
+
 [log.file]
 format = json
 ```
 
-Put that in `conf/custom.ini`. Do not change `conf/defaults.ini` or any production config in this lane.
+Put that in `conf/custom.ini`. On Backend #31, each JSON line includes both `lvl` and `level`.
 
-Until Backend writes production-path JSON, `grafana.log` is still mostly text/logfmt. Promtail/Alloy will ingest those lines as raw text. Parsed JSON fields in Drilldown need either the sample stream above or Backend JSON.
+Do not run `loki-promtail` or `self-instrumentation` together with `sources=loki` (port 3100 clash).
 
 ### 3. Provision the Loki datasource
 
-`make devenv` only starts containers. From `devenv/`:
+From `devenv/`:
 
 ```bash
 ./setup.sh
 ```
 
-That symlinks `devenv/datasources.yaml`, including **gdev-loki** → `http://localhost:3100`.
+That symlinks **gdev-loki** → `http://localhost:3100`.
 
 ## Start the demo path
 
-From the repo root:
+Preferred (Docker):
 
 ```bash
 make devenv sources=loki
@@ -68,13 +77,13 @@ cd devenv && ./setup.sh
 make run
 ```
 
+Equivalent without Docker: Loki binary on `:3100`, then `node devenv/docker/blocks/loki/data/data.js http://127.0.0.1:3100`, then Grafana with gdev-loki.
+
 Wait until Loki is ready:
 
 ```bash
 curl -sfS http://localhost:3100/ready
 ```
-
-Optional: confirm SAMPLE labels exist (after `loki-data` has pushed):
 
 ```bash
 curl -sfS http://localhost:3100/loki/api/v1/label/source/values
@@ -85,17 +94,23 @@ curl -sfSG 'http://localhost:3100/loki/api/v1/query_range' \
   --data-urlencode 'limit=5'
 ```
 
+To inspect a Backend worktree without merging it into this lane:
+
+```bash
+git fetch origin chore/structured-logging-backend
+git worktree add /tmp/grafana-backend origin/chore/structured-logging-backend
+# JSON mapping lives in pkg/infra/log/json_level.go (lvl + level).
+```
+
 ## Drilldown → Logs
 
 1. Open Grafana at `http://localhost:3000`.
 2. Go to **Drilldown → Logs**, or open `http://localhost:3000/a/grafana-lokiexplore-app`.
 3. Select datasource **gdev-loki**.
 4. Pick service **grafana** (`service_name=grafana`) or filter `source=structured-logging-sample`.
-5. Confirm a **volume** graph for the last hour (sample lines are timestamped “now”).
-6. Click a line. Details should show parsed fields (`level`, `msg`, `logger`, and `err` on errors), not one opaque string.
-7. Group or filter by `level` and `logger`.
-
-Live process logs, once Backend JSON exists and you use `loki-promtail` or `self-instrumentation` with `[log.file] format = json`, show up as `{job="grafana"}` / `{filename="/var/log/grafana/grafana.log"}`.
+5. Confirm a **volume** graph for the last hour.
+6. Click a line. Details must show parsed fields (`level`, `lvl`, `msg`, `logger`, and `err` on errors), not one opaque string.
+7. Group or filter by `level` and `logger`. Prefer `level="error"` (not `lvl="eror"`).
 
 ## Explore
 
@@ -104,55 +119,60 @@ Live process logs, once Backend JSON exists and you use `loki-promtail` or `self
 3. Switch to **Code** mode and run:
 
 ```logql
-{source="structured-logging-sample"}
 {source="structured-logging-sample"} | json
 {service_name="grafana"} | json
+{service_name="grafana"} | json | level="error"
 {service_name="grafana", level="error"} | json
 {service_name="grafana", logger="query_data"} | json
 {source="structured-logging-sample"} | json | err!=""
+{source="structured-logging-sample"} | json | lvl="eror"
 sum by (level) (count_over_time({service_name="grafana"}[5m]))
 ```
 
-Existing generic JSON (not Grafana-shaped):
-
-```logql
-{place="moon"} | json
-{place="moon"} | json | level="error"
-```
-
-After Backend JSON + file scrape:
+After file scrape of a JSON `grafana.log`:
 
 ```logql
 {job="grafana"} | json
+{job="grafana"} | json | level="error"
 {filename="/var/log/grafana/grafana.log"} | json
-{filename="/var/log/grafana/grafana.log"} | logfmt
 ```
-
-(`logfmt` is what stock file logs look like today. Switch to `| json` when `[log.file] format = json` is on.)
 
 ## Optional Logs panel
 
-After `./devenv/setup.sh`, open the gdev dashboard **Structured logging sample (Loki)** (`uid=structured-logging-sample`) in folder **gdev dashboards**. It queries `{source="structured-logging-sample"} | json`.
+gdev dashboard **Structured logging sample (Loki)** (`uid=structured-logging-sample`) queries `{source="structured-logging-sample"} | json`.
 
-## Sample JSON shape
-
-These lines are **samples**. They match the Backend lane contract (`msg`, `logger`, `level`, `err` on failures). Stock `pkg/infra/log` `format = json` today also emits go-kit `lvl` (error is `eror`) and `t`; Backend may stabilize on `level`.
+## Sample JSON shape (matches Backend #31)
 
 ```json
-{"t":"2026-09-18T15:00:25.000000000Z","level":"error","msg":"Query data failed","logger":"query_data","err":"query backend unavailable","sample":true}
+{"t":"2026-09-18T15:00:25.000000000Z","lvl":"eror","level":"error","msg":"Query data failed","logger":"query_data","err":"query backend unavailable","sample":true}
 ```
 
-Every `level=error` sample includes `err`. Secrets are not present in fixtures (use `[REDACTED]` if you add any).
+| Field | Notes |
+| --- | --- |
+| `t` | RFC3339Nano |
+| `lvl` | go-kit key; error is `eror` |
+| `level` | Stable Drilldown field; `eror` → `error` |
+| `msg` | Message string |
+| `logger` | Logger name |
+| `err` | Required on `level=error` samples |
+
+## Live verify notes
+
+On a machine with Docker, `make devenv sources=loki` plus Grafana is the product path (Drilldown chrome at `/a/grafana-lokiexplore-app`).
+
+This VM: Docker **daemon** can be started, but **image pull is blocked** (`auth.docker.io` egress). Grafana/Loki release binaries are also blocked (`release-assets.githubusercontent.com`, `dl.grafana.com`). `make run` needs Go 1.26.6 from `proxy.golang.org` (blocked). Backend #31 is in a worktree at `/tmp/grafana-backend` (`pkg/infra/log/json_level.go`) and was **not** merged into this lane.
+
+What was verified here: Backend-shaped samples pushed to a Loki-compatible API on `:3100`. Queries `{service_name="grafana"}` and `{level="error"}` return JSON objects with parsed `lvl` + `level` + `msg` + `logger`, and `err` on every error. That is the data Drilldown/Explore would parse. Product chrome screenshots need a host that can run Grafana + Loki images.
 
 ## Lane boundaries
 
-- **This lane:** existing Loki compose, sample JSON, Drilldown/Explore docs, optional Logs panel.
+- **This lane:** existing Loki path, sample JSON, Drilldown/Explore docs, optional Logs panel, live verify against Loki.
 - **Not this lane:** Go backend log migration, Faro wrapper, CI lint, security/vuln work.
-- **Blocked:** live Drilldown against real Backend JSON until that lane emits it.
+- **Do not merge** Backend into this branch or this PR into `main`.
 
 ## Related
 
 - [devenv/docker/blocks/loki/README.md](../devenv/docker/blocks/loki/README.md)
 - [devenv/docker/blocks/loki-promtail/README.md](../devenv/docker/blocks/loki-promtail/README.md)
 - [devenv/docker/blocks/self-instrumentation/readme.md](../devenv/docker/blocks/self-instrumentation/readme.md)
-- [contribute/backend/instrumentation.md](../contribute/backend/instrumentation.md)
+- Backend PR: https://github.com/njm-cursor-x/grafana/pull/31

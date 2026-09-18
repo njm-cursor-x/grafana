@@ -208,11 +208,13 @@ function getGrafanaShapedSampleLog(counter, timestampMs) {
   const isError = level === 'error';
   const item = {
     t: rfc3339NanoFromMs(timestampMs),
+    // Backend PR #31: keep go-kit `lvl` (error is `eror`) and add stable `level`.
+    lvl: level === 'error' ? 'eror' : level,
     level,
     msg: isError ? 'Query data failed' : 'Request completed',
     logger,
     sample: true,
-    sample_note: 'SAMPLE structured log; live Grafana JSON waits on Backend lane',
+    sample_note: 'SAMPLE: Backend-shaped JSON (lvl + level). File scrape of live grafana-server is optional.',
     counter: counter.toString(),
   };
   if (isError) {

@@ -17,7 +17,7 @@ This is the Observability-lane path for structured JSON → Loki. Do not add a s
 
 | Labels | Format | Notes |
 | --- | --- | --- |
-| `{source="structured-logging-sample", service_name="grafana"}` | JSON | SAMPLE Grafana-shaped lines (`msg`, `logger`, `level`, `err`). For Drilldown/Explore before Backend JSON exists. |
+| `{source="structured-logging-sample", service_name="grafana"}` | JSON | SAMPLE Backend-shaped lines (`t`, `lvl`, `level`, `msg`, `logger`, `err`). `level` maps go-kit `eror` → `error`. |
 | `{place="moon", source="data"}` | JSON | Existing Loki datasource test data. |
 | `{place="luna", source="data"}` | logfmt | Existing Loki datasource test data. |
 
