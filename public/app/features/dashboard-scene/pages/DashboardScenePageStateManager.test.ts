@@ -12,6 +12,7 @@ import {
 } from '@grafana/schema/apis/dashboard.grafana.app/v2';
 import { setTestFlags } from '@grafana/test-utils/unstable';
 import { provisioningAPIv0alpha1 } from 'app/api/clients/provisioning/v0alpha1';
+import { logError } from 'app/core/logging/faro';
 import { markAsUrlRewrite } from 'app/core/navigation/urlRewrite';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AnnoKeyIgnorePredefinedVariables, DENY_ALL_PREDEFINED } from 'app/features/apiserver/types';
@@ -32,7 +33,11 @@ import { DashboardScene } from '../scene/DashboardScene';
 import * as DashboardTemplateExtensionModule from '../settings/enterprise-components/DashboardTemplateExtension';
 import { DashboardInteractions } from '../utils/interactions';
 import { serializeIgnorePredefinedVariables } from '../utils/predefinedVariableDenyList';
-import { setupLoadDashboardMock, setupLoadDashboardMockReject } from '../utils/test-utils';
+import {
+  setupLoadDashboardMock,
+  setupLoadDashboardMockReject,
+  setupLoadDashboardRuntimeErrorMock,
+} from '../utils/test-utils';
 
 import {
   DashboardScenePageStateManager,
@@ -105,6 +110,10 @@ jest.mock('app/features/playlist/PlaylistSrv', () => ({
       isPlaying: false,
     },
   },
+}));
+
+jest.mock('app/core/logging/faro', () => ({
+  logError: jest.fn(),
 }));
 
 const mockUserStorageGetItem = jest.fn();
@@ -436,6 +445,20 @@ describe('DashboardScenePageStateManager v1', () => {
         messageId: undefined,
         message: 'Dashboard not found',
       });
+    });
+
+    it('reports non-fetch load failures via Faro and does not call console', async () => {
+      setupLoadDashboardRuntimeErrorMock();
+      jest.mocked(logError).mockClear();
+      const consoleError = jest.spyOn(console, 'error').mockImplementation();
+
+      const loader = new DashboardScenePageStateManager({});
+      await loader.loadDashboard({ uid: 'fake-dash', route: DashboardRoutes.Normal });
+
+      expect(logError).toHaveBeenCalledWith(new Error('Runtime error'), { source: 'dashboard.load' });
+      expect(consoleError).not.toHaveBeenCalled();
+      expect(loader.state.loadError?.message).toBe('Runtime error');
+      consoleError.mockRestore();
     });
 
     it('should clear current dashboard while loading next', async () => {
