@@ -8,7 +8,11 @@ import (
 	"sort"
 
 	diff "github.com/yudai/gojsondiff"
+
+	"github.com/grafana/grafana/pkg/infra/log"
 )
+
+var dashdiffLogger = log.New("dashdiffs")
 
 type ChangeType int
 
@@ -156,7 +160,7 @@ func (f *JSONFormatter) Format(diff diff.Diff) (result string, err error) {
 	b := &bytes.Buffer{}
 	err = f.tpl.ExecuteTemplate(b, "JSONDiffWrapper", f.Lines)
 	if err != nil {
-		fmt.Printf("%v\n", err)
+		dashdiffLogger.Error("failed to execute JSON diff template", "err", err)
 		return "", err
 	}
 
