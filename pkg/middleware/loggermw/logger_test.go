@@ -111,6 +111,30 @@ func Test_prepareLog(t *testing.T) {
 			},
 			expectedLevel: errutil.LevelInfo,
 		},
+		{
+			name: "does not log Authorization or passwords",
+			req: func() *http.Request {
+				r := mustRequest(http.NewRequest(http.MethodGet, "/api/dashboards/uid/abc?api_key=test-secret", nil))
+				r.Header.Set("Authorization", "Bearer test-secret")
+				r.Header.Set("Referer", "https://example.com/d/x?auth_token=test-secret")
+				return r
+			}(),
+			response: mockResponseWriter{status: http.StatusOK},
+			opts:     opts{RouterLogging: true},
+
+			expectFields: map[string]any{
+				"method":  "GET",
+				"path":    "/api/dashboards/uid/abc",
+				"referer": "https://example.com/d/x?auth_token=hidden",
+			},
+			expectAbsence: map[string]struct{}{
+				"Authorization": {},
+				"authorization": {},
+				"password":      {},
+				"api_key":       {},
+			},
+			expectedLevel: errutil.LevelInfo,
+		},
 	}
 
 	for _, tc := range tests {
@@ -146,6 +170,12 @@ func Test_prepareLog(t *testing.T) {
 			}
 			for key := range tc.expectAbsence {
 				assert.NotContains(t, kv, key)
+			}
+
+			for _, val := range kv {
+				s := fmt.Sprint(val)
+				assert.NotContains(t, s, "test-secret")
+				assert.NotContains(t, s, "Bearer ")
 			}
 
 			if tc.expectedLevel != "" {
