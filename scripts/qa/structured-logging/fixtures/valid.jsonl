@@ -1,0 +1,6 @@
+{"t":"2026-09-18T15:00:00.000000000Z","level":"info","msg":"HTTP Server Listen","logger":"http.server","address":"0.0.0.0:3000"}
+{"t":"2026-09-18T15:00:05.000000000Z","level":"info","msg":"Request completed","logger":"context","method":"GET","path":"/api/dashboards/home","status":200}
+{"t":"2026-09-18T15:00:15.000000000Z","level":"info","msg":"User login succeeded","logger":"login","userId":1,"orgId":1}
+{"t":"2026-09-18T15:00:25.000000000Z","level":"error","msg":"Failed to query datasource","logger":"tsdb.loki","err":"context deadline exceeded","dashboardTitle":"ops / api latency"}
+{"t":"2026-09-18T15:00:30.000000000Z","level":"info","msg":"Dashboard saved","logger":"dashboard","orgId":1}
+{"t":"2026-09-18T15:00:40.000000000Z","level":"error","msg":"Query data failed","logger":"query_data","err":"Authorization: [REDACTED]"}
