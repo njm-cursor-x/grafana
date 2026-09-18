@@ -105,7 +105,7 @@ GRAFANA_URL=http://localhost:3001 yarn e2e:pw --project smoke -- e2e-playwright/
 
 ```text
 # QA lane
-node --test scripts/qa/structured-logging/*.test.mjs          # 12/12 PASS
+node --test scripts/qa/structured-logging/*.test.mjs          # 13/13 PASS
 make qa-structured-logging-test                               # PASS
 make qa-structured-logging                                    # PASS (epic-only tree)
 node .yarn/releases/yarn-4.17.1.cjs install --immutable       # PASS (warnings); corepack yarn download failed
