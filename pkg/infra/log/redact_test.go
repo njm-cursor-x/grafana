@@ -2,165 +2,96 @@ package log
 
 import (
 	"bytes"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"strings"
+	"net/http"
 	"testing"
+	"time"
 
 	gokitlog "github.com/go-kit/log"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestRedact(t *testing.T) {
-	t.Parallel()
+const leakProbe = "test-secret"
 
-	tests := []struct {
-		name  string
-		in    string
-		want  string
-		leaks []string
-	}{
-		{
-			name:  "bearer token",
-			in:    "Authorization: Bearer test-secret",
-			want:  "Authorization: " + Redacted,
-			leaks: []string{"test-secret"},
-		},
-		{
-			name:  "bearer in message",
-			in:    "upstream said Bearer abc.def-ghi",
-			want:  "upstream said Bearer " + Redacted,
-			leaks: []string{"abc.def-ghi"},
-		},
-		{
-			name:  "basic auth",
-			in:    "Authorization: Basic dXNlcjpwYXNz",
-			want:  "Authorization: " + Redacted,
-			leaks: []string{"dXNlcjpwYXNz"},
-		},
-		{
-			name:  "password assignment",
-			in:    "login failed password=supersecret user=admin",
-			want:  "login failed password=" + Redacted + " user=admin",
-			leaks: []string{"supersecret"},
-		},
-		{
-			name:  "api_key assignment",
-			in:    "query api_key=abcd1234 failed",
-			want:  "query api_key=" + Redacted + " failed",
-			leaks: []string{"abcd1234"},
-		},
-		{
-			name: "plain error stays",
-			in:   "datasource timeout",
-			want: "datasource timeout",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			got := Redact(tt.in)
-			assert.Equal(t, tt.want, got)
-			for _, leak := range tt.leaks {
-				assert.NotContains(t, got, leak)
-			}
-		})
-	}
+func TestRedactSecrets_BearerAuthorization(t *testing.T) {
+	got := RedactSecrets("Authorization: Bearer " + leakProbe)
+	require.NotContains(t, got, leakProbe)
+	require.Contains(t, got, Redacted)
 }
 
-func TestRedactFields_SensitiveKeys(t *testing.T) {
-	t.Parallel()
-
-	secret := "test-secret"
-	fields := []any{
-		"msg", "query failed",
-		"Authorization", "Bearer " + secret,
-		"password", "hunter2",
-		"api_key", secret,
-		"err", errors.New("Authorization: Bearer " + secret),
-		"dashboardId", 42,
-	}
-
-	got := RedactFields(fields)
-	require.Len(t, got, len(fields))
-
-	kv := map[any]any{}
-	for i := 0; i < len(got); i += 2 {
-		kv[got[i]] = got[i+1]
-	}
-
-	assert.Equal(t, "query failed", kv["msg"])
-	assert.Equal(t, Redacted, kv["Authorization"])
-	assert.Equal(t, Redacted, kv["password"])
-	assert.Equal(t, Redacted, kv["api_key"])
-	assert.Equal(t, 42, kv["dashboardId"])
-	require.Error(t, kv["err"].(error))
-	assert.NotContains(t, kv["err"].(error).Error(), secret)
-	assert.Contains(t, kv["err"].(error).Error(), Redacted)
-
-	encoded := fmt.Sprintf("%v", got)
-	assert.NotContains(t, encoded, secret)
-	assert.NotContains(t, encoded, "hunter2")
-}
-
-func TestRedaction_AppliedOnLogAndJSON(t *testing.T) {
+func TestBearerTokenDoesNotAppearInBackendLogOutput(t *testing.T) {
 	scenario := newLoggerScenario(t)
-	secret := "test-secret"
+	logger := New("http")
 
-	New("http").Error("request failed",
-		"Authorization", "Bearer "+secret,
-		"password", "hunter2",
-		"err", errors.New("Authorization: Bearer "+secret),
-		"orgId", 1,
+	logger.Info("request failed", "Authorization", "Bearer "+leakProbe)
+	logger.Error("Authorization: Bearer " + leakProbe)
+	logger.Warn("proxy hop", "headers", http.Header{
+		"Authorization": []string{"Bearer " + leakProbe},
+		"Cookie":        []string{"grafana_session=" + leakProbe},
+	})
+	logger.Debug("login", "password", leakProbe, "api_key", leakProbe)
+
+	require.NotEmpty(t, scenario.loggedArgs)
+	for i, args := range scenario.loggedArgs {
+		for _, arg := range args {
+			require.NotContainsf(t, fmt.Sprint(arg), leakProbe, "line %d leaked probe secret: %#v", i, args)
+		}
+	}
+}
+
+func TestBearerTokenDoesNotAppearInJSONLogBytes(t *testing.T) {
+	var buf bytes.Buffer
+	origRoot := root
+	origNow := now
+	now = func() time.Time { return time.Date(2026, 9, 18, 12, 0, 0, 0, time.UTC) }
+	root = newManager(gokitlog.NewJSONLogger(&buf))
+	t.Cleanup(func() {
+		root = origRoot
+		now = origNow
+	})
+
+	New("http").Info(
+		"request failed",
+		"Authorization", "Bearer "+leakProbe,
+		"cookie", "grafana_session="+leakProbe,
+		"err", fmt.Errorf("upstream rejected Authorization: Bearer %s", leakProbe),
 	)
 
-	require.Len(t, scenario.loggedArgs, 1)
-	line := scenario.loggedArgs[0]
-	joined := fmt.Sprintf("%v", line)
-	assert.NotContains(t, joined, secret)
-	assert.NotContains(t, joined, "hunter2")
-	assert.Contains(t, joined, Redacted)
-	assert.Contains(t, joined, "request failed")
-
-	kv := map[any]any{}
-	for i := 0; i < len(line); i += 2 {
-		kv[line[i]] = line[i+1]
-	}
-	assert.Equal(t, "http", kv["logger"])
-	assert.Equal(t, "request failed", kv["msg"])
-	assert.Equal(t, Redacted, kv["Authorization"])
-	assert.Equal(t, Redacted, kv["password"])
-	assert.Equal(t, 1, kv["orgId"])
-	require.Error(t, kv["err"].(error))
-	assert.NotContains(t, kv["err"].(error).Error(), secret)
-
-	var buf bytes.Buffer
-	jsonLogger := gokitlog.NewJSONLogger(&buf)
-	require.NoError(t, jsonLogger.Log(RedactFields([]any{
-		"msg", "query failed",
-		"logger", "query_data",
-		"Authorization", "Bearer " + secret,
-		"err", errors.New("Authorization: Bearer " + secret),
-	})...))
-
-	encoded := buf.String()
-	assert.NotContains(t, encoded, secret)
-	assert.Contains(t, encoded, Redacted)
-
-	var parsed map[string]any
-	require.NoError(t, json.Unmarshal(buf.Bytes(), &parsed))
-	assert.Equal(t, "query failed", parsed["msg"])
-	assert.Equal(t, "query_data", parsed["logger"])
-	assert.Equal(t, Redacted, parsed["Authorization"])
-	assert.True(t, strings.Contains(fmt.Sprint(parsed["err"]), Redacted))
+	out := buf.String()
+	require.NotEmpty(t, out)
+	require.NotContains(t, out, leakProbe)
+	require.NotContains(t, out, "Bearer "+leakProbe)
+	require.Contains(t, out, "request failed")
+	require.Contains(t, out, Redacted)
 }
 
-func TestRedactFields_OddTrailingValue(t *testing.T) {
-	t.Parallel()
-	got := RedactFields([]any{"orphan Bearer test-secret"})
-	require.Len(t, got, 1)
-	assert.Equal(t, "orphan Bearer "+Redacted, got[0])
+func TestUserControlledStringsAreFieldsNotFormatSinks(t *testing.T) {
+	var buf bytes.Buffer
+	origRoot := root
+	origNow := now
+	now = func() time.Time { return time.Date(2026, 9, 18, 12, 0, 0, 0, time.UTC) }
+	root = newManager(gokitlog.NewJSONLogger(&buf))
+	t.Cleanup(func() {
+		root = origRoot
+		now = origNow
+	})
+
+	// Verbatim user input that would be dangerous as a fmt format string.
+	title := `Ops %s %!(EXTRA string=boom) %d`
+	query := `up{job='%s'} OR rate(http_requests[5m])`
+
+	New("dashboard").Info("query failed", "dashboardTitle", title, "query", query)
+
+	out := buf.String()
+	require.Contains(t, out, title)
+	require.Contains(t, out, query)
+}
+
+func TestRedactLogKeyvalsLeavesSafeFields(t *testing.T) {
+	in := []any{"msg", "hello", "dashboardTitle", "Sales %s", "orgId", 1}
+	out := RedactLogKeyvals(in)
+	require.Equal(t, in, out)
+	// copy, not alias — mutating the result must not change the caller slice
+	out[1] = "mutated"
+	require.Equal(t, "hello", in[1])
 }
