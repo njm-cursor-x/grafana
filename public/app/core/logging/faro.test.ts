@@ -1,7 +1,7 @@
 import { faro, LogLevel } from '@grafana/faro-web-sdk';
 import { config } from '@grafana/runtime';
 
-import { log, logDebug, logError, logEvent, logInfo, logWarning } from './faro';
+import { flushPendingFaroLogs, log, logDebug, logError, logEvent, logInfo, logWarning } from './faro';
 import { REDACTED } from './redact';
 
 jest.mock('@grafana/faro-web-sdk', () => ({
@@ -12,6 +12,7 @@ jest.mock('@grafana/faro-web-sdk', () => ({
       pushError: jest.fn(),
       pushEvent: jest.fn(),
     },
+    config: {},
   },
 }));
 
@@ -40,6 +41,7 @@ describe('faro logger', () => {
   });
 
   afterEach(() => {
+    flushPendingFaroLogs();
     config.grafanaJavascriptAgent.enabled = originalEnabled;
     consoleLog.mockRestore();
     consoleInfo.mockRestore();
@@ -171,6 +173,42 @@ describe('faro logger', () => {
       const [err, options] = mockPushError.mock.calls[0];
       expect(err).toEqual(new Error('{"message":"boom","password":"[REDACTED]"}'));
       expect(options).toEqual({ context: { source: 'auth.bootstrap' } });
+    });
+
+    it('redacts compact JWTs embedded in Error.message before pushError', () => {
+      const jwt = 'eyJhbGciOiJub25lIn0.eyJmb28iOiJiYXIifQ.signature';
+      logError(new Error(`oauth failed ${jwt}`), { source: 'auth.bootstrap' });
+
+      expect(mockPushError).toHaveBeenCalledTimes(1);
+      const [err, options] = mockPushError.mock.calls[0];
+      expect(err).toEqual(new Error(`oauth failed ${REDACTED}`));
+      expect((err as Error).message).not.toContain(jwt);
+      expect(options).toEqual({ context: { source: 'auth.bootstrap' } });
+      expectConsoleUnused();
+    });
+  });
+
+  describe('before Faro is initialized', () => {
+    it('queues logError and delivers it after Faro is ready', () => {
+      const originalConfig = faro.config;
+      const err = new Error('openfeature failed');
+      // Pre-initialize Faro exposes a no-op api and no config.
+      (faro as { config?: typeof faro.config }).config = undefined;
+
+      try {
+        logError(err, { source: 'auth.bootstrap', phase: 'openfeature' });
+        expect(mockPushError).not.toHaveBeenCalled();
+      } finally {
+        (faro as { config?: typeof originalConfig }).config = originalConfig;
+      }
+
+      flushPendingFaroLogs();
+
+      expect(mockPushError).toHaveBeenCalledTimes(1);
+      expect(mockPushError).toHaveBeenCalledWith(err, {
+        context: { source: 'auth.bootstrap', phase: 'openfeature' },
+      });
+      expectConsoleUnused();
     });
   });
 

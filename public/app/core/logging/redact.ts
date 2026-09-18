@@ -44,8 +44,8 @@ const SENSITIVE_SUFFIXES = [
   'bearer',
 ];
 
-const JWT_RE = /^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
-const BEARER_RE = /^Bearer\s+\S+/i;
+const JWT_RE = /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g;
+const BEARER_RE = /Bearer\s+\S+/gi;
 
 export type LogAttributes = Record<string, unknown>;
 
@@ -96,11 +96,10 @@ function redactDeep(value: unknown): unknown {
   return value;
 }
 
-function redactString(value: string): string {
-  if (JWT_RE.test(value) || BEARER_RE.test(value)) {
-    return REDACTED;
-  }
-  return value;
+export function redactString(value: string): string {
+  JWT_RE.lastIndex = 0;
+  BEARER_RE.lastIndex = 0;
+  return value.replace(JWT_RE, REDACTED).replace(BEARER_RE, REDACTED);
 }
 
 function stringifyValue(value: unknown): string {

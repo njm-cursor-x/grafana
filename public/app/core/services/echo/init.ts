@@ -1,4 +1,5 @@
 import { config, registerEchoBackend, setEchoSrv } from '@grafana/runtime';
+import { flushPendingFaroLogs } from 'app/core/logging/faro';
 import { reportMetricPerformanceMark } from 'app/core/utils/metrics';
 
 import { contextSrv } from '../context_srv';
@@ -36,6 +37,9 @@ export async function initEchoSrv() {
   } catch (error) {
     console.error('Error initializing EchoSrv Faro backend', error);
   }
+
+  // OpenFeature (and other bootstrap) can fail before Faro exists; deliver those now.
+  flushPendingFaroLogs();
 
   try {
     await initGoogleAnalyticsBackend();

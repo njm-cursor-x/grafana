@@ -42,6 +42,13 @@ describe('redactSecrets', () => {
     const input = { dashboardTitle: 'Sales %s', query: "up{job='%s'}" };
     expect(redactSecretsDeep(input)).toBe(input);
   });
+
+  it('redacts compact JWTs that have no secret keywords', () => {
+    const jwt = 'eyJhbGciOiJub25lIn0.eyJmb28iOiJiYXIifQ.signature';
+    expect(redactSecretString(`oauth failed ${jwt}`)).toBe(`oauth failed ${REDACTED}`);
+    expect(redactSecretString(jwt)).toBe(REDACTED);
+    expect(redactSecretString(`oauth failed ${jwt}`)).not.toContain(jwt);
+  });
 });
 
 describe('Faro beforeSend reachability', () => {
@@ -78,6 +85,30 @@ describe('Faro beforeSend reachability', () => {
     expect(serialized).toContain(`Authorization: Bearer ${REDACTED}`);
     expect(serialized).toContain('Finance %s Q3');
     expect(serialized).toContain("up{job='%s'}");
+  });
+
+  it('redacts a compact JWT in exception value when no secret keywords are present', () => {
+    const jwt = 'eyJhbGciOiJub25lIn0.eyJmb28iOiJiYXIifQ.signature';
+    const item: TransportItem = {
+      type: TransportItemType.EXCEPTION,
+      meta: {
+        browser: { userAgent },
+        page: { url: 'https://grafana.example/login' },
+      },
+      payload: {
+        type: 'Error',
+        value: `oauth failed ${jwt}`,
+        stacktrace: {
+          frames: [{ filename: 'https://grafana.example/public/build/app.js', functionName: 'login' }],
+        },
+      },
+    };
+
+    const result = beforeSendHandler(false, item);
+    expect(result).not.toBeNull();
+    const serialized = JSON.stringify(result);
+    expect(serialized).not.toContain(jwt);
+    expect(serialized).toContain(`oauth failed ${REDACTED}`);
   });
 
   it('does not send session cookies on the bot-filtered path either', () => {

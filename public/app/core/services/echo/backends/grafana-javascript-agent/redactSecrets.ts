@@ -27,6 +27,7 @@ const AUTH_SCHEME = /(\b(?:authorization\s*[:=]\s*)?(?:bearer|basic|token)\s+)\S
 const ASSIGNED_SECRET =
   /(\b(?:password|passwd|secret|api[_-]?key|access[_-]?token|client_secret|refresh_token|auth_token|id_token)\s*[:=]\s*)\S+/gi;
 const SESSION_COOKIE = /(\b(?:grafana_session|grafana_session_expiry)=)[^;\s]+/gi;
+const JWT = /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g;
 
 export function isSensitiveKey(key: string): boolean {
   return SENSITIVE_KEYS.has(key.toLowerCase());
@@ -48,7 +49,8 @@ function maybeContainsSecret(value: string): boolean {
     lower.includes('grafana_session') ||
     lower.includes('client_secret') ||
     lower.includes('refresh_token') ||
-    lower.includes('id_token')
+    lower.includes('id_token') ||
+    value.includes('eyJ')
   );
 }
 
@@ -63,7 +65,8 @@ export function redactSecretString(value: string): string {
   }
   let next = replaceGlobal(AUTH_SCHEME, value, `$1${REDACTED}`);
   next = replaceGlobal(ASSIGNED_SECRET, next, `$1${REDACTED}`);
-  return replaceGlobal(SESSION_COOKIE, next, `$1${REDACTED}`);
+  next = replaceGlobal(SESSION_COOKIE, next, `$1${REDACTED}`);
+  return replaceGlobal(JWT, next, REDACTED);
 }
 
 /**
