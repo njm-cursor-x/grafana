@@ -11,6 +11,12 @@ describe('redactSecrets', () => {
     expect(redactSecretString(`Authorization: Bearer ${LEAK_PROBE}`)).not.toContain(LEAK_PROBE);
   });
 
+  it('redacts id_token assignments even when the value does not contain "secret"', () => {
+    const probe = 'idtok-aabbccdd1122';
+    expect(redactSecretString(`oauth failed id_token=${probe}`)).toBe(`oauth failed id_token=${REDACTED}`);
+    expect(redactSecretString(`oauth failed id_token=${probe}`)).not.toContain(probe);
+  });
+
   it('redacts grafana_session cookies and leaves surrounding text', () => {
     const input = `grafana_session=${LEAK_PROBE}; grafana_session_expiry=1743967026; theme=dark`;
     const got = redactSecretString(input);

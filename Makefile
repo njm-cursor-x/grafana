@@ -824,7 +824,7 @@ check-tparse:
 	}
 
 .PHONY: logging-secret-inventory
-logging-secret-inventory: ## Inventory console/print and secret-like strings near log sites.
+logging-secret-inventory: ## Inventory log/Faro sites and Authorization/Bearer/token/password nearby.
 	./scripts/logging-security/inventory.sh
 
 .PHONY: logging-security-audit
