@@ -14,6 +14,7 @@ import {
 import { setEchoSrv } from '@grafana/runtime';
 import { ExpressionDatasourceRef } from '@grafana/runtime/internal';
 import { type DataQuery } from '@grafana/schema';
+import { logError } from 'app/core/logging/faro';
 
 import { deepFreeze } from '../../../../test/core/redux/reducerTester';
 import { Echo } from '../../../core/services/echo/Echo';
@@ -23,6 +24,9 @@ import { getMockDataSource, type TestQuery } from './mocks/mockDataSource';
 import { callQueryMethodWithMigration, runRequest } from './runRequest';
 
 jest.mock('app/core/services/backend_srv');
+jest.mock('app/core/logging/faro', () => ({
+  logError: jest.fn(),
+}));
 
 const dashboardModel = createDashboardModelFixture({
   panels: [{ id: 1, type: 'graph' }],
@@ -137,6 +141,7 @@ function runRequestScenarioThatThrows(desc: string, fn: (ctx: ScenarioCtx) => vo
 
     beforeEach(() => {
       consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      jest.mocked(logError).mockClear();
       setEchoSrv(new Echo());
       ctx.reset();
       return ctx.setupFn();
@@ -324,6 +329,8 @@ describe('runRequest', () => {
     it('should emit 1 error result', () => {
       expect(ctx.results[0].error?.message).toBe('Ohh no');
       expect(ctx.results[0].state).toBe(LoadingState.Error);
+      expect(logError).toHaveBeenCalledWith(ctx.error, { source: 'datasource.query', runner: 'runRequest' });
+      expect(console.error).not.toHaveBeenCalled();
     });
   });
 
@@ -338,6 +345,8 @@ describe('runRequest', () => {
     it('should emit 1 error result', () => {
       expect(ctx.results[0].error?.message).toBe('Query error: 500 Internal Server Error');
       expect(ctx.results[0].state).toBe(LoadingState.Error);
+      expect(logError).toHaveBeenCalledWith(ctx.error, { source: 'datasource.query', runner: 'runRequest' });
+      expect(console.error).not.toHaveBeenCalled();
     });
   });
 

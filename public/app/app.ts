@@ -84,6 +84,7 @@ import { initializeCrashDetection } from './core/crash';
 import { NAMESPACES, GRAFANA_NAMESPACE } from './core/internationalization/constants';
 import { loadTranslations } from './core/internationalization/loadTranslations';
 import { postInitTasks, preInitTasks } from './core/lifecycle-hooks';
+import { logError } from './core/logging/faro';
 import { setMonacoEnv } from './core/monacoEnv';
 import { handleRedirectTo } from './core/navigation/handleRedirectTo';
 import { interceptLinkClicks } from './core/navigation/patch/interceptLinkClicks';
@@ -171,7 +172,7 @@ export class GrafanaApp {
         try {
           await initOpenFeature();
         } catch (err) {
-          console.error('Failed to initialize OpenFeature provider', err);
+          logError(err, { source: 'auth.bootstrap', phase: 'openfeature' });
         }
       }
 
@@ -373,7 +374,7 @@ export class GrafanaApp {
 
       await postInitTasks();
     } catch (error) {
-      console.error('Failed to start Grafana', error);
+      logError(error, { source: 'auth.bootstrap', phase: 'app.init' });
       window.__grafana_load_failed(error);
     } finally {
       stopMeasure('frontend_app_init');
