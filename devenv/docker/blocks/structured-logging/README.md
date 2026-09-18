@@ -32,9 +32,13 @@ Stop with `make devenv-down`.
 
 | Path | When it appears in Loki |
 | --- | --- |
-| Seeded HTTP push, `{job="grafana-structured", source="fixture"}` | Immediately after the seed container succeeds |
+| Seeded HTTP push, `{service_name="grafana", source="fixture"}` | Immediately after the seed container succeeds |
 | `devenv/docker/blocks/structured-logging/fixtures/*.jsonl` | After Alloy tails the file (`source="fixture-file"`) |
 | Repo-root `data/log/grafana.log` (Grafana default `logs = data/log`) | After `make run` with JSON file format enabled |
+
+Seeded streams also carry `level` and `logger` labels so Drilldown can group
+without waiting on `| json`. The log line itself is still JSON (`t`, `level`,
+`msg`, `logger`, …) so clicking a row shows parsed fields, not one opaque string.
 
 On macOS, Docker Desktop may not create `/var/log/grafana` on the host. This
 block bind-mounts repo `data/log` instead, so that Mac caveat from
@@ -105,10 +109,11 @@ The fixture stream is enough to walk the UI today.
 3. Open **Drilldown → Logs**, or go directly to
    `http://localhost:3000/a/grafana-lokiexplore-app`.
 4. Select datasource **gdev-loki**.
-5. Choose service / label `job=grafana-structured` (fixtures) or
-   `job=grafana` (live file tail).
-6. Use the JSON viewer / field filters for `level`, `msg`, `logger`, and
-   `source` (detected via `| json`).
+5. Choose service **grafana** (`service_name=grafana`). Fixtures and live file
+   tail share that label. Volume should appear for the last hour.
+6. Click a line. The details view must show parsed JSON fields (`level`,
+   `msg`, `logger`, `source`, …) — not one opaque string.
+7. Filter / group by `level` and `logger` (stream labels on the fixture path).
 
 If Drilldown shows no series, confirm Loki has data with `./verify.sh`
 (below) and that the time picker covers the last hour.
@@ -122,23 +127,23 @@ If Drilldown shows no series, confirm Loki has data with `./verify.sh`
 Example queries:
 
 ```logql
-{job="grafana-structured"}
+{service_name="grafana"}
 ```
 
 ```logql
-{job="grafana-structured"} | json
+{service_name="grafana"} | json
 ```
 
 ```logql
-{job="grafana-structured"} | json | level="error"
+{service_name="grafana", level="error"}
 ```
 
 ```logql
-{job="grafana-structured"} | json | logger="tsdb.loki"
+{service_name="grafana", logger="tsdb.loki"}
 ```
 
 ```logql
-{job="grafana-structured"} | json | source="backend"
+{service_name="grafana"} | json | source="backend"
 ```
 
 ```logql
@@ -146,13 +151,13 @@ Example queries:
 ```
 
 ```logql
-sum by (level) (count_over_time({job="grafana-structured"} | json [5m]))
+sum by (level) (count_over_time({service_name="grafana"} [5m]))
 ```
 
-After Backend JSON is on, the same parsers apply to the live file stream:
+After Backend JSON is on, the same labels apply to the live file stream:
 
 ```logql
-{job="grafana"} | json | level="error"
+{service_name="grafana", job="grafana"} | json | level="error"
 ```
 
 ## Verify without the Grafana UI
@@ -161,11 +166,11 @@ From the repo root, after the block is up:
 
 ```bash
 ./devenv/docker/blocks/structured-logging/verify.sh
-./devenv/docker/blocks/structured-logging/verify.sh '{job="grafana-structured"} | json | level="error"'
+./devenv/docker/blocks/structured-logging/verify.sh '{service_name="grafana", level="error"}'
 ```
 
-Expected: Loki `/ready` returns `ready`, `/labels` includes `job` / `source` /
-`service`, and `query_range` returns the seeded JSON lines.
+Expected: Loki `/ready` returns `ready`, `/labels` includes `service_name` /
+`level` / `logger` / `job`, and `query_range` returns the seeded JSON lines.
 
 Re-seed (for example after `devenv-down`) by restarting the seed container, or
 from the host if Loki is reachable:
@@ -184,7 +189,7 @@ python3 devenv/docker/blocks/structured-logging/seed/seed.py --dry-run
 
 Dashboard UID `structured-logging-demo`, title **Structured logging demo**:
 
-- Logs panel: `{job="grafana-structured"} | json`
+- Logs panel: `{service_name="grafana"} | json`
 - Stat: error count over 5m
 
 Open it from **Dashboards → gdev dashboards** after `./devenv/setup.sh`.

@@ -21,7 +21,7 @@
   "panels": [
     {
       "datasource": { "type": "loki", "uid": "gdev-loki" },
-      "description": "Seeded structured JSON (job=grafana-structured). Live grafana.log uses job=grafana after Backend enables JSON file logs.",
+      "description": "Seeded structured JSON (service_name=grafana). Live grafana.log uses the same service_name after Backend enables JSON file logs.",
       "fieldConfig": {
         "defaults": {},
         "overrides": []
@@ -42,7 +42,7 @@
         {
           "datasource": { "type": "loki", "uid": "gdev-loki" },
           "editorMode": "code",
-          "expr": "{job=\"grafana-structured\"} | json",
+          "expr": "{service_name=\"grafana\"} | json",
           "queryType": "range",
           "refId": "A"
         }
@@ -81,7 +81,7 @@
         {
           "datasource": { "type": "loki", "uid": "gdev-loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"grafana-structured\"} | json | level=\"error\" [5m]))",
+          "expr": "sum(count_over_time({service_name=\"grafana\", level=\"error\"} [5m]))",
           "legendFormat": "errors",
           "queryType": "range",
           "refId": "A"

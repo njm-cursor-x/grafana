@@ -16,12 +16,13 @@ LOKI_URL = os.environ.get("LOKI_URL", "http://loki:3100").rstrip("/")
 READY_URL = f"{LOKI_URL}/ready"
 PUSH_URL = f"{LOKI_URL}/loki/api/v1/push"
 
-# Stream labels stay low-cardinality. Parsed JSON fields (level, msg, logger, …)
-# are queried with `| json` — the same shape live grafana.log JSON will have.
-STREAM = {
+# Stream labels stay low-cardinality. Drilldown groups on service_name, then
+# level / logger. JSON fields stay on the line so a click shows parsed keys
+# (not one opaque string).
+STREAM_BASE = {
     "job": "grafana-structured",
     "source": "fixture",
-    "service": "grafana",
+    "service_name": "grafana",
 }
 
 # Provisional schema aligned with pkg/infra/log go-kit JSON (format = json):
@@ -119,8 +120,8 @@ def rfc3339_nano(ts: float) -> str:
     return dt.strftime("%Y-%m-%dT%H:%M:%S.") + f"{dt.microsecond:06d}000Z"
 
 
-def push(values: list[list[str]]) -> None:
-    payload = json.dumps({"streams": [{"stream": STREAM, "values": values}]}).encode()
+def push(streams: list[dict]) -> None:
+    payload = json.dumps({"streams": streams}).encode()
     req = urllib.request.Request(
         PUSH_URL,
         data=payload,
@@ -132,27 +133,36 @@ def push(values: list[list[str]]) -> None:
             raise SystemExit(f"loki push failed: HTTP {resp.status}")
 
 
-def build_values(now: float | None = None) -> list[list[str]]:
+def build_streams(now: float | None = None) -> list[dict]:
     now = time.time() if now is None else now
-    values: list[list[str]] = []
+    streams: list[dict] = []
     for index, sample in enumerate(SAMPLES):
         ts = now - (len(SAMPLES) - index) * 5
         line = {"t": rfc3339_nano(ts), **sample}
-        values.append([str(int(ts * 1_000_000_000)), json.dumps(line, separators=(",", ":"))])
-    return values
+        labels = {
+            **STREAM_BASE,
+            "level": sample["level"],
+            "logger": sample["logger"],
+        }
+        streams.append(
+            {
+                "stream": labels,
+                "values": [[str(int(ts * 1_000_000_000)), json.dumps(line, separators=(",", ":"))]],
+            }
+        )
+    return streams
 
 
 def main() -> int:
+    streams = build_streams()
     if "--dry-run" in sys.argv:
-        payload = {"streams": [{"stream": STREAM, "values": build_values()}]}
-        print(json.dumps(payload, indent=2))
+        print(json.dumps({"streams": streams}, indent=2))
         return 0
 
     wait_ready()
-    values = build_values()
-    push(values)
-    print(f"pushed {len(values)} fixture lines to {PUSH_URL}", flush=True)
-    print(f"stream labels: {STREAM}", flush=True)
+    push(streams)
+    print(f"pushed {len(streams)} fixture lines to {PUSH_URL}", flush=True)
+    print(f"stream labels: {STREAM_BASE} + per-line level, logger", flush=True)
     return 0
 
 

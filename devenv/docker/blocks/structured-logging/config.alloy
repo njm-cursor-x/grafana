@@ -10,16 +10,16 @@ loki.write "default" {
 local.file_match "structured_logs" {
 	path_targets = [
 		{
-			__path__ = "/var/log/grafana/*.log",
-			job      = "grafana",
-			source   = "grafana-file",
-			service  = "grafana",
+			__path__       = "/var/log/grafana/*.log",
+			job            = "grafana",
+			source         = "grafana-file",
+			service_name   = "grafana",
 		},
 		{
-			__path__ = "/fixtures/*.jsonl",
-			job      = "grafana-structured",
-			source   = "fixture-file",
-			service  = "grafana",
+			__path__       = "/fixtures/*.jsonl",
+			job            = "grafana-structured",
+			source         = "fixture-file",
+			service_name   = "grafana",
 		},
 	]
 }

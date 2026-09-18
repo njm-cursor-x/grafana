@@ -3,7 +3,7 @@
 set -euo pipefail
 
 LOKI_URL="${LOKI_URL:-http://localhost:3100}"
-QUERY="${1:-"{job=\"grafana-structured\"}"}"
+QUERY="${1:-"{service_name=\"grafana\"}"}"
 
 echo "== Loki ready =="
 curl -sfS "${LOKI_URL}/ready"
