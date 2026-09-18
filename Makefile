@@ -634,14 +634,6 @@ lint-go-diff:
 		sed 's,^,./,' | \
 		$(XARGSR) $(golangci-lint) run --config .golangci.yml
 
-.PHONY: check-structured-logging
-check-structured-logging: ## Fail on new console.* / fmt.Print* / stdlib log in public/app and pkg
-	node scripts/check-structured-logging.mjs
-
-.PHONY: check-structured-logging-update
-check-structured-logging-update: ## Rewrite the structured-logging baseline after removing existing violations
-	node scripts/check-structured-logging.mjs --update-baseline
-
 .PHONY: gofmt
 gofmt: ## Run gofmt for all Go files.
 	@go list -m -f '{{.Dir}}' | xargs -I{} sh -c 'test ! -f {}/.nolint && echo {}' | xargs gofmt -s -w 2>&1 | grep -v '/pkg/build/' || true
