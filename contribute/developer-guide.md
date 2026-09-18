@@ -77,6 +77,26 @@ In some cases, fixes can be automatically applied:
 yarn knip:fix
 ```
 
+### Structured logging checks
+
+CI rejects new `console.*` in `public/app` and new `fmt.Print*` / stdlib `log` in `pkg` (outside `pkg/infra/log`). Existing call sites are tracked in `scripts/structured-logging-baseline.json`.
+
+```sh
+make check-structured-logging
+```
+
+After deleting an existing violation, refresh the baseline:
+
+```sh
+make check-structured-logging-update
+```
+
+The checker itself is covered by:
+
+```sh
+yarn lint:structured-logging:test
+```
+
 ## Build Grafana
 
 When building Grafana, be aware that it consists of two components:

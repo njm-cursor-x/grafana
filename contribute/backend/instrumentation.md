@@ -24,6 +24,12 @@ logger.Warning("Warning msg")
 logger.Error("Error msg", "error", fmt.Errorf("BOOM"))
 ```
 
+Do not add `fmt.Print`, `fmt.Printf`, `fmt.Println`, or the standard library `log` package in `pkg` production code. CI fails on **new** occurrences; existing ones are listed in `scripts/structured-logging-baseline.json`. Run the gate locally with:
+
+```sh
+make check-structured-logging
+```
+
 ### Naming conventions
 
 Name the logger using lowercase characters, for example, `log.New("my-logger")` using snake_case or kebab-case styling.
