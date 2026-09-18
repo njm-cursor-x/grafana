@@ -24,7 +24,6 @@ import (
 	"gopkg.in/ini.v1"
 
 	"github.com/grafana/grafana-app-sdk/logging"
-	"github.com/grafana/grafana/pkg/infra/log/secretredact"
 	"github.com/grafana/grafana/pkg/infra/log/term"
 	"github.com/grafana/grafana/pkg/infra/log/text"
 	"github.com/grafana/grafana/pkg/util"
@@ -203,9 +202,10 @@ func (cl *ConcreteLogger) Debug(msg string, args ...any) {
 }
 
 func (cl *ConcreteLogger) Log(ctx ...any) error {
-	ctx = secretredact.RedactLogKeyvals(ctx)
+	// Redact at emit time so Authorization / cookies / tokens never reach sinks
+	// even if a caller logs the raw header. Same helper Backend should call.
 	logger := gokitlog.With(&cl.SwapLogger, "t", gokitlog.TimestampFormat(now, logTimeFormat))
-	return logger.Log(ctx...)
+	return logger.Log(RedactFields(ctx)...)
 }
 
 func (cl *ConcreteLogger) Error(msg string, args ...any) {
