@@ -10,6 +10,7 @@ import {
   userHasAnyPermission,
 } from '@grafana/data';
 import { featureEnabled, getBackendSrv } from '@grafana/runtime';
+import { logError } from 'app/core/logging/faro';
 import { canRotateSessionToken, getSessionExpiry } from 'app/core/utils/auth';
 import { type UserPermission, AccessControlAction } from 'app/types/accessControl';
 import { type CurrentUserInternal } from 'app/types/config';
@@ -108,7 +109,7 @@ export class ContextSrv {
         reloadcache: true,
       });
     } catch (e) {
-      console.error(e);
+      logError(e, { source: 'auth.permissions' });
     }
   }
 
@@ -263,7 +264,7 @@ export class ContextSrv {
         }
       })
       .catch((e) => {
-        console.error(e);
+        logError(e, { source: 'auth.token_rotation' });
       });
   }
 }

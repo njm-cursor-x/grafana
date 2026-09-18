@@ -541,6 +541,21 @@ module.exports = [
   },
 
   {
+    name: 'grafana/no-console',
+    files: ['public/app/**/*.{js,jsx,ts,tsx}'],
+    ignores: [
+      ...commonTestIgnores,
+      // Local-only debug helpers and opt-in console reporting backends.
+      'public/app/core/utils/debugLog.ts',
+      'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+      'public/app/features/dashboard/services/performanceUtils.ts',
+    ],
+    rules: {
+      'no-console': ['error', {}],
+    },
+  },
+
+  {
     // custom rule for Table to avoid performance regressions
     files: ['packages/grafana-ui/src/components/Table/TableNG/**/*.{ts,tsx}'],
     rules: {
@@ -668,9 +683,14 @@ module.exports = [
       ...enterpriseIgnores,
       // Ignore decoupled plugin webpack configs
       'public/app/**/webpack.config.ts',
+      // Local-only debug helpers and opt-in console reporting backends.
+      'public/app/core/utils/debugLog.ts',
+      'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+      'public/app/features/dashboard/services/performanceUtils.ts',
     ],
     rules: {
       'no-barrel-files/no-barrel-files': 'error',
+      'no-console': ['error', {}],
     },
   },
 
