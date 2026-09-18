@@ -99,6 +99,21 @@ PASS  yarn jest --watchAll=false --testPathPattern='grafana-javascript-agent/(re
 
 `go test ./pkg/infra/log/` (full logger package, including emit-through-`New()` tests in `redact_test.go`) could not be compiled here because `pkg/infra/log` imports `k8s.io/*` / `gopkg.in/ini.v1` via existing helpers. Those tests stay in-tree for CI / a working GOPROXY.
 
+## Single redaction path
+
+**`pkg/infra/log/secretredact` is the only implementation.** `pkg/infra/log/redact.go` is thin wrappers:
+
+| Security name | Backend alias |
+| --- | --- |
+| `RedactSecrets` | `Redact` |
+| `RedactLogKeyvals` | `RedactFields` |
+| `RedactValue(key, val)` | same |
+| `Redacted` | same |
+
+`ConcreteLogger.Log`, `newConcreteLogger`, and `with()` all call package-level `RedactFields`.
+
+**Backend should delete its inline `redact.go` on #25 and use `log.Redact` / `log.RedactFields` / `log.RedactValue`.** Do not add a second thin `redact.go` — Security owns that file.
+
 ## Acceptance mapping
 
 | Criterion | Evidence |
