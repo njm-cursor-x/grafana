@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-"""Push provisional Grafana-shaped JSON logs to Loki so the stack is queryable
-without waiting on the Backend JSON-logging lane."""
+"""Push Backend-shaped Grafana JSON logs to Loki (pkg/infra/log format=json).
+
+Matches the Backend lane contract: msg, logger, level, key/value fields,
+err as a field, secrets already redacted. Used when compose comes up and
+when a live Grafana process is not yet writing grafana.log."""
 
 from __future__ import annotations
 
@@ -25,38 +28,33 @@ STREAM_BASE = {
     "service_name": "grafana",
 }
 
-# Provisional schema aligned with pkg/infra/log go-kit JSON (format = json):
-#   t, level, msg, logger, plus arbitrary sibling fields.
-# `source` is extra and marked provisional for the Backend lane to match or drop.
+# Backend lane (PR #25) + pkg/infra/log go-kit JSON (format = json):
+#   t, level, msg, logger, plus sibling fields. err is a field. Secrets redacted.
 SAMPLES = [
     {
         "level": "info",
         "msg": "HTTP Server Listen",
         "logger": "http.server",
-        "source": "backend",
         "address": "0.0.0.0:3000",
     },
     {
         "level": "info",
         "msg": "Request completed",
         "logger": "context",
-        "source": "backend",
         "method": "GET",
         "path": "/api/dashboards/home",
         "status": 200,
     },
     {
         "level": "debug",
-        "msg": "Plugin loaded",
-        "logger": "plugins",
-        "source": "backend",
-        "pluginId": "loki",
+        "msg": "QueryMetricsV2: request received",
+        "logger": "query_data",
+        "time_in_query": False,
     },
     {
         "level": "info",
         "msg": "User login succeeded",
         "logger": "login",
-        "source": "backend",
         "userId": 1,
         "orgId": 1,
     },
@@ -64,37 +62,35 @@ SAMPLES = [
         "level": "warn",
         "msg": "Slow query",
         "logger": "tsdb.query",
-        "source": "backend",
         "datasource": "gdev-loki",
         "duration": "2.1s",
     },
     {
         "level": "error",
-        "msg": "Failed to query datasource",
-        "logger": "tsdb.loki",
-        "source": "backend",
-        "err": "context deadline exceeded",
-    },
-    {
-        "level": "info",
-        "msg": "Dashboard saved",
-        "logger": "dashboard",
-        "source": "backend",
-        "orgId": 1,
+        "msg": "Query data failed",
+        "logger": "query_data",
+        "err": "query backend unavailable",
     },
     {
         "level": "error",
-        "msg": "Alert rule evaluation failed",
-        "logger": "ngalert.eval",
-        "source": "backend",
-        "rule": "HighErrorRate",
+        "msg": "HTTP server error",
+        "logger": "http.server",
+        "err": "http: accept error: connection reset by peer",
     },
     {
-        "level": "info",
-        "msg": "Frontend error reported",
-        "logger": "frontend-faro",
-        "source": "frontend",
-        "app": "grafana",
+        "level": "error",
+        "msg": "request failed",
+        "logger": "http",
+        "Authorization": "[REDACTED]",
+        "password": "[REDACTED]",
+        "err": "Authorization: [REDACTED]",
+        "orgId": 1,
+    },
+    {
+        "level": "warn",
+        "msg": "skipped duplicate response header",
+        "logger": "query",
+        "header": "Set-Cookie",
     },
 ]
 

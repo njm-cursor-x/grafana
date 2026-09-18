@@ -1,17 +1,16 @@
 # Structured logging (JSON → Loki)
 
-Developer-local path for Grafana structured JSON logs into Loki, so you can
-exercise **Drilldown → Logs**, **Explore**, and a demo Logs panel without
-waiting on the Backend JSON-logging lane.
+Developer-local path for Grafana **backend JSON logs** into Loki, then
+**Drilldown → Logs**, **Explore**, and an optional Logs panel.
 
-This block is observability-only. It does not change Grafana's default log
-format. Live `grafana.log` JSON depends on the Backend lane enabling
-`[log.file] format = json`. Until then, fixtures seed Loki so the stack is
-queryable immediately.
+Backend lane (`chore/structured-logging-backend`, PR #25) emits
+`pkg/infra/log` JSON when `format = json`. This block does not merge that
+lane. It **ingests** those lines (file and/or console tee) and documents how
+to point Grafana at the Backend branch tip.
 
-## Start
+## Start (compose)
 
-From the repo root:
+From the repo root, on this observability branch:
 
 ```bash
 make devenv sources=structured-logging
@@ -19,184 +18,191 @@ make devenv sources=structured-logging
 
 That starts:
 
-- **Loki** on `http://localhost:3100` (matches the provisioned `gdev-loki` datasource)
-- **Grafana Alloy** tailing `data/log/*.log` and this block's fixture JSONL
-- **structured-logging-seed** pushing current-timestamp fixture lines to Loki
+- **Loki** on `http://localhost:3100` (provisioned as `gdev-loki`)
+- **Grafana Alloy** tailing `data/log/*.log` and `*.json.log` plus fixture JSONL
+- **structured-logging-seed** pushing Backend-shaped JSON so Loki is never empty
+- **grafana-json** on `http://localhost:3000` (admin/admin) with
+  `GF_LOG_*_FORMAT=json`, writing `data/log/grafana.log` for Alloy to tail
 
-Do not combine this block with `loki`, `loki-promtail`, or
-`self-instrumentation` — they share port `3100` and the `loki` service name.
-
-Stop with `make devenv-down`.
+Do not combine this block with `loki`, `loki-promtail`, `self-instrumentation`,
+or the devenv `grafana` block (port `3100` / `3000` clashes). Stop with
+`make devenv-down`.
 
 ### Where logs land
 
-| Path | When it appears in Loki |
+| Path | Loki labels |
 | --- | --- |
-| Seeded HTTP push, `{service_name="grafana", source="fixture"}` | Immediately after the seed container succeeds |
-| `devenv/docker/blocks/structured-logging/fixtures/*.jsonl` | After Alloy tails the file (`source="fixture-file"`) |
-| Repo-root `data/log/grafana.log` (Grafana default `logs = data/log`) | After `make run` with JSON file format enabled |
+| Seed HTTP push | `{service_name="grafana", source="fixture", job="grafana-structured"}` |
+| Fixture JSONL (`fixtures/sample-structured.jsonl`) | `{service_name="grafana", source="fixture-file"}` |
+| Compose `grafana-json` or host `data/log/grafana.log` | `{service_name="grafana", job="grafana", source="grafana-file"}` |
+| Console tee `data/log/grafana-console.json.log` | `{service_name="grafana", source="grafana-console"}` |
 
-Seeded streams also carry `level` and `logger` labels so Drilldown can group
-without waiting on `| json`. The log line itself is still JSON (`t`, `level`,
-`msg`, `logger`, …) so clicking a row shows parsed fields, not one opaque string.
+Stream labels always include `service_name=grafana`, `level`, and `logger`
+(Drilldown grouping). The line body is JSON (`t`, `level`, `msg`, `logger`,
+optional `err` + fields) so a click shows **parsed fields**, not one opaque string.
 
-On macOS, Docker Desktop may not create `/var/log/grafana` on the host. This
-block bind-mounts repo `data/log` instead, so that Mac caveat from
-`loki-promtail` does not apply here. Create `data/log` if Grafana has never
-been started (`mkdir -p data/log`).
+Create `data/log` if needed (`mkdir -p data/log`). Alloy bind-mounts repo-root
+`data/log` (the `loki-promtail` macOS `/var/log/grafana` caveat does not apply).
 
-## Provisional JSON schema
+## Live Grafana JSON (Backend lane — do not merge)
 
-**Provisional — Backend should match or propose a delta.** This is the shape
-`pkg/infra/log` already emits when a mode is `format = json` (go-kit JSON
-logger, also used by the slog adapter).
+Repo defaults stay `console`/`text`. Staging/prod (and this demo) set JSON
+exactly as Backend documented:
+
+```ini
+[log]
+mode = console file
+level = info
+
+[log.console]
+format = json
+
+[log.file]
+format = json
+```
+
+Checked-in copy: `grafana-json-logging.ini`.
+
+### Option A — compose Grafana (this block)
+
+`grafana-json` already sets `GF_LOG_CONSOLE_FORMAT=json` and
+`GF_LOG_FILE_FORMAT=json`. Alloy tails its file. Open
+`http://localhost:3000` (anonymous Admin is on for local demo).
+
+That image is stock OSS Grafana, not the Backend-lane binary. Lines are still
+real `pkg/infra/log` JSON once you run a Backend-built process (option B).
+Compose Grafana is enough to exercise Drilldown/Explore against seeded +
+compose-file logs.
+
+### Option B — Backend branch tip as the Grafana process
+
+Do **not** merge `chore/structured-logging-backend` into this lane. Run it
+from a worktree so file logs land where Alloy (or `ship_file.py`) can read them:
+
+```bash
+# 1) Loki/Alloy from this observability branch
+make devenv sources=structured-logging
+mkdir -p data/log
+
+# 2) Grafana process from Backend tip
+git fetch origin chore/structured-logging-backend
+git worktree add /tmp/grafana-backend origin/chore/structured-logging-backend
+LOGS="$(pwd)/data/log"
+cat devenv/docker/blocks/structured-logging/grafana-json-logging.ini >> /tmp/grafana-backend/conf/custom.ini
+printf '\n[paths]\nlogs = %s\n' "$LOGS" >> /tmp/grafana-backend/conf/custom.ini
+# optional: also capture console JSON
+# (cd /tmp/grafana-backend && make run) 2>&1 | tee -a "$LOGS/grafana-console.json.log"
+cd /tmp/grafana-backend && make run
+```
+
+Then either wait for Alloy to tail `data/log/grafana.log`, or (no Docker):
+
+```bash
+LOKI_URL=http://localhost:3100 python3 devenv/docker/blocks/structured-logging/seed/ship_file.py data/log/grafana.log
+```
+
+### Option C — same-repo `make run` on observability + Backend ini only
+
+If you only need JSON **format** (not Backend call-site migrations):
+
+```bash
+cat devenv/docker/blocks/structured-logging/grafana-json-logging.ini >> conf/custom.ini
+make devenv sources=structured-logging
+make run
+```
+
+Call-site strings like `Query data failed` / `HTTP server error` require
+option B (Backend tip).
+
+## Backend JSON schema (stable)
+
+Aligned with `pkg/infra/log` go-kit JSON and Backend PR #25:
 
 ```json
 {
-  "t": "2026-09-18T15:00:00.123456000Z",
-  "level": "info",
-  "msg": "Request completed",
-  "logger": "context",
-  "source": "backend"
+  "t": "2026-09-18T15:00:25.000000000Z",
+  "level": "error",
+  "msg": "Query data failed",
+  "logger": "query_data",
+  "err": "query backend unavailable"
 }
 ```
 
 | Field | Required | Notes |
 | --- | --- | --- |
-| `t` | yes | RFC3339Nano timestamp from `pkg/infra/log` (`logTimeFormat`) |
-| `level` | yes | `debug` \| `info` \| `warn` \| `error` (go-kit `level.Key()`) |
+| `t` | yes | RFC3339Nano (`logTimeFormat`) |
+| `level` | yes | `debug` \| `info` \| `warn` \| `error` |
 | `msg` | yes | Message string |
-| `logger` | yes | Named logger (`log.New("http.server")`) |
-| `source` | provisional | Suggested: `backend` \| `frontend` \| `fixture`. Not emitted by `pkg/infra/log` today — Backend may add it or drop it from this contract |
-| extra pairs | optional | Logged as sibling JSON keys (`err`, `path`, `status`, `userId`, …) |
+| `logger` | yes | `log.New("query_data")` / contextual name |
+| `err` | when failing | Field, not interpolated into `msg` |
+| extra pairs | optional | `path`, `status`, `orgId`, `header`, … |
+| secrets | redacted | Backend replaces tokens / `Authorization` / `password` with `[REDACTED]` |
 
-Checked-in examples: `fixtures/sample-structured.jsonl`.
-The seed script (`seed/seed.py`) pushes the same shape with **current**
-timestamps so Explore's default `now-1h` range finds them.
+Fixtures (`fixtures/sample-structured.jsonl`, `seed/seed.py`) use these names,
+including a redacted `Authorization` example from Backend’s leakage test.
 
-Until Backend emits JSON, keep Grafana on the default text/console format.
-To opt into JSON file logs locally (after Backend lands, or to experiment):
-
-```ini
-[log.file]
-format = json
-```
-
-Add that to `conf/custom.ini` and restart (`make run`). Alloy will then tail
-`data/log/grafana.log` into `{job="grafana"}`.
-
-## Provision Grafana datasources and the demo dashboard
+## Provision host Grafana (make run, not compose grafana-json)
 
 ```bash
 ./devenv/setup.sh
 ```
 
-Restart Grafana if it is already running. This provisions:
-
 - Datasource **gdev-loki** → `http://localhost:3100`
-- Dashboard **Structured logging demo** under **gdev dashboards**
-  (`devenv/dev-dashboards/structured-logging/structured-logs.json`)
+- Dashboard **Structured logging demo**
 
-Default login is `admin` / `admin` on `http://localhost:3000`.
+Default login `admin` / `admin` on `http://localhost:3000`.
 
 ## Drilldown → Logs
 
-Live Drilldown against **real** Grafana process logs needs Backend JSON.
-The fixture stream is enough to walk the UI today.
+1. Start the block (`make devenv sources=structured-logging`).
+2. Open **Drilldown → Logs** or `http://localhost:3000/a/grafana-lokiexplore-app`.
+3. Datasource **gdev-loki**. Service **grafana** (`service_name=grafana`).
+4. Confirm **volume** for the last hour.
+5. Click a line. Details must show parsed JSON fields (`level`, `msg`,
+   `logger`, `err`, …) — not one opaque string.
+6. Group / filter by `level` and `logger`.
 
-1. Start this block and provision datasources (`make devenv sources=structured-logging` then `./devenv/setup.sh`).
-2. Run Grafana (`make run`). The first compile is slow; the UI is `http://localhost:3000`.
-3. Open **Drilldown → Logs**, or go directly to
-   `http://localhost:3000/a/grafana-lokiexplore-app`.
-4. Select datasource **gdev-loki**.
-5. Choose service **grafana** (`service_name=grafana`). Fixtures and live file
-   tail share that label. Volume should appear for the last hour.
-6. Click a line. The details view must show parsed JSON fields (`level`,
-   `msg`, `logger`, `source`, …) — not one opaque string.
-7. Filter / group by `level` and `logger` (stream labels on the fixture path).
-
-If Drilldown shows no series, confirm Loki has data with `./verify.sh`
-(below) and that the time picker covers the last hour.
+Live process logs: `{job="grafana"}`. Seeded demo: `{job="grafana-structured"}`.
+Both share `service_name=grafana`.
 
 ## Explore
 
-1. Open **Explore** (`http://localhost:3000/explore`).
-2. Select **gdev-loki**.
-3. Switch the query editor to **Code** and run LogQL.
-
-Example queries:
+1. **Explore** → **gdev-loki** → Code mode.
 
 ```logql
 {service_name="grafana"}
-```
-
-```logql
 {service_name="grafana"} | json
-```
-
-```logql
 {service_name="grafana", level="error"}
-```
-
-```logql
-{service_name="grafana", logger="tsdb.loki"}
-```
-
-```logql
-{service_name="grafana"} | json | source="backend"
-```
-
-```logql
-{job=~"grafana.*"} | json | msg=~"(?i)failed"
-```
-
-```logql
+{service_name="grafana", logger="query_data"}
+{service_name="grafana"} | json | err!=""
+{job="grafana"} | json | level="error"
 sum by (level) (count_over_time({service_name="grafana"} [5m]))
 ```
 
-After Backend JSON is on, the same labels apply to the live file stream:
-
-```logql
-{service_name="grafana", job="grafana"} | json | level="error"
-```
-
-## Verify without the Grafana UI
-
-From the repo root, after the block is up:
+## Verify without the UI
 
 ```bash
 ./devenv/docker/blocks/structured-logging/verify.sh
 ./devenv/docker/blocks/structured-logging/verify.sh '{service_name="grafana", level="error"}'
+./devenv/docker/blocks/structured-logging/verify.sh '{job="grafana"}'
 ```
 
-Expected: Loki `/ready` returns `ready`, `/labels` includes `service_name` /
-`level` / `logger` / `job`, and `query_range` returns the seeded JSON lines.
-
-Re-seed (for example after `devenv-down`) by restarting the seed container, or
-from the host if Loki is reachable:
-
-```bash
-LOKI_URL=http://localhost:3100 python3 devenv/docker/blocks/structured-logging/seed/seed.py
-```
-
-Print the push payload without contacting Loki:
+Expected: `/ready` → `ready`; labels include `service_name`, `level`, `logger`,
+`job`; `query_range` returns JSON objects with `msg` / `logger` / `level`.
 
 ```bash
 python3 devenv/docker/blocks/structured-logging/seed/seed.py --dry-run
+LOKI_URL=http://localhost:3100 python3 devenv/docker/blocks/structured-logging/seed/seed.py
+LOKI_URL=http://localhost:3100 python3 devenv/docker/blocks/structured-logging/seed/ship_file.py data/log/grafana.log
 ```
 
 ## Optional Logs panel
 
-Dashboard UID `structured-logging-demo`, title **Structured logging demo**:
-
-- Logs panel: `{service_name="grafana"} | json`
-- Stat: error count over 5m
-
-Open it from **Dashboards → gdev dashboards** after `./devenv/setup.sh`.
+Dashboard UID `structured-logging-demo`: `{service_name="grafana"} | json`.
+Compose Grafana loads it from this folder; host Grafana after `./devenv/setup.sh`.
 
 ## Lane boundaries
 
-- Observability owns this compose path, fixtures, runbook, and the demo panel.
-- Backend owns switching Grafana `pkg/infra/log` output to JSON by default.
-- Frontend owns Faro / `getLogger` wrapping.
-- Do not treat this block as a CI gate.
+- Observability: compose, ingest, runbook, demo panel, verify.
+- Backend: `pkg/infra/log` JSON emit, call-site migrations, redaction.
+- Do not merge Backend into this lane. Do not treat this block as a CI gate.

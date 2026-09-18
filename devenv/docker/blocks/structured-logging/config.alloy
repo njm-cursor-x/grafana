@@ -15,6 +15,13 @@ local.file_match "structured_logs" {
 			source         = "grafana-file",
 			service_name   = "grafana",
 		},
+		// Console JSON when `make run` is teed into data/log (see README).
+		{
+			__path__       = "/var/log/grafana/*.json.log",
+			job            = "grafana",
+			source         = "grafana-console",
+			service_name   = "grafana",
+		},
 		{
 			__path__       = "/fixtures/*.jsonl",
 			job            = "grafana-structured",

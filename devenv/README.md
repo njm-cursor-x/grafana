@@ -68,9 +68,11 @@ Jaeger block runs both Jaeger and Loki container. Loki container sends traces to
 
 #### Structured logging (JSON → Loki)
 
-Local Loki + Alloy + fixture seed for Grafana structured JSON logs. Use this to
-exercise Drilldown → Logs and Explore against `gdev-loki` before the Backend
-lane emits JSON.
+Local Loki + Alloy + fixture seed, plus an optional compose Grafana that
+writes JSON file logs for Alloy to tail. Exercise Drilldown → Logs and
+Explore against `gdev-loki`. Live process JSON: run Grafana from
+`chore/structured-logging-backend` (do not merge) with
+`grafana-json-logging.ini`, or use this block’s `grafana-json` service.
 
 ```bash
 make devenv sources=structured-logging

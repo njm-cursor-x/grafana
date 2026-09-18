@@ -37,3 +37,27 @@
       - ./docker/blocks/structured-logging/seed/seed.py:/seed.py:ro
     command: ['python', '/seed.py']
     restart: 'on-failure'
+
+  # Optional compose Grafana for live Drilldown/Explore. Writes JSON file logs
+  # into the same data/log dir Alloy tails. Do not combine with the devenv
+  # `grafana` block (both publish a UI). Host `make run` also uses :3000.
+  grafana-json:
+    image: grafana/grafana:12.2.1
+    ports:
+      - '3000:3000'
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_LOG_MODE: console file
+      GF_LOG_CONSOLE_FORMAT: json
+      GF_LOG_FILE_FORMAT: json
+      GF_PATHS_LOGS: /var/log/grafana
+    volumes:
+      - ../data/log:/var/log/grafana
+      - ./docker/blocks/structured-logging/provisioning/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+      - ./docker/blocks/structured-logging/provisioning/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./dev-dashboards/structured-logging:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - loki

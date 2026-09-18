@@ -21,7 +21,7 @@
   "panels": [
     {
       "datasource": { "type": "loki", "uid": "gdev-loki" },
-      "description": "Seeded structured JSON (service_name=grafana). Live grafana.log uses the same service_name after Backend enables JSON file logs.",
+      "description": "service_name=grafana. Covers fixture seed and live grafana.log JSON (Backend format=json).",
       "fieldConfig": {
         "defaults": {},
         "overrides": []
