@@ -7,6 +7,7 @@ import 'vendor/css/font_awesome.css';
 import { loadLegacyMoment } from '@grafana/data/internal/legacyMoment';
 
 import { setLegacyMoment } from './core/legacyMomentShim';
+import { log } from './core/logging/logger';
 import { initPreferences } from './initPreferences';
 import { patchFetchForLegacyAPIMode } from './legacyAPIHandling';
 
@@ -59,7 +60,7 @@ bootstrapWindowData().catch((error) => {
   const isRedirect = error && error.redirect && typeof error.redirect === 'string';
   // If a redirect was thrown, just ignore this. The index.html will handle the redirect
   if (!isRedirect) {
-    console.error('Error bootstrapping Grafana', error);
+    log.error(error, { message: 'Error bootstrapping Grafana' });
     window.__grafana_load_failed(error);
   }
 });

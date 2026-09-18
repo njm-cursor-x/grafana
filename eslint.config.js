@@ -675,6 +675,41 @@ module.exports = [
   },
 
   {
+    // Structured logging: enforce no-console only on paths this lane migrated
+    // to the Faro wrapper. Remaining features/plugins stay on the base
+    // grafana allow-list until a later frontend pass — do not dump those
+    // leftovers into eslint-suppressions.json.
+    name: 'grafana/no-console-public-app',
+    files: [
+      `public/app/core/**/${jsTsFiles}`,
+      `public/app/${jsTsFiles}`,
+      'public/app/api/clients/provisioning/v0alpha1/index.ts',
+      'public/app/api/clients/provisioning/utils/createOnCacheEntryAdded.ts',
+      'public/app/features/dashboard/services/DashboardLoaderSrv.ts',
+      'public/app/features/dashboard-scene/pages/DashboardScenePage.tsx',
+      'public/app/features/dashboard-scene/pages/DashboardScenePageStateManager.ts',
+      'public/app/features/dashboard-scene/pages/utils.ts',
+      'public/app/features/query/state/runRequest.ts',
+      'public/app/features/query/state/QueryRunner.ts',
+      'public/app/features/query/state/PanelQueryRunner.ts',
+      'public/app/features/query/components/QueryGroup.tsx',
+      'public/app/features/query/state/DashboardQueryRunner/utils.ts',
+      'public/app/features/query/state/DashboardQueryRunner/LegacyAnnotationQueryRunner.ts',
+    ],
+    ignores: [
+      ...commonTestIgnores,
+      ...enterpriseIgnores,
+      'public/app/core/utils/debugLog.ts',
+      'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+    ],
+    rules: {
+      // Base @grafana/eslint-config allows console.error/log/warn/info.
+      // Re-declare with a non-production allowlist so those methods error.
+      'no-console': ['error', { allow: ['trace'] }],
+    },
+  },
+
+  {
     // @grafana/i18n shouldn't import from our 'library' NPM packages
     name: 'grafana/packages-that-i18n-cant-import',
     files: ['packages/grafana-i18n/**/*.{ts,tsx}'],

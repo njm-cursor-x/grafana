@@ -1,4 +1,5 @@
 import { PathValidationError } from '@grafana/data';
+import { log } from 'app/core/logging/logger';
 
 import {
   isContentTypeJson,
@@ -179,7 +180,7 @@ describe('parseResponseBody', () => {
 
   it('returns an empty object {} when the response is empty but is declared as JSON type', async () => {
     rsp.headers.set('Content-Length', '0');
-    jest.spyOn(console, 'warn').mockImplementation();
+    const warnSpy = jest.spyOn(log, 'warn').mockImplementation();
 
     const json = jest.fn();
     const body = await parseResponseBody(
@@ -192,7 +193,9 @@ describe('parseResponseBody', () => {
 
     expect(body).toEqual({});
     expect(json).not.toHaveBeenCalled();
-    expect(console.warn).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith(`${rsp.url} returned an invalid JSON`, { url: rsp.url });
+    warnSpy.mockRestore();
   });
 
   it('parses text', async () => {

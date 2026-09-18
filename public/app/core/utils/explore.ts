@@ -26,6 +26,7 @@ import {
 } from '@grafana/data';
 import { getDataSourceInstance } from '@grafana/runtime/unstable';
 import { RefreshPicker } from '@grafana/ui';
+import { log } from 'app/core/logging/logger';
 import { ExpressionDatasourceUID } from 'app/features/expressions/types';
 import { type QueryOptions, type QueryTransaction } from 'app/types/explore';
 
@@ -159,7 +160,7 @@ export const safeStringifyValue = (value: unknown, space?: number) => {
   try {
     return JSON.stringify(value, null, space);
   } catch (error) {
-    console.error(error);
+    log.error(error);
   }
 
   return '';
@@ -232,7 +233,7 @@ export async function ensureQueries(
         try {
           await getDataSourceInstance(query.datasource.uid);
         } catch {
-          console.error(`One of the queries has a datasource that is no longer available and was removed.`);
+          log.error('One of the queries has a datasource that is no longer available and was removed.');
           validDS = false;
         }
       }

@@ -4,6 +4,7 @@ import { delay } from 'rxjs/operators';
 
 import { AppEvents, DataQueryErrorType, type EventBusExtended, PathValidationError } from '@grafana/data';
 import { type BackendSrvRequest, type FetchError, type FetchResponse } from '@grafana/runtime';
+import { log } from 'app/core/logging/logger';
 
 import { TokenRevokedModal } from '../../features/users/TokenRevokedModal';
 import { ShowModalReactEvent } from '../../types/events';
@@ -1048,8 +1049,8 @@ describe('backendSrv', () => {
 
   describe('chunked', () => {
     beforeEach(() => {
-      // we do a bunch of console.log in the chunked function
-      jest.spyOn(console, 'log').mockImplementation(() => {});
+      // chunked request path logs via the structured logger
+      jest.spyOn(log, 'debug').mockImplementation(() => {});
     });
 
     afterEach(() => {

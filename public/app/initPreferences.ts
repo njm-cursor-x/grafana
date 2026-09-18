@@ -1,5 +1,7 @@
 import type { Preferences } from '@grafana/api-clients/rtkq/preferences/v1';
 
+import { log } from './core/logging/logger';
+
 export const initPreferences = async (): Promise<Preferences | undefined> => {
   const preferences = await fetchMergedPreferences();
   if (!preferences) {
@@ -51,7 +53,7 @@ export async function fetchMergedPreferences(): Promise<Preferences | undefined>
     }
     return await resp.json();
   } catch (err) {
-    console.warn('Failed to fetch merged preferences', err);
+    log.warn('Failed to fetch merged preferences', { error: String(err) });
     return undefined;
   }
 }

@@ -1,3 +1,5 @@
+import { log } from 'app/core/logging/logger';
+
 import { str } from './utils';
 
 describe('str', () => {
@@ -5,7 +7,7 @@ describe('str', () => {
   let originalEnv: string | undefined;
 
   beforeEach(() => {
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    warnSpy = jest.spyOn(log, 'warn').mockImplementation(() => {});
     originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'test';
   });

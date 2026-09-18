@@ -1,5 +1,6 @@
 import { type JourneyHandle, type JourneyMeta, type JourneyTracker } from '@grafana/runtime';
 import { setJourneyTracker } from '@grafana/runtime/internal';
+import { log } from 'app/core/logging/logger';
 
 import { JourneyRegistryImpl } from './JourneyRegistryImpl';
 
@@ -336,20 +337,23 @@ describe('JourneyRegistryImpl', () => {
   // -------------------------------------------------------------------------
 
   it('should warn for registry entries with no start trigger registered', () => {
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const warnSpy = jest.spyOn(log, 'warn').mockImplementation();
 
     // Only register start for test_journey, not another_journey
     registry.registerTriggers('test_journey', () => jest.fn());
     registry.warnUnregistered();
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('"another_journey" has no triggers registered'));
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('"another_journey" has no triggers registered'),
+      { type: 'another_journey' }
+    );
 
     warnSpy.mockRestore();
   });
 
   it('should not warn when all registry entries have start triggers registered', () => {
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const warnSpy = jest.spyOn(log, 'warn').mockImplementation();
 
     registry.registerTriggers('test_journey', () => jest.fn());
     registry.registerTriggers('another_journey', () => jest.fn());
