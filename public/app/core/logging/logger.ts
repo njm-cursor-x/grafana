@@ -10,7 +10,8 @@ export interface AppLogger {
   event: (name: string, attributes?: AppLogAttributes) => void;
 }
 
-const SENSITIVE_KEY = /^(authorization|password|passwd|secret|token|api[_-]?key|cookie|set-cookie|bearer|credentials?)$/i;
+const SENSITIVE_KEY =
+  /^(authorization|password|passwd|secret|token|api[_-]?key|cookie|set-cookie|bearer|credentials?)$/i;
 const SENSITIVE_VALUE = /(?:authorization:\s*\S+(?:\s+\S+)*|bearer\s+[a-z0-9._\-+=/]+)/gi;
 
 export function toError(value: unknown): Error {
@@ -63,16 +64,42 @@ export function toLogContext(source: string, attributes?: AppLogAttributes): Log
   return context;
 }
 
+function emitConsole(level: LogLevel, message: string, context: LogContext): void {
+  switch (level) {
+    case LogLevel.ERROR:
+      console.error(message, context); // eslint-disable-line no-console
+      return;
+    case LogLevel.WARN:
+      console.warn(message, context); // eslint-disable-line no-console
+      return;
+    case LogLevel.INFO:
+      console.info(message, context); // eslint-disable-line no-console
+      return;
+    default:
+      console.debug(message, context); // eslint-disable-line no-console
+  }
+}
+
 function pushLog(level: LogLevel, message: string, source: string, attributes?: AppLogAttributes): void {
-  faro.api?.pushLog([redactLogValue('message', message)], {
-    level,
-    context: toLogContext(source, attributes),
-  });
+  const redactedMessage = redactLogValue('message', message);
+  const context = toLogContext(source, attributes);
+
+  if (faro.api?.pushLog) {
+    faro.api.pushLog([redactedMessage], {
+      level,
+      context,
+    });
+    return;
+  }
+
+  // Faro is off or not initialized yet (boot, OSS, agent disabled).
+  emitConsole(level, redactedMessage, context);
 }
 
 /**
- * Thin Faro adapter for app code. Always emits through faro.api.pushLog / pushEvent
- * (no console.*) so production paths stay structured and secret-safe.
+ * Thin Faro adapter for app code. Emits through faro.api.pushLog / pushEvent when
+ * the JavaScript agent is ready; otherwise falls back to console so boot and OSS
+ * paths are not silent. Messages are redacted before either sink.
  */
 export function createLogger(source: string): AppLogger {
   return {
@@ -97,7 +124,12 @@ export function createLogger(source: string): AppLogger {
     },
 
     event(name: string, attributes?: AppLogAttributes) {
-      faro.api?.pushEvent(name, toLogContext(source, attributes));
+      const context = toLogContext(source, attributes);
+      if (faro.api?.pushEvent) {
+        faro.api.pushEvent(name, context);
+        return;
+      }
+      emitConsole(LogLevel.INFO, name, context);
     },
   };
 }

@@ -69,6 +69,16 @@ func TestUserControlledStringsAreFieldsNotFormatSinks(t *testing.T) {
 	}
 }
 
+func TestRedactSecrets_IDTokenAssignment(t *testing.T) {
+	got := RedactSecrets("oauth failed id_token=" + leakProbe)
+	if strings.Contains(got, leakProbe) {
+		t.Fatalf("id_token leaked in %q", got)
+	}
+	if got != "oauth failed id_token="+Redacted {
+		t.Fatalf("got %q", got)
+	}
+}
+
 func TestRedactSecrets_BasicAuth(t *testing.T) {
 	got := RedactSecrets("Authorization: Basic dXNlcjpwYXNz")
 	if strings.Contains(got, "dXNlcjpwYXNz") {

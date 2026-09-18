@@ -1,4 +1,4 @@
-import { LogLevel } from '@grafana/faro-web-sdk';
+import { faro, LogLevel } from '@grafana/faro-web-sdk';
 
 import { createLogger, log, redactLogValue, stringifyLogAttribute, toError, toLogContext } from './logger';
 
@@ -204,6 +204,39 @@ describe('createLogger', () => {
       api_key: '[REDACTED]',
     });
     expect(logSpy).not.toHaveBeenCalled();
+  });
+
+  it('falls back to console when Faro is not initialized', () => {
+    const api = faro.api;
+    // Simulate boot / OSS / agent-disabled: initializeFaro has not set faro.api.
+    (faro as { api?: typeof api }).api = undefined;
+
+    try {
+      const logger = createLogger('core.app');
+      const err = new Error('Failed to start Grafana');
+
+      logger.error(err, { stage: 'init' });
+      logger.warn('preferences failed', { phase: 'boot' });
+      logger.event('openfeature_init_failed', { reason: 'timeout' });
+
+      expect(mockPushLog).not.toHaveBeenCalled();
+      expect(mockPushEvent).not.toHaveBeenCalled();
+      expect(errorSpy).toHaveBeenCalledWith('Failed to start Grafana', {
+        source: 'core.app',
+        stage: 'init',
+        errorName: 'Error',
+      });
+      expect(warnSpy).toHaveBeenCalledWith('preferences failed', {
+        source: 'core.app',
+        phase: 'boot',
+      });
+      expect(infoSpy).toHaveBeenCalledWith('openfeature_init_failed', {
+        source: 'core.app',
+        reason: 'timeout',
+      });
+    } finally {
+      faro.api = api;
+    }
   });
 });
 

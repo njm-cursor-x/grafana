@@ -19,10 +19,12 @@ const BACKEND_ROOT = 'pkg';
 
 const FRONTEND_EXTENSIONS = new Set(['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs', '.mts', '.cts']);
 
-// localStorage-gated debug helper and Echo's explicit browser-console backend.
+// localStorage-gated debug helper, Echo's explicit browser-console backend,
+// and the app logger's console fallback when Faro is not initialized.
 export const FRONTEND_ALLOWLIST = new Set([
   'public/app/core/utils/debugLog.ts',
   'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+  'public/app/core/logging/logger.ts',
 ]);
 
 const FRONTEND_TEST_PATTERNS = [

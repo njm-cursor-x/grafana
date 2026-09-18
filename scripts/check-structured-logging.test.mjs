@@ -27,6 +27,7 @@ describe('path filters', () => {
       shouldScanFrontend('public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts'),
       false
     );
+    assert.equal(shouldScanFrontend('public/app/core/logging/logger.ts'), false);
     assert.equal(isFrontendTestFile('public/app/features/foo/bar.test.tsx'), true);
     assert.equal(shouldScanFrontend('public/app/features/foo/bar.test.tsx'), false);
     assert.equal(shouldScanFrontend('packages/grafana-ui/src/components/Button.tsx'), false);

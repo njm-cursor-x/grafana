@@ -47,7 +47,8 @@ function maybeContainsSecret(value: string): boolean {
     lower.includes('auth_token') ||
     lower.includes('grafana_session') ||
     lower.includes('client_secret') ||
-    lower.includes('refresh_token')
+    lower.includes('refresh_token') ||
+    lower.includes('id_token')
   );
 }
 
