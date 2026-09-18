@@ -83,7 +83,8 @@ func maybeContainsSecret(s string) bool {
 		strings.Contains(lower, "auth_token") ||
 		strings.Contains(lower, "grafana_session") ||
 		strings.Contains(lower, "client_secret") ||
-		strings.Contains(lower, "refresh_token")
+		strings.Contains(lower, "refresh_token") ||
+		strings.Contains(lower, "id_token")
 }
 
 // RedactSecrets replaces credential-like substrings in s.

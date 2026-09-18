@@ -1,6 +1,6 @@
 # Logging security inventory
 
-Regenerate the call-site / secret-identifier inventory:
+Regenerate the call-site / secret-identifier inventory (console/fmt.Print/Faro emit sites plus Authorization/Bearer/token/password nearby):
 
 ```bash
 make logging-secret-inventory

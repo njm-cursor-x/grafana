@@ -48,6 +48,18 @@ func TestBearerTokenDoesNotAppearInEncodedLogOutput(t *testing.T) {
 	}
 }
 
+func TestRedactSecrets_IDTokenAssignment(t *testing.T) {
+	// Probe avoids the substring "secret" so maybeContainsSecret must match id_token itself.
+	probe := "idtok-aabbccdd1122"
+	got := RedactSecrets("oauth failed id_token=" + probe)
+	if strings.Contains(got, probe) {
+		t.Fatalf("id_token leaked in %q", got)
+	}
+	if got != "oauth failed id_token="+Redacted {
+		t.Fatalf("got %q", got)
+	}
+}
+
 func TestUserControlledStringsAreFieldsNotFormatSinks(t *testing.T) {
 	title := `Ops %s %!(EXTRA string=boom) %d`
 	query := `up{job='%s'} OR rate(http_requests[5m])`
