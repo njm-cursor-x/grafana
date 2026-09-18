@@ -1,0 +1,732 @@
+{
+  "version": 1,
+  "violations": {
+    "pkg/api/http_server.go": {
+      "stdlib.log": 1
+    },
+    "pkg/apimachinery/utils/meta.go": {
+      "fmt.Print": 1
+    },
+    "pkg/cmd/grafana-cli/logger/logger.go": {
+      "fmt.Print": 8
+    },
+    "pkg/cmd/grafana-cli/logger/loggerV2.go": {
+      "fmt.Print": 10
+    },
+    "pkg/cmd/grafana/main.go": {
+      "fmt.Print": 2
+    },
+    "pkg/components/satokengen/cmd/main.go": {
+      "fmt.Print": 6
+    },
+    "pkg/components/simplejson/simplejson.go": {
+      "fmt.Print": 3,
+      "stdlib.log": 11
+    },
+    "pkg/plugins/codegen/package_json.go": {
+      "stdlib.log": 1
+    },
+    "pkg/registry/apis/dashboard/legacy/sql_dashboards.go": {
+      "fmt.Print": 1
+    },
+    "pkg/registry/apis/dashboardsnapshot/exporter.go": {
+      "fmt.Print": 2
+    },
+    "pkg/registry/apis/query/queryschema/oas_helper.go": {
+      "fmt.Print": 1
+    },
+    "pkg/server/bootstrap/diagnostics.go": {
+      "fmt.Print": 2
+    },
+    "pkg/server/bootstrap/lifecycle.go": {
+      "fmt.Print": 1
+    },
+    "pkg/server/bootstrap/servers.go": {
+      "fmt.Print": 4
+    },
+    "pkg/services/annotations/annotationsimpl/xorm_store.go": {
+      "fmt.Print": 1
+    },
+    "pkg/services/apiserver/builder/helper.go": {
+      "fmt.Print": 1
+    },
+    "pkg/services/live/pipeline/devdata.go": {
+      "stdlib.log": 4
+    },
+    "pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go": {
+      "stdlib.log": 13
+    },
+    "pkg/services/preference/generate_themes.go": {
+      "fmt.Print": 1
+    },
+    "pkg/services/publicdashboards/internal/commands/generate_datasources/main.go": {
+      "fmt.Print": 2
+    },
+    "pkg/services/sqlstore/sqlstore.go": {
+      "fmt.Print": 3
+    },
+    "pkg/services/sqlstore/sqlutil/sqlutil.go": {
+      "fmt.Print": 3
+    },
+    "pkg/setting/setting.go": {
+      "fmt.Print": 2
+    },
+    "pkg/storage/unified/resource/table.go": {
+      "fmt.Print": 1
+    },
+    "pkg/util/interface.go": {
+      "fmt.Print": 2
+    },
+    "pkg/util/proxyutil/reverse_proxy.go": {
+      "stdlib.log": 1
+    },
+    "public/app/features/actions/utils.ts": {
+      "console": 2
+    },
+    "public/app/features/admin/UserOrgs.tsx": {
+      "console": 2
+    },
+    "public/app/features/admin/Users/OrgUsersTable.tsx": {
+      "console": 1
+    },
+    "public/app/features/admin/state/actions.ts": {
+      "console": 4
+    },
+    "public/app/features/admin/state/apis.tsx": {
+      "console": 1
+    },
+    "public/app/features/alerting/unified/components/receivers/form/fields/OptionField.tsx": {
+      "console": 1
+    },
+    "public/app/features/alerting/unified/components/rule-editor/labels/LabelsField.tsx": {
+      "console": 1
+    },
+    "public/app/features/alerting/unified/components/rule-editor/useDashboardQuery.ts": {
+      "console": 2
+    },
+    "public/app/features/alerting/unified/components/rule-editor/util.ts": {
+      "console": 1
+    },
+    "public/app/features/alerting/unified/rule-list/hooks/grafanaFilter.ts": {
+      "console": 1
+    },
+    "public/app/features/alerting/unified/state/AlertingQueryRunner.ts": {
+      "console": 1
+    },
+    "public/app/features/annotations/components/StandardAnnotationQueryEditor.tsx": {
+      "console": 1
+    },
+    "public/app/features/annotations/standardAnnotationSupport.ts": {
+      "console": 1
+    },
+    "public/app/features/annotations/utils/savedQueryUtils.ts": {
+      "console": 1
+    },
+    "public/app/features/apiserver/client.ts": {
+      "console": 4
+    },
+    "public/app/features/auth-config/FieldRenderer.tsx": {
+      "console": 2
+    },
+    "public/app/features/auth-config/state/actions.ts": {
+      "console": 1
+    },
+    "public/app/features/browse-dashboards/api/browseDashboardsAPI.ts": {
+      "console": 1
+    },
+    "public/app/features/browse-dashboards/api/recentlyViewed.ts": {
+      "console": 1
+    },
+    "public/app/features/browse-dashboards/api/useRecentlyDeletedStateManager.ts": {
+      "console": 1
+    },
+    "public/app/features/browse-dashboards/state/actions.ts": {
+      "console": 2
+    },
+    "public/app/features/canvas/runtime/frame.tsx": {
+      "console": 2
+    },
+    "public/app/features/commandPalette/actions/dashboardActions.ts": {
+      "console": 2
+    },
+    "public/app/features/commandPalette/actions/deepSearchActions.ts": {
+      "console": 1
+    },
+    "public/app/features/commandPalette/actions/useActions.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/behaviors/DashboardAnalyticsInitializerBehavior.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/behaviors/DefaultControlsBehavior.ts": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/inspect/HelpWizard/SupportSnapshotService.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/inspect/InspectJsonTab.tsx": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/mutation-api/clientBridge.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/panel-edit/PanelDataPane/PanelDataQueriesTab.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/panel-edit/PanelEditNext/PanelDataPaneNext.tsx": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/panel-edit/PanelEditNext/QueryEditor/Header/PluginActions.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/panel-edit/PanelEditNext/localStorageWithTTL.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/DashboardLayoutOrchestrator.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/DashboardMacro.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/DashboardScene.tsx": {
+      "console": 8
+    },
+    "public/app/features/dashboard-scene/scene/DashboardSceneUrlSync.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/GoToSnapshotOriginButton.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/export/exporters.ts": {
+      "console": 3
+    },
+    "public/app/features/dashboard-scene/scene/layout-auto-grid/AutoGridItem.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/layout-auto-grid/AutoGridLayoutManager.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/layout-default/DashboardGridItem.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/layout-default/DefaultGridLayoutManager.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/scene/layout-default/RowRepeaterBehavior.ts": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/scene/layout-rows/RowItem.tsx": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/scene/layout-tabs/TabItem.tsx": {
+      "console": 3
+    },
+    "public/app/features/dashboard-scene/serialization/DashboardSceneSerializer.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/serialization/angularMigration.ts": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/serialization/layoutSerializers/utils.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/serialization/transformSaveModelSchemaV2ToScene.ts": {
+      "console": 3
+    },
+    "public/app/features/dashboard-scene/serialization/transformSceneToSaveModelSchemaV2.ts": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/serialization/transformToV1TypesUtils.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/AnnotationsEditView.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/GeneralSettingsEditView.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/VariablesEditView.tsx": {
+      "console": 6
+    },
+    "public/app/features/dashboard-scene/settings/VersionsEditView.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/annotations/AnnotationQueryOptions.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/variables/editors/AdHocFiltersVariableEditor.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/variables/editors/ConstantVariableEditor.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/variables/editors/GroupByVariableEditor.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/variables/editors/IntervalVariableEditor.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/variables/editors/QueryVariableEditor/getQueryVariableOptions.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/variables/editors/SwitchVariableEditor.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/settings/variables/editors/TextBoxVariableEditor.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/sharing/DownloadDiagnostics.tsx": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/sharing/ExportButton/ExportAsImage.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/sidebar/DashboardSidebar.tsx": {
+      "console": 2
+    },
+    "public/app/features/dashboard-scene/utils/DashboardModelCompatibilityWrapper.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/utils/PanelModelCompatibilityWrapper.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/utils/dashboardControls.ts": {
+      "console": 3
+    },
+    "public/app/features/dashboard-scene/utils/predefinedVariables.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard-scene/utils/variables.ts": {
+      "console": 3
+    },
+    "public/app/features/dashboard/api/ResponseTransformers.ts": {
+      "console": 4
+    },
+    "public/app/features/dashboard/components/GenAI/hooks.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard/components/HelpWizard/SupportSnapshotService.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard/dashgrid/DashboardLibrary/DashboardCard.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard/dashgrid/DashboardLibrary/GrafanaTemplatesTab.tsx": {
+      "console": 1
+    },
+    "public/app/features/dashboard/dashgrid/DashboardLibrary/SuggestedDashboardsList/SuggestedDashboardsList.tsx": {
+      "console": 2
+    },
+    "public/app/features/dashboard/dashgrid/DashboardLibrary/api/compatibilityApi.ts": {
+      "console": 3
+    },
+    "public/app/features/dashboard/dashgrid/DashboardLibrary/api/dashboardLibraryApi.ts": {
+      "console": 3
+    },
+    "public/app/features/dashboard/dashgrid/DashboardLibrary/utils/communityDashboardHelpers.ts": {
+      "console": 4
+    },
+    "public/app/features/dashboard/services/DashboardAnalyticsAggregator.ts": {
+      "console": 1
+    },
+    "public/app/features/dashboard/services/performanceUtils.ts": {
+      "console": 6
+    },
+    "public/app/features/dashboard/state/DashboardModel.ts": {
+      "console": 2
+    },
+    "public/app/features/datasources/components/EditDataSource.tsx": {
+      "console": 1
+    },
+    "public/app/features/dimensions/editors/FileUploader.tsx": {
+      "console": 1
+    },
+    "public/app/features/dimensions/editors/ResourcePickerPopover.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/Logs/LogsMetaRow.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/Logs/LogsTableWrap.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/Logs/utils/table/logsTable.ts": {
+      "console": 1
+    },
+    "public/app/features/explore/PrometheusListView/utils/getRawPrometheusListItemsFromDataFrame.ts": {
+      "console": 1
+    },
+    "public/app/features/explore/QueryLibrary/OpenQueryLibraryExposedComponent.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/TraceView/components/CriticalPath/index.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/TraceView/components/ScrollManager.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/TraceView/components/TraceTimelineViewer/ListView/index.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/TraceView/components/model/link-patterns.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/TraceView/components/model/transform-trace-data.tsx": {
+      "console": 2
+    },
+    "public/app/features/explore/TraceView/createSpanLink.tsx": {
+      "console": 1
+    },
+    "public/app/features/explore/hooks/useExplorePageContext.ts": {
+      "console": 1
+    },
+    "public/app/features/explore/state/correlations.ts": {
+      "console": 2
+    },
+    "public/app/features/explore/state/query.ts": {
+      "console": 2
+    },
+    "public/app/features/explore/state/utils.ts": {
+      "console": 1
+    },
+    "public/app/features/expressions/components/QueryToolbox.tsx": {
+      "console": 1
+    },
+    "public/app/features/expressions/components/SqlExpressions/hooks/useFunctionSignatures.ts": {
+      "console": 1
+    },
+    "public/app/features/geo/gazetteer/gazetteer.ts": {
+      "console": 1
+    },
+    "public/app/features/inspector/InspectJSONTab.tsx": {
+      "console": 1
+    },
+    "public/app/features/library-panels/components/LibraryPanelsView/actions.ts": {
+      "console": 2
+    },
+    "public/app/features/live/centrifuge/LiveDataStream.ts": {
+      "console": 4
+    },
+    "public/app/features/live/centrifuge/channel.ts": {
+      "console": 1
+    },
+    "public/app/features/live/centrifuge/service.ts": {
+      "console": 1
+    },
+    "public/app/features/live/dashboard/dashboardWatcher.ts": {
+      "console": 1
+    },
+    "public/app/features/live/live.ts": {
+      "console": 1
+    },
+    "public/app/features/logs/components/fieldSelector/LogListFieldSelector.tsx": {
+      "console": 1
+    },
+    "public/app/features/logs/components/panel/grammar.ts": {
+      "console": 2
+    },
+    "public/app/features/logs/components/panel/panelState/getLogsPanelState.ts": {
+      "console": 1
+    },
+    "public/app/features/logs/components/panel/virtualization.ts": {
+      "console": 1
+    },
+    "public/app/features/logs/utils.ts": {
+      "console": 2
+    },
+    "public/app/features/loki-helpers/mergeResponses.ts": {
+      "console": 1
+    },
+    "public/app/features/panel-screenshot/PanelScreenshotServiceImpl.ts": {
+      "console": 1
+    },
+    "public/app/features/panel/panellinks/linkSuppliers.ts": {
+      "console": 1
+    },
+    "public/app/features/panel/suggestions/getAllSuggestions.ts": {
+      "console": 2
+    },
+    "public/app/features/plugins/admin/api.ts": {
+      "console": 3
+    },
+    "public/app/features/plugins/admin/components/GetStartedWithPlugin/GetStartedWithApp.tsx": {
+      "console": 1
+    },
+    "public/app/features/plugins/admin/pages/Browse.tsx": {
+      "console": 1
+    },
+    "public/app/features/plugins/admin/state/actions.ts": {
+      "console": 4
+    },
+    "public/app/features/plugins/components/AppRootPage.tsx": {
+      "console": 1
+    },
+    "public/app/features/plugins/components/PluginErrorBoundary.tsx": {
+      "console": 1
+    },
+    "public/app/features/plugins/components/restrictedGrafanaApis/dashboardMutation/dashboardMutationApi.ts": {
+      "console": 1
+    },
+    "public/app/features/plugins/extensions/logs/LogViewFilters.tsx": {
+      "console": 1
+    },
+    "public/app/features/plugins/extensions/logs/log.ts": {
+      "console": 3
+    },
+    "public/app/features/plugins/extensions/utils.tsx": {
+      "console": 1
+    },
+    "public/app/features/plugins/importer/addTranslationsToI18n.ts": {
+      "console": 3
+    },
+    "public/app/features/plugins/importer/importPluginModule.ts": {
+      "console": 1
+    },
+    "public/app/features/plugins/importer/pluginImporter.ts": {
+      "console": 1
+    },
+    "public/app/features/plugins/loader/systemjsHooks.ts": {
+      "console": 1
+    },
+    "public/app/features/plugins/loader/utils.ts": {
+      "console": 1
+    },
+    "public/app/features/plugins/pluginPreloader.ts": {
+      "console": 1
+    },
+    "public/app/features/plugins/sandbox/distortions.ts": {
+      "console": 2
+    },
+    "public/app/features/plugins/sandbox/sandboxPluginLoader.ts": {
+      "console": 1
+    },
+    "public/app/features/profile/api.ts": {
+      "console": 2
+    },
+    "public/app/features/provisioning/components/Shared/SaveProvisionedResourceDrawer.tsx": {
+      "console": 1
+    },
+    "public/app/features/query/state/DashboardQueryRunner/DashboardQueryRunner.ts": {
+      "console": 1
+    },
+    "public/app/features/scopes/ScopesApiClient.ts": {
+      "console": 15
+    },
+    "public/app/features/scopes/ScopesService.ts": {
+      "console": 3
+    },
+    "public/app/features/scopes/selector/ScopesSelectorService.ts": {
+      "console": 4
+    },
+    "public/app/features/scopes/selector/scopesTreeUtils.ts": {
+      "console": 1
+    },
+    "public/app/features/scopes/selector/useScopeNode.ts": {
+      "console": 1
+    },
+    "public/app/features/search/service/deletedDashboardsCache.ts": {
+      "console": 5
+    },
+    "public/app/features/search/service/unified.ts": {
+      "console": 1
+    },
+    "public/app/features/search/service/utils.ts": {
+      "console": 1
+    },
+    "public/app/features/serviceaccounts/ServiceAccountCreatePage.tsx": {
+      "console": 2
+    },
+    "public/app/features/serviceaccounts/components/ServiceAccountProfile.tsx": {
+      "console": 1
+    },
+    "public/app/features/serviceaccounts/state/actions.ts": {
+      "console": 2
+    },
+    "public/app/features/serviceaccounts/state/actionsServiceAccountPage.ts": {
+      "console": 2
+    },
+    "public/app/features/stars/hooks.ts": {
+      "console": 1
+    },
+    "public/app/features/teams/TeamList.tsx": {
+      "console": 1
+    },
+    "public/app/features/templating/formatVariableValue.ts": {
+      "console": 1
+    },
+    "public/app/features/theme-playground/ThemePlayground.tsx": {
+      "console": 1
+    },
+    "public/app/features/transformers/calculateHeatmap/heatmap.ts": {
+      "console": 1
+    },
+    "public/app/features/transformers/editors/FilterByNameTransformerEditor.tsx": {
+      "console": 1
+    },
+    "public/app/features/transformers/extractFields/fieldExtractors.ts": {
+      "console": 1
+    },
+    "public/app/features/variables/pickers/OptionsPicker/OptionsPicker.tsx": {
+      "console": 3
+    },
+    "public/app/features/variables/pickers/OptionsPicker/actions.ts": {
+      "console": 1
+    },
+    "public/app/features/variables/query/operators.ts": {
+      "console": 1
+    },
+    "public/app/features/variables/state/actions.ts": {
+      "console": 4
+    },
+    "public/app/features/variables/switch/SwitchVariablePicker.tsx": {
+      "console": 1
+    },
+    "public/app/features/variables/textbox/TextBoxVariablePicker.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/azuremonitor/azureMetadata/logsResourceTypes.ts": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/azuremonitor/azure_monitor/azure_monitor_datasource.ts": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/azuremonitor/components/LogsQueryEditor/LogsQueryEditor.tsx": {
+      "console": 2
+    },
+    "public/app/plugins/datasource/azuremonitor/components/LogsQueryEditor/QueryField.tsx": {
+      "console": 2
+    },
+    "public/app/plugins/datasource/azuremonitor/credentials.ts": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/azuremonitor/resourcePicker/resourcePickerData.ts": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/cloudwatch/aws_url.ts": {
+      "console": 3
+    },
+    "public/app/plugins/datasource/cloudwatch/components/ConfigEditor/ConfigEditor.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/cloudwatch/components/Errors/ThrottlingErrorMessage.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/cloudwatch/components/shared/LogGroups/LogGroupsField.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/cloudwatch/query-runner/CloudWatchMetricsQueryRunner.ts": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/cloudwatch/tracking.ts": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/cloudwatch/utils/datalinks.ts": {
+      "console": 2
+    },
+    "public/app/plugins/datasource/cloudwatch/variables.ts": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/dashboard/datasource.ts": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/grafana-testdata-datasource/components/RawFrameEditor.tsx": {
+      "console": 3
+    },
+    "public/app/plugins/datasource/grafana-testdata-datasource/runStreams.ts": {
+      "console": 10
+    },
+    "public/app/plugins/datasource/grafana/components/QueryEditor.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/datasource/graphite/datasource.ts": {
+      "console": 3
+    },
+    "public/app/plugins/datasource/graphite/graphite_query.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/canvas/components/connections/Connections.tsx": {
+      "console": 2
+    },
+    "public/app/plugins/panel/canvas/components/connections/Connections2.tsx": {
+      "console": 2
+    },
+    "public/app/plugins/panel/canvas/editor/element/elementEditor.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/canvas/editor/element/utils.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/canvas/editor/layer/TreeNavigationEditor.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/canvas/editor/layer/layerEditor.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/dashlist/migrations.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/geomap/GeomapPanel.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/geomap/layers/basemaps/maplibre.ts": {
+      "console": 3
+    },
+    "public/app/plugins/panel/geomap/style/markers.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/geomap/style/utils.ts": {
+      "console": 3
+    },
+    "public/app/plugins/panel/geomap/utils/layers.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/heatmap/HeatmapPanel.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/heatmap/utils.ts": {
+      "console": 3
+    },
+    "public/app/plugins/panel/live/LivePanel.tsx": {
+      "console": 5
+    },
+    "public/app/plugins/panel/live/LivePublish.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/logs/LogsPanel.tsx": {
+      "console": 2
+    },
+    "public/app/plugins/panel/logstable/LogDetailsContext.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/logstable/fieldSelector/buildColumnsWithMeta.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/logstable/hooks/useExtractFields.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/logstable/hooks/useOrganizeFields.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/logstable/rows/LogsTableRowActionButtons.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/news/utils.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/table/migrations.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/timeseries/NullsThresholdInput.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/timeseries/migrations.ts": {
+      "console": 1
+    },
+    "public/app/plugins/panel/timeseries/plugins/AnnotationsPlugin.tsx": {
+      "console": 1
+    },
+    "public/app/plugins/panel/timeseries/plugins/annotations/useAnnotationClustering.tsx": {
+      "console": 1
+    }
+  }
+}

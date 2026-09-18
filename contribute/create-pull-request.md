@@ -72,6 +72,28 @@ We use [ESLint](https://eslint.org/) to enforce code style and best practices, a
     To resolve the error, run the following command: `yarn lint:prune` and commit the changes.
   - You may see merge conflicts for the `eslint-suppressions.json` file. To resolve, merge with the target branch (usually `main`) and resolve conflicts however you like, and then run `yarn lint:prune` to ensure the file is up to date and commit.
 
+### Structured logging (console / print)
+
+CI fails when scoped paths gain **new** `console.*` (frontend) or `fmt.Print*` / stdlib `log` (backend) calls. Existing hits are allowlisted in `scripts/structured-logging-baseline.json` so call-site migrations can land incrementally.
+
+Run the same check locally:
+
+```sh
+make check-structured-logging
+# or
+yarn lint:structured-logging
+```
+
+If you removed existing violations, rewrite the baseline and commit it:
+
+```sh
+make check-structured-logging-update
+# or
+yarn lint:structured-logging:update
+```
+
+Do not add new baseline rows to introduce more `console.*` / `fmt.Print*` / stdlib `log` in production paths. Use `pkg/infra/log` on the backend. Tests and the two frontend debug gates (`debugLog.ts`, `BrowseConsoleBackend.ts`) are excluded.
+
 ## Guidelines for backend development
 
 Refer to the [backend style guidelines](/contribute/backend/style-guide.md).

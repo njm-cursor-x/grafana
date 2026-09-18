@@ -340,6 +340,10 @@ For code that needs to be used by an external plugin:
 
 Linting is performed using [@grafana/eslint-config](https://github.com/grafana/eslint-config-grafana).
 
+## Logging
+
+Do not add `console.*` in shipped `public/app` code. CI fails on **new** occurrences (`make check-structured-logging`); existing ones are listed in `scripts/structured-logging-baseline.json`. Tests are excluded, as are the localStorage debug helper (`public/app/core/utils/debugLog.ts`) and Echo's browser-console backend.
+
 ## Functional components
 
 Use function declarations instead of function expressions when creating a new React functional component. For example:

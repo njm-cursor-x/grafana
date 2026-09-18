@@ -23,6 +23,12 @@ To run all linters, use the `lint-go` Makefile target:
 make lint-go
 ```
 
+To fail on **new** `fmt.Print*` / standard library `log` calls outside `pkg/infra/log` (existing hits are baselined):
+
+```bash
+make check-structured-logging
+```
+
 ## Testing
 
 We value clean and readable code, that is loosely coupled and covered by unit tests. This makes it easier to collaborate and maintain the code.

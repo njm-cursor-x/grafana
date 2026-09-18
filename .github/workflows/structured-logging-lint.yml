@@ -1,0 +1,33 @@
+name: Structured logging lint
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'release-*.*.*'
+      - 'chore/structured-logging-**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
+permissions: {}
+
+jobs:
+  check-structured-logging:
+    name: Forbidden console / print patterns
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Unit-test the structured logging checker
+        run: node --test scripts/check-structured-logging.test.mjs
+
+      - name: Fail on new console.* / fmt.Print* / stdlib log
+        run: make check-structured-logging
