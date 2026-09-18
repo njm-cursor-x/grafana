@@ -66,6 +66,24 @@ Jaeger block runs both Jaeger and Loki container. Loki container sends traces to
 | 1.0     | graphite1   | 8280              | 2203           | 2203        |
 | 0.9     | graphite09  | 8380              | 2303           | 2303        |
 
+#### Structured logging (JSON → Loki)
+
+Local Loki + Alloy + fixture seed, plus an optional compose Grafana that
+writes JSON file logs for Alloy to tail. Exercise Drilldown → Logs and
+Explore against `gdev-loki`. Live process JSON: run Grafana from
+`chore/structured-logging-backend` (do not merge) with
+`grafana-json-logging.ini`, or use this block’s `grafana-json` service.
+
+```bash
+make devenv sources=structured-logging
+```
+
+Runbook, provisional JSON schema, LogQL examples, and verification:
+`docker/blocks/structured-logging/README.md`.
+
+Do not combine with `loki`, `loki-promtail`, or `self-instrumentation` (shared
+port 3100).
+
 #### MailDev
 
 MailDev block runs an SMTP server and a web UI to test and view emails. This is useful for testing your email notifications locally.
