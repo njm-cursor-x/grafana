@@ -23,6 +23,14 @@ To run all linters, use the `lint-go` Makefile target:
 make lint-go
 ```
 
+Do not add `fmt.Print`, `fmt.Printf`, `fmt.Println`, or standard-library `log.Print*` in production packages. Use [`pkg/infra/log`](../../pkg/infra/log/) (see [instrumentation](instrumentation.md)). CI fails on _new_ call sites; existing ones are grandfathered.
+
+```bash
+make lint-go-print
+```
+
+See [structured logging lint](../style-guides/logging.md) for allowlists and how to scan the full tree.
+
 ## Testing
 
 We value clean and readable code, that is loosely coupled and covered by unit tests. This makes it easier to collaborate and maintain the code.

@@ -21,5 +21,6 @@ Find style guides for the Grafana software project:
 
 - [Backend style guide](backend/style-guide.md) - Learn how to style and format backend functionality and code.
 - [Frontend style guide](style-guides/frontend.md) - Learn how to style and format the user-facing functionality and code.
+- [Structured logging lint](style-guides/logging.md) - Local commands for the `console.*` / `fmt.Print*` CI gate.
 - [Redux framework](style-guides/redux.md) - Design the Grafana Redux framework.
 - [Themes style guide](style-guides/themes.md) - Design and update Grafana themes.

@@ -71,6 +71,7 @@ We use [ESLint](https://eslint.org/) to enforce code style and best practices, a
   - If you have fixed suppressed issues but not updated the suppressions file, you may see the following error message in the CI: `There are suppressions left that do not occur anymore.`.
     To resolve the error, run the following command: `yarn lint:prune` and commit the changes.
   - You may see merge conflicts for the `eslint-suppressions.json` file. To resolve, merge with the target branch (usually `main`) and resolve conflicts however you like, and then run `yarn lint:prune` to ensure the file is up to date and commit.
+  - `no-console` is an error in `public/app/**`. New `console.*` uses fail CI even when the file already has a suppression (the count must not increase). Run `yarn lint:ts` locally. See [structured logging lint](style-guides/logging.md).
 
 ## Guidelines for backend development
 
