@@ -1,0 +1,9 @@
+{
+  "messages": ["query failed"],
+  "level": "error",
+  "err": "query backend unavailable",
+  "context": {
+    "source": "datasource.query",
+    "dashboardUid": "abc"
+  }
+}

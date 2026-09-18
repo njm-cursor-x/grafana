@@ -1,0 +1,1 @@
+{"t":"2026-09-18T16:00:03Z","lvl":"eror","level":"error","msg":"query failed","logger":"query_data","err":"plugin timeout","dashboardTitle":"Ops %s %!(EXTRA string=boom) %d","query":"up{job='%s'} OR rate(http_requests[5m])"}
