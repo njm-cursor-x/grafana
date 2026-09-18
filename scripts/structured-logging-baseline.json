@@ -2,7 +2,7 @@
   "version": 1,
   "violations": {
     "pkg/api/http_server.go": {
-      "stdlib.log": 2
+      "stdlib.log": 1
     },
     "pkg/apimachinery/utils/meta.go": {
       "fmt.Print": 1
@@ -16,18 +16,12 @@
     "pkg/cmd/grafana/main.go": {
       "fmt.Print": 2
     },
-    "pkg/components/dashdiffs/formatter_json.go": {
-      "fmt.Print": 1
-    },
     "pkg/components/satokengen/cmd/main.go": {
       "fmt.Print": 6
     },
     "pkg/components/simplejson/simplejson.go": {
       "fmt.Print": 3,
       "stdlib.log": 11
-    },
-    "pkg/expr/sql/frame_table.go": {
-      "fmt.Print": 1
     },
     "pkg/plugins/codegen/package_json.go": {
       "stdlib.log": 1
@@ -54,9 +48,6 @@
       "fmt.Print": 1
     },
     "pkg/services/apiserver/builder/helper.go": {
-      "fmt.Print": 1
-    },
-    "pkg/services/ldap/settings.go": {
       "fmt.Print": 1
     },
     "pkg/services/live/pipeline/devdata.go": {
