@@ -28,8 +28,11 @@ STREAM_BASE = {
     "service_name": "grafana",
 }
 
+ERROR_LEVELS = frozenset({"error", "eror", "crit", "critical"})
+
 # Backend lane (PR #25) + pkg/infra/log go-kit JSON (format = json):
 #   t, level, msg, logger, plus sibling fields. err is a field. Secrets redacted.
+# QA parse --require-err-on-error: every error-level object must include err.
 SAMPLES = [
     {
         "level": "info",
@@ -87,12 +90,32 @@ SAMPLES = [
         "orgId": 1,
     },
     {
+        "level": "error",
+        "msg": "Alert rule evaluation failed",
+        "logger": "ngalert.eval",
+        "err": "failed to execute query: context deadline exceeded",
+        "rule": "HighErrorRate",
+    },
+    {
         "level": "warn",
         "msg": "skipped duplicate response header",
         "logger": "query",
         "header": "Set-Cookie",
     },
 ]
+
+
+def require_err_on_error(samples: list[dict]) -> None:
+    """QA --require-err-on-error: every level=error object must include err."""
+    for sample in samples:
+        level = str(sample.get("level", "")).lower()
+        if level not in ERROR_LEVELS:
+            continue
+        err = sample.get("err")
+        if not isinstance(err, str) or not err.strip():
+            raise ValueError(
+                f"error-level sample {sample.get('msg')!r} must include a non-empty err field"
+            )
 
 
 def wait_ready(timeout_s: int = 120) -> None:
@@ -130,6 +153,7 @@ def push(streams: list[dict]) -> None:
 
 
 def build_streams(now: float | None = None) -> list[dict]:
+    require_err_on_error(SAMPLES)
     now = time.time() if now is None else now
     streams: list[dict] = []
     for index, sample in enumerate(SAMPLES):

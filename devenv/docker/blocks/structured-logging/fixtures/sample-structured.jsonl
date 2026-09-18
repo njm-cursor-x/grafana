@@ -6,4 +6,5 @@
 {"t":"2026-09-18T15:00:25.000000000Z","level":"error","msg":"Query data failed","logger":"query_data","err":"query backend unavailable"}
 {"t":"2026-09-18T15:00:30.000000000Z","level":"error","msg":"HTTP server error","logger":"http.server","err":"http: accept error: connection reset by peer"}
 {"t":"2026-09-18T15:00:35.000000000Z","level":"error","msg":"request failed","logger":"http","Authorization":"[REDACTED]","password":"[REDACTED]","err":"Authorization: [REDACTED]","orgId":1}
-{"t":"2026-09-18T15:00:40.000000000Z","level":"warn","msg":"skipped duplicate response header","logger":"query","header":"Set-Cookie"}
+{"t":"2026-09-18T15:00:40.000000000Z","level":"error","msg":"Alert rule evaluation failed","logger":"ngalert.eval","err":"failed to execute query: context deadline exceeded","rule":"HighErrorRate"}
+{"t":"2026-09-18T15:00:45.000000000Z","level":"warn","msg":"skipped duplicate response header","logger":"query","header":"Set-Cookie"}

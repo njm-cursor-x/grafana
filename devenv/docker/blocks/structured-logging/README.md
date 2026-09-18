@@ -140,6 +140,8 @@ Aligned with `pkg/infra/log` go-kit JSON and Backend PR #25:
 
 Fixtures (`fixtures/sample-structured.jsonl`, `seed/seed.py`) use these names,
 including a redacted `Authorization` example from Backend’s leakage test.
+Every `level=error` line includes `err` (QA `--require-err-on-error`), including
+`Alert rule evaluation failed` (`logger=ngalert.eval`).
 
 ## Provision host Grafana (make run, not compose grafana-json)
 
