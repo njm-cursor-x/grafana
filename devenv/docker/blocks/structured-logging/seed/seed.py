@@ -132,14 +132,24 @@ def push(values: list[list[str]]) -> None:
             raise SystemExit(f"loki push failed: HTTP {resp.status}")
 
 
-def main() -> int:
-    wait_ready()
-    now = time.time()
+def build_values(now: float | None = None) -> list[list[str]]:
+    now = time.time() if now is None else now
     values: list[list[str]] = []
     for index, sample in enumerate(SAMPLES):
         ts = now - (len(SAMPLES) - index) * 5
         line = {"t": rfc3339_nano(ts), **sample}
         values.append([str(int(ts * 1_000_000_000)), json.dumps(line, separators=(",", ":"))])
+    return values
+
+
+def main() -> int:
+    if "--dry-run" in sys.argv:
+        payload = {"streams": [{"stream": STREAM, "values": build_values()}]}
+        print(json.dumps(payload, indent=2))
+        return 0
+
+    wait_ready()
+    values = build_values()
     push(values)
     print(f"pushed {len(values)} fixture lines to {PUSH_URL}", flush=True)
     print(f"stream labels: {STREAM}", flush=True)

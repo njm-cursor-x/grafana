@@ -174,6 +174,12 @@ from the host if Loki is reachable:
 LOKI_URL=http://localhost:3100 python3 devenv/docker/blocks/structured-logging/seed/seed.py
 ```
 
+Print the push payload without contacting Loki:
+
+```bash
+python3 devenv/docker/blocks/structured-logging/seed/seed.py --dry-run
+```
+
 ## Optional Logs panel
 
 Dashboard UID `structured-logging-demo`, title **Structured logging demo**:
