@@ -107,3 +107,18 @@ Executed product checks did **not** FAIL. Remaining gaps are environment or out-
 ## Hard stops
 
 No production deploy, no authz/secret-store changes, no billing. Parse fixtures use the placeholder `test-secret` only.
+
+## Epic integration re-run
+
+After merging lanes #30–#34 into `chore/structured-logging-epic` (QA artifacts only from #35):
+
+| Check | Result |
+| --- | --- |
+| `node --test scripts/qa/structured-logging/parse-checks.test.mjs` | **PASS** (16/16) |
+| Parse CLI on valid Backend error fixture | **PASS** |
+| Parse CLI rejects secrets | **PASS** (exit 1 expected) |
+| `go test ./pkg/infra/log/secretredact/` | **BLOCKED** — distro Go 1.22.2; `go.work` requires 1.26.6; `proxy.golang.org` toolchain zip EOF |
+| Faro Jest / `yarn eslint` | **not re-run** — no `node_modules` on the integration agent |
+| Drilldown/Explore chrome screenshots | **deferred** — CA Docker egress blocked |
+
+LogQL verify against Backend-shaped JSON already passed on Observability #32. Full `go test` / e2e remain env-blocked as above.
