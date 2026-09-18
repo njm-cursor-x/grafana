@@ -17,9 +17,25 @@ scrape_configs:
       job: varlogs
       __path__: /var/log/*log
 - job_name: grafana
+  pipeline_stages:
+    # Best-effort. Text/logfmt grafana.log still ships; JSON fields land after
+    # [log.file] format = json (Backend lane / local custom.ini).
+    - json:
+        expressions:
+          level: level
+          lvl: lvl
+          logger: logger
+    - template:
+        source: level
+        template: '{{ if .level }}{{ .level }}{{ else }}{{ .lvl }}{{ end }}'
+    - labels:
+        level:
+        logger:
   static_configs:
   - targets:
       - localhost
     labels:
       job: grafana
+      service_name: grafana
+      source: grafana-file
       __path__: /var/log/grafana/*log
