@@ -1,6 +1,5 @@
 import { type JourneyHandle, type JourneyMeta, type JourneyTracker } from '@grafana/runtime';
 import { setJourneyTracker } from '@grafana/runtime/internal';
-
 import { log } from 'app/core/logging/logger';
 
 import { JourneyRegistryImpl } from './JourneyRegistryImpl';

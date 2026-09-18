@@ -11,7 +11,6 @@ import {
 } from '@grafana/api-clients/rtkq/provisioning/v0alpha1';
 import { t } from '@grafana/i18n';
 import { isFetchError } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 import { clearFolders } from 'app/features/browse-dashboards/state/slice';
 import { getState } from 'app/store/store';

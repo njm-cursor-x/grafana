@@ -3,7 +3,6 @@ import { config, locationService } from '@grafana/runtime';
 import { FlagKeys } from '@grafana/runtime/internal';
 import { SceneTimeRange } from '@grafana/scenes';
 import { setTestFlags } from '@grafana/test-utils/unstable';
-
 import { log } from 'app/core/logging/logger';
 import { DashboardScene } from 'app/features/dashboard-scene/scene/DashboardScene';
 import { createLogRow } from 'app/features/logs/components/mocks/logRow';

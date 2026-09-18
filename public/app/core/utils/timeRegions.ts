@@ -1,7 +1,6 @@
 import { Cron } from 'croner';
 
 import { type AbsoluteTimeRange, type TimeRange, durationToMilliseconds, parseDuration } from '@grafana/data';
-
 import { log } from 'app/core/logging/logger';
 
 export type TimeRegionMode = null | 'cron';

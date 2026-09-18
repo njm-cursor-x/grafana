@@ -6,8 +6,8 @@ import { renderLimitedComponents } from '@grafana/runtime';
 import { ToolbarButton } from '@grafana/ui';
 import { useGetCurrentOrgQuotaQuery } from 'app/api/clients/legacy';
 import { SETUPGUIDE_PLUGIN_ID } from 'app/core/constants';
-import { log } from 'app/core/logging/logger';
 import { useMediaQueryMinWidth } from 'app/core/hooks/useMediaQueryMinWidth';
+import { log } from 'app/core/logging/logger';
 import { usePluginComponents } from 'app/features/plugins/extensions/usePluginComponents';
 
 import { NavToolbarSeparator } from '../NavToolbar/NavToolbarSeparator';

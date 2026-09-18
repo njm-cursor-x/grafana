@@ -6,8 +6,8 @@ import 'vendor/css/font_awesome.css';
 
 import { loadLegacyMoment } from '@grafana/data/internal/legacyMoment';
 
-import { log } from './core/logging/logger';
 import { setLegacyMoment } from './core/legacyMomentShim';
+import { log } from './core/logging/logger';
 import { initPreferences } from './initPreferences';
 import { patchFetchForLegacyAPIMode } from './legacyAPIHandling';
 

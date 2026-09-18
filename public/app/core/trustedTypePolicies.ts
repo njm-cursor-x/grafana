@@ -1,6 +1,5 @@
 import { textUtil } from '@grafana/data';
 import { config } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 
 const CSP_REPORT_ONLY_ENABLED = config.cspReportOnlyEnabled;

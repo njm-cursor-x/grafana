@@ -4,7 +4,6 @@ import { of } from 'rxjs';
 
 import { type DataQuery, store } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 import { SortOrder } from 'app/core/utils/richHistoryTypes';
 

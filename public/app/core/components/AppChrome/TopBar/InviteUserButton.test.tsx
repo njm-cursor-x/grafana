@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { render } from 'test/test-utils';
 
 import { config, reportInteraction } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 import { contextSrv } from 'app/core/services/context_srv';
 import { createComponentWithMeta, usePluginComponents } from 'app/features/plugins/extensions/usePluginComponents';

@@ -3,7 +3,6 @@ import { type Observable, of, throwError } from 'rxjs';
 
 import { deprecationWarning, validatePath } from '@grafana/data';
 import { type BackendSrvRequest } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 
 export const parseInitFromOptions = (options: BackendSrvRequest): RequestInit => {

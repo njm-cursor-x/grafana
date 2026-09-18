@@ -4,7 +4,6 @@ import { delay } from 'rxjs/operators';
 
 import { AppEvents, DataQueryErrorType, type EventBusExtended, PathValidationError } from '@grafana/data';
 import { type BackendSrvRequest, type FetchError, type FetchResponse } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 
 import { TokenRevokedModal } from '../../features/users/TokenRevokedModal';

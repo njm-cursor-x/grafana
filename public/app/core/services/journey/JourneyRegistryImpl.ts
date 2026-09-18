@@ -8,7 +8,6 @@ import {
   getJourneyTracker,
 } from '@grafana/runtime';
 import { type JourneyStartOptions } from '@grafana/runtime/internal';
-
 import { log } from 'app/core/logging/logger';
 import { createDebugLog } from 'app/core/utils/debugLog';
 

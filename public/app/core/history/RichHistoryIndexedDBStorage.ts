@@ -3,7 +3,6 @@ import { isEqual, omit } from 'lodash';
 
 import { type DataQuery, generateUUID } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 import {
   DEFAULT_RICH_HISTORY_SETTINGS as DEFAULT_SETTINGS,

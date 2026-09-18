@@ -8,7 +8,6 @@ import {
   MAX_PAGE_URL_LENGTH,
   TRUNCATION_MARKER,
 } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 
 import { contextSrv } from '../context_srv';

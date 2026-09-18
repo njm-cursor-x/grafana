@@ -1,5 +1,4 @@
 import { type JourneyHandle, locationService } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 
 /**

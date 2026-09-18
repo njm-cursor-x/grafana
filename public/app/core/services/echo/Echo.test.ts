@@ -1,5 +1,4 @@
 import { EchoEventType, MAX_PAGE_URL_LENGTH, TRUNCATION_MARKER } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 
 import { Echo } from './Echo';

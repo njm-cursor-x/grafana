@@ -1,7 +1,6 @@
 import { type Span, SpanStatusCode } from '@opentelemetry/api';
 
 import { config, getJourneyTracker } from '@grafana/runtime';
-
 import { log } from 'app/core/logging/logger';
 
 import { JourneyTrackerImpl } from './JourneyTrackerImpl';

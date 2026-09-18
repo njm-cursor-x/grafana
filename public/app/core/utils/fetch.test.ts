@@ -1,5 +1,4 @@
 import { PathValidationError } from '@grafana/data';
-
 import { log } from 'app/core/logging/logger';
 
 import {
