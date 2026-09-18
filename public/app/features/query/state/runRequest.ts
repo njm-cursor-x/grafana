@@ -19,6 +19,7 @@ import {
   type TimeRange,
 } from '@grafana/data';
 import { config, isMigrationHandler, migrateRequest, toDataQueryError, isExpressionReference } from '@grafana/runtime';
+import { log } from 'app/core/logging/logger';
 import { backendSrv } from 'app/core/services/backend_srv';
 import { queryIsEmpty } from 'app/core/utils/query';
 import { dataSource as expressionDatasource } from 'app/features/expressions/ExpressionDatasource';
@@ -161,7 +162,7 @@ export function runRequest(
     }),
     // handle errors
     catchError((err) => {
-      console.error('runRequest.catchError', err);
+      log.error(err, { stage: 'runRequest.catchError' });
       return of({
         ...state.panelData,
         state: LoadingState.Error,
