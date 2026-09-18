@@ -1,5 +1,5 @@
 // Package secretredact strips credential-like material from log fields and strings.
-// It is stdlib-only so leakage tests can run without the rest of Grafana's module graph.
+// It is the single redaction implementation for pkg/infra/log (stdlib-only).
 package secretredact
 
 import (
@@ -14,6 +14,7 @@ import (
 const Redacted = "[REDACTED]"
 
 var sensitiveKeys = map[string]struct{}{
+	"auth":                {},
 	"authorization":       {},
 	"proxy-authorization": {},
 	"cookie":              {},
@@ -21,30 +22,51 @@ var sensitiveKeys = map[string]struct{}{
 	"password":            {},
 	"passwd":              {},
 	"secret":              {},
+	"token":               {},
 	"api_key":             {},
 	"api-key":             {},
 	"apikey":              {},
+	"x-api-key":           {},
 	"access_token":        {},
 	"access-token":        {},
 	"accesstoken":         {},
 	"refresh_token":       {},
 	"id_token":            {},
-	"client_secret":       {},
-	"grafana_session":     {},
+	"x-auth-token":        {},
 	"x-access-token":      {},
 	"auth_token":          {},
+	"client_secret":       {},
+	"private_key":         {},
+	"credential":          {},
+	"credentials":         {},
+	"grafana_session":     {},
 	"bearer":              {},
 }
 
+var sensitiveKeyFragments = []string{"token", "credential"}
+
 var (
-	reAuthScheme = regexp.MustCompile(`(?i)(\b(?:authorization\s*[:=]\s*)?(?:bearer|basic|token)\s+)\S+`)
+	reAuthHeader = regexp.MustCompile(`(?i)(authorization\s*[:=]\s*)(\S.+)`)
+	reAuthScheme = regexp.MustCompile(`(?i)(\b(?:bearer|basic|token)\s+)\S+`)
 	reAssign     = regexp.MustCompile(`(?i)(\b(?:password|passwd|secret|api[_-]?key|access[_-]?token|client_secret|refresh_token|auth_token|id_token)\s*[:=]\s*)\S+`)
 	reCookie     = regexp.MustCompile(`(?i)(\b(?:grafana_session|grafana_session_expiry)=)[^;\s]+`)
 )
 
-func isSensitiveKey(key string) bool {
-	_, ok := sensitiveKeys[strings.ToLower(strings.TrimSpace(key))]
-	return ok
+// IsSensitiveKey reports whether a log field key should have its entire value replaced.
+func IsSensitiveKey(key string) bool {
+	k := strings.ToLower(strings.TrimSpace(key))
+	if k == "" {
+		return false
+	}
+	if _, ok := sensitiveKeys[k]; ok {
+		return true
+	}
+	for _, frag := range sensitiveKeyFragments {
+		if strings.Contains(k, frag) {
+			return true
+		}
+	}
+	return false
 }
 
 func maybeContainsSecret(s string) bool {
@@ -69,10 +91,20 @@ func RedactSecrets(s string) string {
 	if s == "" || !maybeContainsSecret(s) {
 		return s
 	}
+	s = reAuthHeader.ReplaceAllString(s, "${1}"+Redacted)
 	s = reAuthScheme.ReplaceAllString(s, "${1}"+Redacted)
 	s = reAssign.ReplaceAllString(s, "${1}"+Redacted)
 	s = reCookie.ReplaceAllString(s, "${1}"+Redacted)
 	return s
+}
+
+// RedactValue redacts val when key is sensitive, and always scrubs secret patterns
+// out of strings, errors, headers, and nested maps.
+func RedactValue(key string, val any) any {
+	if IsSensitiveKey(key) {
+		return Redacted
+	}
+	return redactValue(val)
 }
 
 // RedactLogKeyvals copies keyvals and redacts sensitive keys and credential-like values.
@@ -84,13 +116,18 @@ func RedactLogKeyvals(keyvals []any) []any {
 	}
 	out := make([]any, len(keyvals))
 	copy(out, keyvals)
-	for i := 0; i < len(out); i++ {
-		if key, ok := out[i].(string); ok && i+1 < len(out) && isSensitiveKey(key) {
-			out[i+1] = Redacted
-			i++
+	for i := 0; i < len(out); i += 2 {
+		var key string
+		if k, ok := out[i].(string); ok {
+			key = k
+		}
+		if i+1 < len(out) {
+			out[i+1] = RedactValue(key, out[i+1])
 			continue
 		}
-		out[i] = redactValue(out[i])
+		if s, ok := out[i].(string); ok {
+			out[i] = RedactSecrets(s)
+		}
 	}
 	return out
 }
@@ -140,7 +177,7 @@ func redactStringMap(in map[string]string) map[string]string {
 	out := make(map[string]string, len(in))
 	changed := false
 	for k, v := range in {
-		if isSensitiveKey(k) {
+		if IsSensitiveKey(k) {
 			out[k] = Redacted
 			if v != Redacted {
 				changed = true
@@ -166,7 +203,7 @@ func redactStringSliceMap(in map[string][]string) map[string][]string {
 	out := make(map[string][]string, len(in))
 	changed := false
 	for k, vals := range in {
-		if isSensitiveKey(k) {
+		if IsSensitiveKey(k) {
 			out[k] = []string{Redacted}
 			changed = true
 			continue
@@ -193,7 +230,7 @@ func redactAnyMap(in map[string]any) map[string]any {
 	out := make(map[string]any, len(in))
 	changed := false
 	for k, v := range in {
-		if isSensitiveKey(k) {
+		if IsSensitiveKey(k) {
 			out[k] = Redacted
 			if v != Redacted {
 				changed = true

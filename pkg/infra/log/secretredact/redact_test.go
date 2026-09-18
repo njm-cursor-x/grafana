@@ -69,6 +69,45 @@ func TestUserControlledStringsAreFieldsNotFormatSinks(t *testing.T) {
 	}
 }
 
+func TestRedactSecrets_BasicAuth(t *testing.T) {
+	got := RedactSecrets("Authorization: Basic dXNlcjpwYXNz")
+	if strings.Contains(got, "dXNlcjpwYXNz") {
+		t.Fatalf("basic secret leaked in %q", got)
+	}
+	if got != "Authorization: "+Redacted {
+		t.Fatalf("got %q", got)
+	}
+}
+
+func TestRedactValue_FragmentKeys(t *testing.T) {
+	if got := RedactValue("sessionToken", leakProbe); got != Redacted {
+		t.Fatalf("sessionToken: got %#v", got)
+	}
+	if got := RedactValue("clientCredential", leakProbe); got != Redacted {
+		t.Fatalf("clientCredential: got %#v", got)
+	}
+	if got := RedactValue("dashboardTitle", "Sales %s"); got != "Sales %s" {
+		t.Fatalf("safe key was redacted: %#v", got)
+	}
+}
+
+func TestRedactLogKeyvals_OddTrailingValue(t *testing.T) {
+	got := RedactLogKeyvals([]any{"orphan Bearer " + leakProbe})
+	if len(got) != 1 {
+		t.Fatalf("len %d", len(got))
+	}
+	s, ok := got[0].(string)
+	if !ok {
+		t.Fatalf("got %T", got[0])
+	}
+	if strings.Contains(s, leakProbe) {
+		t.Fatalf("leaked in %q", s)
+	}
+	if !strings.Contains(s, "Bearer "+Redacted) {
+		t.Fatalf("got %q", s)
+	}
+}
+
 func TestRedactLogKeyvalsLeavesSafeFields(t *testing.T) {
 	in := []any{"msg", "hello", "dashboardTitle", "Sales %s", "orgId", 1}
 	out := RedactLogKeyvals(in)

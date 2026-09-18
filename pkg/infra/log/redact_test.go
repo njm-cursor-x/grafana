@@ -95,3 +95,18 @@ func TestRedactLogKeyvalsLeavesSafeFields(t *testing.T) {
 	out[1] = "mutated"
 	require.Equal(t, "hello", in[1])
 }
+
+func TestBackendAliasesMatchSecurityNames(t *testing.T) {
+	in := "Authorization: Bearer " + leakProbe
+	require.Equal(t, RedactSecrets(in), Redact(in))
+	require.NotContains(t, Redact(in), leakProbe)
+
+	fields := []any{"msg", "query failed", "Authorization", "Bearer " + leakProbe, "sessionToken", leakProbe}
+	viaSecurity := RedactLogKeyvals(fields)
+	viaBackend := RedactFields(fields)
+	require.Equal(t, viaSecurity, viaBackend)
+	require.Equal(t, Redacted, RedactValue("Authorization", "Bearer "+leakProbe))
+	require.Equal(t, Redacted, viaBackend[3])
+	require.Equal(t, Redacted, viaBackend[5])
+	require.NotContains(t, fmt.Sprint(viaBackend), leakProbe)
+}
