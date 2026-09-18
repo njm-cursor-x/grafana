@@ -8,6 +8,8 @@ make devenv sources=self-instrumentation
 
 This will setup Prometheus, Loki, Tempo, and Pyroscope.
 
+For structured-logging Drilldown/Explore (sample JSON now, live file JSON after Backend), prefer the lighter existing `loki` / `loki-promtail` path documented in [docs/structured-logging-observability.md](../../../../docs/structured-logging-observability.md). This block is the full self-observability stack; it already scrapes `data/log` via Alloy when `[log.file] format = json`.
+
 You then need to run Grafana with those added config:
 
 ```ini
