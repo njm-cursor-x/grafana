@@ -60,6 +60,10 @@ export function shouldScanFrontend(relPath) {
   if (FRONTEND_ALLOWLIST.has(relPath) || isFrontendTestFile(relPath)) {
     return false;
   }
+  // Plugin workspaces may drop node_modules under public/app; those are out of scope.
+  if (relPath.includes('/node_modules/')) {
+    return false;
+  }
   return true;
 }
 

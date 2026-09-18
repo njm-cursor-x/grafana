@@ -30,6 +30,10 @@ describe('path filters', () => {
     assert.equal(isFrontendTestFile('public/app/features/foo/bar.test.tsx'), true);
     assert.equal(shouldScanFrontend('public/app/features/foo/bar.test.tsx'), false);
     assert.equal(shouldScanFrontend('packages/grafana-ui/src/components/Button.tsx'), false);
+    assert.equal(
+      shouldScanFrontend('public/app/plugins/datasource/azuremonitor/node_modules/@grafana/plugin-ui/dist/esm/foo.js'),
+      false
+    );
   });
 
   it('scans pkg production files and skips tests, generated code, and logger internals', () => {
