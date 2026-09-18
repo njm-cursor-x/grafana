@@ -1,0 +1,39 @@
+  # Structured JSON logs → Loki (developer-local).
+  # Start from repo root: make devenv sources=structured-logging
+  # Do not combine with loki, loki-promtail, or self-instrumentation (port 3100 / service name clash).
+  loki:
+    image: grafana/loki:3.5.3
+    ports:
+      - '3100:3100'
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./docker/blocks/structured-logging/loki-config.yaml:/etc/loki/local-config.yaml:ro
+
+  alloy:
+    image: grafana/alloy:v1.10.0
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+    ports:
+      - '12345:12345'
+    volumes:
+      - ./docker/blocks/structured-logging/config.alloy:/etc/alloy/config.alloy:ro
+      - ./docker/blocks/structured-logging/fixtures:/fixtures:ro
+      - ../data/log:/var/log/grafana:ro
+    depends_on:
+      - loki
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  structured-logging-seed:
+    image: python:3.12-alpine
+    depends_on:
+      - loki
+    environment:
+      LOKI_URL: http://loki:3100
+    volumes:
+      - ./docker/blocks/structured-logging/seed/seed.py:/seed.py:ro
+    command: ['python', '/seed.py']
+    restart: 'on-failure'

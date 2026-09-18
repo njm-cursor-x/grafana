@@ -1,0 +1,9 @@
+{"t":"2026-09-18T15:00:00.000000000Z","level":"info","msg":"HTTP Server Listen","logger":"http.server","source":"backend","address":"0.0.0.0:3000"}
+{"t":"2026-09-18T15:00:05.000000000Z","level":"info","msg":"Request completed","logger":"context","source":"backend","method":"GET","path":"/api/dashboards/home","status":200}
+{"t":"2026-09-18T15:00:10.000000000Z","level":"debug","msg":"Plugin loaded","logger":"plugins","source":"backend","pluginId":"loki"}
+{"t":"2026-09-18T15:00:15.000000000Z","level":"info","msg":"User login succeeded","logger":"login","source":"backend","userId":1,"orgId":1}
+{"t":"2026-09-18T15:00:20.000000000Z","level":"warn","msg":"Slow query","logger":"tsdb.query","source":"backend","datasource":"gdev-loki","duration":"2.1s"}
+{"t":"2026-09-18T15:00:25.000000000Z","level":"error","msg":"Failed to query datasource","logger":"tsdb.loki","source":"backend","err":"context deadline exceeded"}
+{"t":"2026-09-18T15:00:30.000000000Z","level":"info","msg":"Dashboard saved","logger":"dashboard","source":"backend","orgId":1}
+{"t":"2026-09-18T15:00:35.000000000Z","level":"error","msg":"Alert rule evaluation failed","logger":"ngalert.eval","source":"backend","rule":"HighErrorRate"}
+{"t":"2026-09-18T15:00:40.000000000Z","level":"info","msg":"Frontend error reported","logger":"frontend-faro","source":"frontend","app":"grafana"}

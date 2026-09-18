@@ -1,0 +1,52 @@
+// Ship Grafana JSON file logs and checked-in fixtures to the local Loki.
+// Live grafana.log lines appear only after the Backend lane enables JSON file format.
+
+loki.write "default" {
+	endpoint {
+		url = "http://loki:3100/loki/api/v1/push"
+	}
+}
+
+local.file_match "structured_logs" {
+	path_targets = [
+		{
+			__path__ = "/var/log/grafana/*.log",
+			job      = "grafana",
+			source   = "grafana-file",
+			service  = "grafana",
+		},
+		{
+			__path__ = "/fixtures/*.jsonl",
+			job      = "grafana-structured",
+			source   = "fixture-file",
+			service  = "grafana",
+		},
+	]
+}
+
+loki.source.file "structured_logs" {
+	targets    = local.file_match.structured_logs.targets
+	forward_to = [loki.process.json_fields.receiver]
+}
+
+// Best-effort JSON parse. Text-format grafana.log lines still ingest as raw lines
+// until Backend switches [log.file] format = json.
+loki.process "json_fields" {
+	stage.json {
+		expressions = {
+			level  = "level",
+			msg    = "msg",
+			logger = "logger",
+			source = "source",
+		}
+	}
+
+	stage.labels {
+		values = {
+			level  = "",
+			logger = "",
+		}
+	}
+
+	forward_to = [loki.write.default.receiver]
+}
