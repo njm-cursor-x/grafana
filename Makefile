@@ -625,6 +625,17 @@ golangci-lint:
 .PHONY: lint-go
 lint-go: golangci-lint ## Run all code checks for backend. You can use GO_LINT_FILES to specify exact files to check
 
+# Fail on newly introduced fmt.Print*/log.Print* since GIT_BASE (default remotes/origin/main).
+# Existing call sites are grandfathered. Set LINT_PRINT_NEW=0 to scan the whole tree.
+.PHONY: lint-go-print
+lint-go-print: ## Fail on new fmt.Print*/log.Print* in production Go vs GIT_BASE
+	@echo "lint Go print-style logging via golangci-lint forbidigo"
+	$(golangci-lint) run \
+		--config .golangci-print.yml \
+		$(if $(filter 0,$(LINT_PRINT_NEW)),,--new-from-merge-base $(GIT_BASE)) \
+		$(if $(GO_BUILD_TAGS),--build-tags $(GO_BUILD_TAGS)) \
+		$(GO_LINT_FILES)
+
 .PHONY: lint-go-diff
 lint-go-diff:
 	git diff --name-only $(GIT_BASE) | \

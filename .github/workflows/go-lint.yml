@@ -4,6 +4,8 @@ on:
     paths:
       - pkg/**
       - .github/workflows/go-lint.yml
+      - .golangci.yml
+      - .golangci-print.yml
       - go.*
     branches:
       - main
@@ -78,4 +80,29 @@ jobs:
           version: v2.12.2
           args: |
             --verbose $(go list -m -f '{{.Dir}}' | xargs -I{} sh -c 'test ! -f {}/.nolint && echo {}/...')
+          install-mode: binary
+
+  lint-go-print:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true'
+    runs-on: ubuntu-arm64
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Setup Go
+        uses: ./.github/actions/setup-go
+        with:
+          cache-build: 'false'
+      - name: Forbid new fmt.Print*/log.Print* (structured logging)
+        uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
+        with:
+          version: v2.12.2
+          only-new-issues: true
+          args: |
+            --config .golangci-print.yml --verbose $(go list -m -f '{{.Dir}}' | xargs -I{} sh -c 'test ! -f {}/.nolint && echo {}/...')
           install-mode: binary
