@@ -202,6 +202,9 @@ func (cl *ConcreteLogger) Debug(msg string, args ...any) {
 }
 
 func (cl *ConcreteLogger) Log(ctx ...any) error {
+	// Redact at emit time so Authorization / cookies / tokens never reach sinks
+	// (JSON, logfmt, Faro-adjacent collectors) even if a caller logs the raw header.
+	ctx = RedactLogKeyvals(ctx)
 	logger := gokitlog.With(&cl.SwapLogger, "t", gokitlog.TimestampFormat(now, logTimeFormat))
 	return logger.Log(ctx...)
 }
