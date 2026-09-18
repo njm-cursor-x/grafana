@@ -130,6 +130,15 @@ describe('Faro payload parse checks', () => {
 
 describe('secret pattern helper', () => {
   it('does not flag [REDACTED] placeholders', () => {
-    assert.deepEqual(findObviousSecrets('Authorization: Bearer [REDACTED] password=[REDACTED] grafana_session=[REDACTED]'), []);
+    assert.deepEqual(
+      findObviousSecrets('Authorization: Bearer [REDACTED] password=[REDACTED] grafana_session=[REDACTED]'),
+      []
+    );
+    assert.deepEqual(findObviousSecrets('{"password":"[REDACTED]","cookie":"[REDACTED]"}'), []);
+  });
+
+  it('flags JSON-quoted password and cookie fields', () => {
+    assert.ok(findObviousSecrets('{"password":"hunter2"}').includes('password'));
+    assert.ok(findObviousSecrets('{"cookie":"grafana_session=abc123session"}').includes('grafana_session'));
   });
 });

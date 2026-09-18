@@ -12,27 +12,39 @@ import { pathToFileURL } from 'node:url';
 
 export const REDACTED = '[REDACTED]';
 
-const SECRET_PATTERNS = [
-  { name: 'bearer', re: /Bearer\s+(?!\[REDACTED\])\S+/i },
-  { name: 'password', re: /password\s*[:=]\s*(?!\[REDACTED\])\S+/i },
-  { name: 'cookie', re: /(?:^|[\s"{,])(?:set-)?cookie\s*[:=]\s*(?!\[REDACTED\])\S+/i },
-  { name: 'grafana_session', re: /grafana_session=(?!\[REDACTED\])[^;"\s]+/i },
-];
+function assignedValue(text, key) {
+  const re = new RegExp(`${key}["']?\\s*[:=]\\s*(?:"([^"]*)"|'([^']*)'|(\\S+))`, 'i');
+  const match = text.match(re);
+  if (!match) {
+    return null;
+  }
+  return match[1] ?? match[2] ?? match[3] ?? null;
+}
+
+export function findObviousSecrets(text) {
+  const hits = [];
+  if (/Bearer\s+(?!\[REDACTED\])\S+/i.test(text)) {
+    hits.push('bearer');
+  }
+  const password = assignedValue(text, 'password');
+  if (password && password !== REDACTED) {
+    hits.push('password');
+  }
+  const cookie = assignedValue(text, 'cookie') ?? assignedValue(text, 'set-cookie');
+  if (cookie && cookie !== REDACTED) {
+    hits.push('cookie');
+  }
+  const session = text.match(/grafana_session=([^;"\s]+)/i);
+  if (session && session[1] !== REDACTED) {
+    hits.push('grafana_session');
+  }
+  return hits;
+}
 
 export function isErrorLevel(record) {
   const raw = record.level ?? record.lvl ?? '';
   const level = String(raw).toLowerCase();
   return level === 'error' || level === 'eror';
-}
-
-export function findObviousSecrets(text) {
-  const hits = [];
-  for (const { name, re } of SECRET_PATTERNS) {
-    if (re.test(text)) {
-      hits.push(name);
-    }
-  }
-  return hits;
 }
 
 function isPlainObject(value) {
