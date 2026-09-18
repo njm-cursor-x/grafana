@@ -400,7 +400,7 @@ func getLogFormat(format string) Formatedlogger {
 		}
 	case "json":
 		return func(w io.Writer) gokitlog.Logger {
-			return gokitlog.NewJSONLogger(gokitlog.NewSyncWriter(w))
+			return newJSONLevelLogger(w)
 		}
 	default:
 		return func(w io.Writer) gokitlog.Logger {

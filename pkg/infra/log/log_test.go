@@ -402,3 +402,13 @@ func newLoggerScenario(t testing.TB, resetCtxLogProviders ...bool) *scenarioCont
 	root = newManager(l)
 	return scenario
 }
+
+func TestRemapJSONLevelKeyvals_AddsStableLevel(t *testing.T) {
+	got := remapJSONLevelKeyvals([]any{"lvl", "eror", "msg", "boom"})
+	require.Equal(t, []any{"lvl", "eror", "msg", "boom", "level", "error"}, got)
+
+	already := []any{"lvl", "info", "level", "info", "msg", "ok"}
+	require.Equal(t, already, remapJSONLevelKeyvals(already))
+
+	require.Equal(t, []any{"msg", "plain"}, remapJSONLevelKeyvals([]any{"msg", "plain"}))
+}
