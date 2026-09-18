@@ -823,6 +823,16 @@ check-tparse:
 		exit 1; \
 	}
 
+.PHONY: logging-secret-inventory
+logging-secret-inventory: ## Inventory console/print and secret-like strings near log sites.
+	./scripts/logging-security/inventory.sh
+
+.PHONY: logging-security-audit
+logging-security-audit: ## Print how to refresh govulncheck / yarn audit notes for the logging-security lane.
+	@echo "See scripts/logging-security/AUDIT.md"
+	@echo "  govulncheck ./pkg/infra/log/..."
+	@echo "  yarn npm audit --recursive --environment production"
+
 .PHONY: help
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
