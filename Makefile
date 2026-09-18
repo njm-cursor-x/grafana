@@ -625,6 +625,14 @@ golangci-lint:
 .PHONY: lint-go
 lint-go: golangci-lint ## Run all code checks for backend. You can use GO_LINT_FILES to specify exact files to check
 
+.PHONY: qa-structured-logging
+qa-structured-logging: ## QA: parse structured JSON log fixtures and inventory public/app console.*
+	node scripts/qa/structured-logging/run.mjs
+
+.PHONY: qa-structured-logging-test
+qa-structured-logging-test: ## QA: unit tests for structured-log parse and console inventory
+	node --test scripts/qa/structured-logging/*.test.mjs
+
 .PHONY: lint-go-diff
 lint-go-diff:
 	git diff --name-only $(GIT_BASE) | \
