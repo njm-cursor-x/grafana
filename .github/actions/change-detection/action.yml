@@ -155,6 +155,8 @@ runs:
             - 'devenv/docker/blocks/*_tests/**'
             - 'scripts/ci/backend-tests/**'
             - 'public/app/plugins/**/plugin.json'
+            - '.golangci.yml'
+            - '.golangci-print.yml'
             - '${{ inputs.self }}'
           backend_src:
             # Same as `backend` above, but excludes Go test files. Used to gate
@@ -182,6 +184,8 @@ runs:
             - '**.cue'
             - 'devenv/docker/blocks/*_tests/**'
             - 'scripts/ci/backend-tests/**'
+            - '.golangci.yml'
+            - '.golangci-print.yml'
             - '${{ inputs.self }}'
             - '!**_test.go'
           frontend:

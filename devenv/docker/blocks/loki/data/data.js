@@ -182,6 +182,68 @@ const sharedLabels = {
   job: '"grafana/data"',
 };
 
+// SAMPLE Grafana-shaped JSON (Observability lane). Mirrors pkg/infra/log
+// format=json + the Backend lane field names (msg, logger, level, err).
+// Live Drilldown against a real grafana-server JSON file waits on Backend.
+const grafanaSampleLabels = {
+  job: 'grafana',
+  service: 'grafana',
+  service_name: 'grafana',
+  source: 'structured-logging-sample',
+  env: 'devenv',
+};
+
+const grafanaSampleLoggers = ['http.server', 'context', 'query_data', 'sqlstore', 'ngalert.eval', 'login'];
+const grafanaSampleLevels = ['debug', 'info', 'info', 'info', 'warn', 'error'];
+const grafanaSamplePaths = ['/api/dashboards/home', '/api/datasources', '/api/search', '/login', '/api/org'];
+
+function rfc3339NanoFromMs(timestampMs) {
+  const iso = new Date(timestampMs).toISOString();
+  return iso.replace('Z', '000Z');
+}
+
+function getGrafanaShapedSampleLog(counter, timestampMs) {
+  const level = chooseRandomElement(grafanaSampleLevels);
+  const logger = chooseRandomElement(grafanaSampleLoggers);
+  const isError = level === 'error';
+  const item = {
+    t: rfc3339NanoFromMs(timestampMs),
+    // Backend PR #31: keep go-kit `lvl` (error is `eror`) and add stable `level`.
+    lvl: level === 'error' ? 'eror' : level,
+    level,
+    msg: isError ? 'Query data failed' : 'Request completed',
+    logger,
+    sample: true,
+    sample_note: 'SAMPLE: Backend-shaped JSON (lvl + level). File scrape of live grafana-server is optional.',
+    counter: counter.toString(),
+  };
+  if (isError) {
+    item.err = logger === 'ngalert.eval' ? 'failed to execute query: context deadline exceeded' : 'query backend unavailable';
+    if (logger === 'ngalert.eval') {
+      item.msg = 'Alert rule evaluation failed';
+      item.rule = 'HighErrorRate';
+    }
+  } else {
+    item.method = chooseRandomElement(['GET', 'GET', 'POST']);
+    item.path = chooseRandomElement(grafanaSamplePaths);
+    item.status = chooseRandomElement([200, 200, 204, 304]);
+    item.time_ms = Math.trunc(Math.random() * 120);
+    item.userId = 1;
+    item.orgId = 1;
+  }
+  return item;
+}
+
+async function sendGrafanaShapedSampleLine(timestampMs, counter) {
+  const item = getGrafanaShapedSampleLog(counter, timestampMs);
+  const timestampNs = `${timestampMs}${getRandomNanosecPart()}`;
+  await lokiSendLogLine(timestampNs, JSON.stringify(item), {
+    ...grafanaSampleLabels,
+    level: item.level,
+    logger: item.logger,
+  });
+}
+
 let globalCounter = 0;
 
 async function sendOldLogs() {
@@ -207,6 +269,10 @@ async function sendOldLogs() {
       { age: 'old', place: 'luna', ...sharedLabels },
       { structuredMetadataKey: 'value', traceId: fakeTraceId() }
     );
+    // ~1/6 of the historical stream is Grafana-shaped SAMPLE JSON for Drilldown.
+    if (i % 6 === 0) {
+      await sendGrafanaShapedSampleLine(timestampMs, globalCounter);
+    }
   }
 }
 
@@ -228,6 +294,7 @@ async function sendNewLogs() {
       { age: 'new', place: 'luna', ...sharedLabels },
       { structuredMetadataKey: 'value', traceId: fakeTraceId() }
     );
+    await sendGrafanaShapedSampleLine(nowMs, globalCounter);
     const sleepDuration = 200 + Math.random() * 800; // between 0.2 and 1 seconds
     await sleep(sleepDuration);
   }

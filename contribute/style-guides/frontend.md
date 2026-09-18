@@ -340,6 +340,10 @@ For code that needs to be used by an external plugin:
 
 Linting is performed using [@grafana/eslint-config](https://github.com/grafana/eslint-config-grafana).
 
+`no-console` is an error under `public/app/**`. Do not add `console.log` / `console.debug` / `console.info` / `console.warn` / `console.error` (or other `console.*`) in application code. Use `@grafana/runtime` logging helpers instead. Existing violations are grandfathered in `eslint-suppressions.json`.
+
+Run the check locally with `yarn lint:ts` (the same ESLint invocation CI uses). See [structured logging lint](logging.md).
+
 ## Functional components
 
 Use function declarations instead of function expressions when creating a new React functional component. For example:

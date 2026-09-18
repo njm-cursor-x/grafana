@@ -54,6 +54,16 @@ make devenv sources=postgres,auth/openldap,grafana postgres_version=9.2 grafana_
 
 The grafana block is pre-configured with the dev-datasources and dashboards.
 
+#### Loki (structured JSON sample)
+
+Existing `loki` block — do not start a second Loki stack. Seeds generic JSON/logfmt plus Grafana-shaped **SAMPLE** JSON for Drilldown → Logs and Explore (`gdev-loki`). Live `grafana-server` JSON waits on the Backend lane; file scrape of `data/log` is the existing `loki-promtail` or `self-instrumentation` block.
+
+```bash
+make devenv sources=loki
+```
+
+Runbook: [docs/structured-logging-observability.md](../docs/structured-logging-observability.md). Do not combine with `loki-promtail` or `self-instrumentation` (shared port 3100).
+
 #### Jaeger
 
 Jaeger block runs both Jaeger and Loki container. Loki container sends traces to Jaeger and also logs its own logs into itself so it is possible to setup derived field for traceID from Loki to Jaeger. You need to install a docker plugin for the self logging to work, without it the container won't start. See https://grafana.com/docs/loki/latest/clients/docker-driver/#installing for installation instructions.

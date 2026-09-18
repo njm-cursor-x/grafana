@@ -33,6 +33,14 @@ const commonTestIgnores = [
   'packages/grafana-test-utils/src/**/*.{ts,tsx}',
 ];
 
+const noConsoleAppIgnores = [
+  ...commonTestIgnores,
+  'public/app/**/webpack.config.ts',
+  'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+  'public/app/core/utils/debugLog.ts',
+  'public/app/features/dashboard/services/performanceUtils.ts',
+];
+
 const generatedFiles = ['**/*.gen.ts', '**/*_gen.ts'];
 
 const enterpriseIgnores = ['public/app/extensions/**/*', 'e2e/extensions/**/*'];
@@ -240,6 +248,19 @@ module.exports = [
           additionalHooks: 'use(Async)$',
         },
       ],
+    },
+  },
+
+  {
+    // Ban console.* in application code. Existing violations are grandfathered in
+    // eslint-suppressions.json so this lane can land before a full logging migration.
+    // @grafana/eslint-config allows console.log/warn/error/info; ESLint keeps those
+    // options if we only change severity. A sentinel allow list replaces them.
+    name: 'grafana/no-console',
+    files: ['public/app/**/*.{js,jsx,ts,tsx}'],
+    ignores: noConsoleAppIgnores,
+    rules: {
+      'no-console': ['error', { allow: ['grafanaStructuredLoggingSentinel'] }],
     },
   },
 

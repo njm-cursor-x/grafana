@@ -1,5 +1,7 @@
 import { type TransportItem } from '@grafana/faro-core';
 
+import { redactSecretsDeep } from './redactSecrets';
+
 // as listed in https://grafana.com/docs/grafana-cloud/monitor-applications/frontend-observability/instrument/filter-bots/#filter-out-bots-from-collecting-data-for-frontend-observability
 const bots =
   '(googlebot|googlebot-mobile|googlebot-image|google favicon|mediapartners-google|' +
@@ -28,9 +30,18 @@ const bots =
 
 const botsRegex = new RegExp(bots);
 
+function redactItem(item: TransportItem): TransportItem {
+  const payload = redactSecretsDeep(item.payload);
+  const meta = redactSecretsDeep(item.meta);
+  if (payload === item.payload && meta === item.meta) {
+    return item;
+  }
+  return { ...item, payload, meta };
+}
+
 export function beforeSendHandler(botFilterEnabled: boolean, item: TransportItem): TransportItem | null {
   if (!botFilterEnabled) {
-    return item;
+    return redactItem(item);
   }
 
   if (typeof item.meta.browser?.userAgent !== 'string') {
@@ -48,7 +59,7 @@ export function beforeSendHandler(botFilterEnabled: boolean, item: TransportItem
 
   try {
     const isBot = botsRegex.test(userAgent);
-    return isBot ? null : item;
+    return isBot ? null : redactItem(item);
   } catch (error) {
     return null;
   }

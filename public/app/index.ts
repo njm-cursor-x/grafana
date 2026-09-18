@@ -59,7 +59,11 @@ bootstrapWindowData().catch((error) => {
   const isRedirect = error && error.redirect && typeof error.redirect === 'string';
   // If a redirect was thrown, just ignore this. The index.html will handle the redirect
   if (!isRedirect) {
-    console.error('Error bootstrapping Grafana', error);
+    void import('./core/logging/faro')
+      .then(({ logError }) => {
+        logError(error, { source: 'auth.bootstrap', phase: 'window' });
+      })
+      .catch(() => undefined);
     window.__grafana_load_failed(error);
   }
 });
