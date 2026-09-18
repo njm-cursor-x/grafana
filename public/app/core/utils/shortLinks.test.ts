@@ -3,6 +3,8 @@ import { config, locationService } from '@grafana/runtime';
 import { FlagKeys } from '@grafana/runtime/internal';
 import { SceneTimeRange } from '@grafana/scenes';
 import { setTestFlags } from '@grafana/test-utils/unstable';
+
+import { log } from 'app/core/logging/logger';
 import { DashboardScene } from 'app/features/dashboard-scene/scene/DashboardScene';
 import { createLogRow } from 'app/features/logs/components/mocks/logRow';
 
@@ -96,7 +98,7 @@ describe('createShortLink using k8s API', () => {
 
 describe('createShortLink retries after failure', () => {
   it('retries after k8s API failure instead of returning cached rejection', async () => {
-    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(log, 'error').mockImplementation();
 
     setTestFlags({ [FlagKeys.UseKubernetesShortURLsAPI]: true });
 

@@ -4,6 +4,8 @@ import { of } from 'rxjs';
 
 import { type DataQuery, store } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
+
+import { log } from 'app/core/logging/logger';
 import { SortOrder } from 'app/core/utils/richHistoryTypes';
 
 import RichHistoryIndexedDBStorage from './RichHistoryIndexedDBStorage';
@@ -752,7 +754,7 @@ describe('migrateToIndexedDB', () => {
   });
 
   it('should abandon migration after max attempts: warn, do not mark complete, do not over-increment', async () => {
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = jest.spyOn(log, 'warn').mockImplementation(() => {});
     try {
       store.setObject(RICH_HISTORY_KEY, [validEntry1]);
 

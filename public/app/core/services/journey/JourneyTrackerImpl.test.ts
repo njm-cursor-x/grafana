@@ -2,6 +2,8 @@ import { type Span, SpanStatusCode } from '@opentelemetry/api';
 
 import { config, getJourneyTracker } from '@grafana/runtime';
 
+import { log } from 'app/core/logging/logger';
+
 import { JourneyTrackerImpl } from './JourneyTrackerImpl';
 
 // Polyfill for jsdom which lacks crypto.randomUUID
@@ -676,7 +678,7 @@ describe('JourneyTrackerImpl', () => {
   // -------------------------------------------------------------------------
 
   it('should isolate throwing onEnd callbacks so later ones still run', () => {
-    const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+    const errorSpy = jest.spyOn(log, 'error').mockImplementation();
     const handle = tracker.startJourney('dashboard_save');
 
     const throwingCb = jest.fn(() => {
@@ -692,10 +694,9 @@ describe('JourneyTrackerImpl', () => {
     expect(throwingCb).toHaveBeenCalledTimes(1);
     // Critical: the second callback (e.g. Echo unsubscribe) must still run.
     expect(cleanupCb).toHaveBeenCalledTimes(1);
-    expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[JourneyTracker] onEnd callback error'),
-      expect.any(Error)
-    );
+    expect(errorSpy).toHaveBeenCalledWith(expect.any(Error), {
+      message: expect.stringContaining('[JourneyTracker] onEnd callback error'),
+    });
 
     errorSpy.mockRestore();
   });

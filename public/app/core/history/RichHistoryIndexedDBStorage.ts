@@ -3,6 +3,8 @@ import { isEqual, omit } from 'lodash';
 
 import { type DataQuery, generateUUID } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
+
+import { log } from 'app/core/logging/logger';
 import {
   DEFAULT_RICH_HISTORY_SETTINGS as DEFAULT_SETTINGS,
   type RichHistorySearchBackendFilters,
@@ -126,7 +128,7 @@ export default class RichHistoryIndexedDBStorage implements RichHistoryStorage, 
     if (!this.migrationPromise) {
       this.migrationPromise = migrateToIndexedDB(this).catch((error) => {
         // Log but don't block — user can still use storage
-        console.error('Query history migration failed:', error);
+        log.error(error, { message: 'Query history migration failed' });
         // Reset so it retries on next access
         this.migrationPromise = undefined;
       });
@@ -228,7 +230,7 @@ export default class RichHistoryIndexedDBStorage implements RichHistoryStorage, 
     // (the no-time-range branch, or a time range wider than the retention
     // window); this self-heals once the next cleanup commits. Acceptable for GC.
     void this.maybeRunRetentionCleanup(db).catch((error) => {
-      console.error('Query history retention cleanup failed:', error);
+      log.error(error, { message: 'Query history retention cleanup failed' });
     });
 
     // 1. Index-based retrieval — narrow at the DB level

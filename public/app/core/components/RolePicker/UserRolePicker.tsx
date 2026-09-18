@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { type OrgRole } from '@grafana/data';
 import { useListUserRolesQuery, useSetUserRolesMutation } from 'app/api/clients/roles';
+import { log } from 'app/core/logging/logger';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction, type Role } from 'app/types/accessControl';
 
@@ -90,7 +91,7 @@ export const UserRolePicker = ({
           },
         }).unwrap();
       } catch (error) {
-        console.error('Error updating user roles', error);
+        log.error(error, { message: 'Error updating user roles' });
       }
     } else if (onApplyRoles) {
       onApplyRoles(newRoles, userId, orgId);

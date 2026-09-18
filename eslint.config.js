@@ -675,6 +675,29 @@ module.exports = [
   },
 
   {
+    // Structured logging: production public/app code must use app/core/logging
+    // instead of console.*. Tests, opt-in debug helpers, and the Echo console
+    // analytics backend are allowlisted.
+    //
+    // features/ and plugins/ still have legacy console.* and will be migrated
+    // in follow-up frontend PRs. They stay ignored so this rule is enforceable
+    // on the paths this lane converted (core + app bootstrap).
+    name: 'grafana/no-console-public-app',
+    files: ['public/app/**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      ...commonTestIgnores,
+      ...enterpriseIgnores,
+      'public/app/core/utils/debugLog.ts',
+      'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+      'public/app/features/**/*.{ts,tsx,js,jsx}',
+      'public/app/plugins/**/*.{ts,tsx,js,jsx}',
+    ],
+    rules: {
+      'no-console': 'error',
+    },
+  },
+
+  {
     // @grafana/i18n shouldn't import from our 'library' NPM packages
     name: 'grafana/packages-that-i18n-cant-import',
     files: ['packages/grafana-i18n/**/*.{ts,tsx}'],

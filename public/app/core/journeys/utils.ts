@@ -1,5 +1,7 @@
 import { type JourneyHandle, locationService } from '@grafana/runtime';
 
+import { log } from 'app/core/logging/logger';
+
 /**
  * Collects cleanup functions so journey wiring doesn't need
  * manual unsub1/unsub2/unsub3 bookkeeping.
@@ -54,9 +56,10 @@ function warnUnsupported(kind: string): void {
     return;
   }
   warnedTypes.add(kind);
-  console.warn(
+  log.warn(
     `[CUJ] str() received unsupported value of type "${kind}"; coerced to ''. ` +
-      `Pass primitives (string/number/boolean) to reportInteraction so journey attributes stay queryable in Tempo.`
+      `Pass primitives (string/number/boolean) to reportInteraction so journey attributes stay queryable in Tempo.`,
+    { kind }
   );
 }
 

@@ -1,5 +1,7 @@
 import { EchoEventType, MAX_PAGE_URL_LENGTH, TRUNCATION_MARKER } from '@grafana/runtime';
 
+import { log } from 'app/core/logging/logger';
+
 import { Echo } from './Echo';
 
 jest.mock('@grafana/runtime', () => ({
@@ -152,7 +154,7 @@ describe('Echo onInteraction', () => {
     echo.onInteraction('test_interaction', errorCallback);
     echo.onInteraction('test_interaction', goodCallback);
 
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    const errorSpy = jest.spyOn(log, 'error').mockImplementation();
 
     echo.addEvent({
       type: EchoEventType.Interaction,
@@ -161,9 +163,12 @@ describe('Echo onInteraction', () => {
 
     expect(errorCallback).toHaveBeenCalledTimes(1);
     expect(goodCallback).toHaveBeenCalledTimes(1);
-    expect(consoleSpy).toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+    expect(errorSpy).toHaveBeenCalledWith(expect.any(Error), {
+      message: '[Echo] onInteraction subscriber error for "test_interaction"',
+    });
 
-    consoleSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 
   it('should still dispatch to backends alongside subscriber dispatch', () => {

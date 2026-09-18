@@ -2,6 +2,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 import { useMemo } from 'react';
 
 import { useListTeamRolesQuery, useSetTeamRolesMutation } from 'app/api/clients/roles';
+import { log } from 'app/core/logging/logger';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction, type Role } from 'app/types/accessControl';
 
@@ -79,7 +80,7 @@ export const TeamRolePicker = ({
           },
         }).unwrap();
       } catch (error) {
-        console.error('Error updating team roles', error);
+        log.error(error, { message: 'Error updating team roles' });
       }
     } else if (onApplyRoles) {
       onApplyRoles(newRoles);

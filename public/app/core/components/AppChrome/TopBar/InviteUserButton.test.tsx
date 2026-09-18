@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { render } from 'test/test-utils';
 
 import { config, reportInteraction } from '@grafana/runtime';
+
+import { log } from 'app/core/logging/logger';
 import { contextSrv } from 'app/core/services/context_srv';
 import { createComponentWithMeta, usePluginComponents } from 'app/features/plugins/extensions/usePluginComponents';
 import { getExternalUserMngLinkUrl } from 'app/features/users/utils';
@@ -191,7 +193,7 @@ describe('NavRightButton', () => {
         throw new Error('URL generation failed');
       });
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const errorSpy = jest.spyOn(log, 'error').mockImplementation(() => {});
       const user = userEvent.setup();
 
       render(<NavRightButton />);
@@ -199,9 +201,11 @@ describe('NavRightButton', () => {
       // Should not crash when URL generation fails
       await user.click(screen.getByRole('button', { name: /invite user/i }));
 
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to handle invite/upgrade user click:', expect.any(Error));
+      expect(errorSpy).toHaveBeenCalledWith(expect.any(Error), {
+        message: 'Failed to handle invite/upgrade user click',
+      });
 
-      consoleSpy.mockRestore();
+      errorSpy.mockRestore();
     });
 
     it('should handle popup blocking gracefully', async () => {
@@ -209,7 +213,7 @@ describe('NavRightButton', () => {
         throw new Error('Popup blocked');
       });
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const errorSpy = jest.spyOn(log, 'error').mockImplementation(() => {});
       const user = userEvent.setup();
 
       render(<NavRightButton />);
@@ -217,9 +221,11 @@ describe('NavRightButton', () => {
       // Should not crash when popup is blocked
       await user.click(screen.getByRole('button', { name: /invite user/i }));
 
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to handle invite/upgrade user click:', expect.any(Error));
+      expect(errorSpy).toHaveBeenCalledWith(expect.any(Error), {
+        message: 'Failed to handle invite/upgrade user click',
+      });
 
-      consoleSpy.mockRestore();
+      errorSpy.mockRestore();
     });
   });
 });

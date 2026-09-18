@@ -9,6 +9,8 @@ import {
   logMeasurement,
 } from '@grafana/runtime';
 import { type JourneyStartOptions } from '@grafana/runtime/internal';
+
+import { log } from 'app/core/logging/logger';
 import { createDebugLog } from 'app/core/utils/debugLog';
 
 const DEFAULT_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
@@ -422,7 +424,7 @@ class JourneyHandleImpl implements JourneyHandle {
       try {
         cb();
       } catch (err) {
-        console.error(`[JourneyTracker] onEnd callback error for "${this.journeyType}":`, err);
+        log.error(err, { message: `[JourneyTracker] onEnd callback error for "${this.journeyType}"` });
       }
     }
   }

@@ -1,3 +1,5 @@
+import { log } from 'app/core/logging/logger';
+
 const AUTH_PATH_PREFIXES = ['/login', '/signup', '/invite/', '/verify', '/user/password/', '/profile/password'];
 
 function isAuthPath(pathname: string): boolean {
@@ -18,6 +20,6 @@ export async function updateMeticulousRecording(pathname: string): Promise<void>
   try {
     window.__meticulous.stopRecording();
   } catch (error) {
-    console.error('Error stopping Meticulous recording:', error);
+    log.error(error, { message: 'Error stopping Meticulous recording' });
   }
 }
