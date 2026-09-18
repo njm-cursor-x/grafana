@@ -7,6 +7,7 @@ import { ToolbarButton } from '@grafana/ui';
 import { useGetCurrentOrgQuotaQuery } from 'app/api/clients/legacy';
 import { SETUPGUIDE_PLUGIN_ID } from 'app/core/constants';
 import { useMediaQueryMinWidth } from 'app/core/hooks/useMediaQueryMinWidth';
+import { log } from 'app/core/logging/logger';
 import { usePluginComponents } from 'app/features/plugins/extensions/usePluginComponents';
 
 import { NavToolbarSeparator } from '../NavToolbar/NavToolbarSeparator';
@@ -61,7 +62,7 @@ function InviteUserButton() {
         performInviteUserClick('top_bar_right', 'invite-user-top-bar');
       }
     } catch (error) {
-      console.error('Failed to handle invite/upgrade user click:', error);
+      log.error(error, { message: 'Failed to handle invite/upgrade user click' });
     }
   };
 

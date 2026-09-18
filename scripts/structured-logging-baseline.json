@@ -89,96 +89,6 @@
     "pkg/util/proxyutil/reverse_proxy.go": {
       "stdlib.log": 1
     },
-    "public/app/AppWrapper.tsx": {
-      "console": 1
-    },
-    "public/app/api/clients/provisioning/utils/createOnCacheEntryAdded.ts": {
-      "console": 1
-    },
-    "public/app/api/clients/provisioning/v0alpha1/index.ts": {
-      "console": 1
-    },
-    "public/app/app.ts": {
-      "console": 3
-    },
-    "public/app/core/components/AccessControl/Permissions.tsx": {
-      "console": 1
-    },
-    "public/app/core/components/AppChrome/TopBar/InviteUserButton.tsx": {
-      "console": 1
-    },
-    "public/app/core/components/Login/LoginCtrl.tsx": {
-      "console": 1
-    },
-    "public/app/core/components/NavLandingPage/NavLandingPage.tsx": {
-      "console": 1
-    },
-    "public/app/core/components/RolePicker/TeamRolePicker.tsx": {
-      "console": 1
-    },
-    "public/app/core/components/RolePicker/UserRolePicker.tsx": {
-      "console": 1
-    },
-    "public/app/core/components/TimePicker/TimePickerWithHistory.tsx": {
-      "console": 1
-    },
-    "public/app/core/history/RichHistoryIndexedDBStorage.ts": {
-      "console": 2
-    },
-    "public/app/core/history/indexedDBMigration.ts": {
-      "console": 1
-    },
-    "public/app/core/journeys/utils.ts": {
-      "console": 1
-    },
-    "public/app/core/navigation/errorModels.ts": {
-      "console": 1
-    },
-    "public/app/core/reducers/appNotification.ts": {
-      "console": 2
-    },
-    "public/app/core/services/FetchQueue.ts": {
-      "console": 3
-    },
-    "public/app/core/services/backend_srv.ts": {
-      "console": 2
-    },
-    "public/app/core/services/context_srv.ts": {
-      "console": 2
-    },
-    "public/app/core/services/echo/Echo.ts": {
-      "console": 1
-    },
-    "public/app/core/services/echo/init.ts": {
-      "console": 8
-    },
-    "public/app/core/services/journey/JourneyRegistryImpl.ts": {
-      "console": 1
-    },
-    "public/app/core/services/journey/JourneyTrackerImpl.ts": {
-      "console": 1
-    },
-    "public/app/core/services/meticulous.ts": {
-      "console": 1
-    },
-    "public/app/core/trustedTypePolicies.ts": {
-      "console": 2
-    },
-    "public/app/core/utils/explore.ts": {
-      "console": 2
-    },
-    "public/app/core/utils/fetch.ts": {
-      "console": 1
-    },
-    "public/app/core/utils/metrics.ts": {
-      "console": 2
-    },
-    "public/app/core/utils/shortLinks.ts": {
-      "console": 2
-    },
-    "public/app/core/utils/timeRegions.ts": {
-      "console": 1
-    },
     "public/app/features/actions/utils.ts": {
       "console": 2
     },
@@ -267,15 +177,6 @@
       "console": 2
     },
     "public/app/features/dashboard-scene/mutation-api/clientBridge.ts": {
-      "console": 1
-    },
-    "public/app/features/dashboard-scene/pages/DashboardScenePage.tsx": {
-      "console": 1
-    },
-    "public/app/features/dashboard-scene/pages/DashboardScenePageStateManager.ts": {
-      "console": 1
-    },
-    "public/app/features/dashboard-scene/pages/utils.ts": {
       "console": 1
     },
     "public/app/features/dashboard-scene/panel-edit/PanelDataPane/PanelDataQueriesTab.tsx": {
@@ -436,9 +337,6 @@
     },
     "public/app/features/dashboard/services/DashboardAnalyticsAggregator.ts": {
       "console": 1
-    },
-    "public/app/features/dashboard/services/DashboardLoaderSrv.ts": {
-      "console": 3
     },
     "public/app/features/dashboard/services/performanceUtils.ts": {
       "console": 6
@@ -617,25 +515,7 @@
     "public/app/features/provisioning/components/Shared/SaveProvisionedResourceDrawer.tsx": {
       "console": 1
     },
-    "public/app/features/query/components/QueryGroup.tsx": {
-      "console": 1
-    },
     "public/app/features/query/state/DashboardQueryRunner/DashboardQueryRunner.ts": {
-      "console": 1
-    },
-    "public/app/features/query/state/DashboardQueryRunner/LegacyAnnotationQueryRunner.ts": {
-      "console": 2
-    },
-    "public/app/features/query/state/DashboardQueryRunner/utils.ts": {
-      "console": 1
-    },
-    "public/app/features/query/state/PanelQueryRunner.ts": {
-      "console": 1
-    },
-    "public/app/features/query/state/QueryRunner.ts": {
-      "console": 1
-    },
-    "public/app/features/query/state/runRequest.ts": {
       "console": 1
     },
     "public/app/features/scopes/ScopesApiClient.ts": {
@@ -711,15 +591,6 @@
       "console": 1
     },
     "public/app/features/variables/textbox/TextBoxVariablePicker.tsx": {
-      "console": 1
-    },
-    "public/app/index.ts": {
-      "console": 1
-    },
-    "public/app/initPreferences.ts": {
-      "console": 1
-    },
-    "public/app/legacyAPIHandling.ts": {
       "console": 1
     },
     "public/app/plugins/datasource/azuremonitor/azureMetadata/logsResourceTypes.ts": {

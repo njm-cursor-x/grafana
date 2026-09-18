@@ -675,6 +675,27 @@ module.exports = [
   },
 
   {
+    // Structured logging: production public/app code must use app/core/logging
+    // instead of console.*. Allowlist is limited to tests and explicit dev
+    // helpers (opt-in debugLog + Echo's browser console analytics backend).
+    name: 'grafana/no-console-public-app',
+    files: [`public/app/**/${jsTsFiles}`],
+    ignores: [
+      ...commonTestIgnores,
+      ...enterpriseIgnores,
+      'public/app/core/utils/debugLog.ts',
+      'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+      // Plugin sandbox must keep a real console so isolated plugins can log.
+      'public/app/features/plugins/sandbox/distortions.ts',
+    ],
+    rules: {
+      // Base @grafana/eslint-config allows console.error/log/warn/info.
+      // Re-declare with a non-production allowlist so those methods error.
+      'no-console': ['error', { allow: ['trace'] }],
+    },
+  },
+
+  {
     // @grafana/i18n shouldn't import from our 'library' NPM packages
     name: 'grafana/packages-that-i18n-cant-import',
     files: ['packages/grafana-i18n/**/*.{ts,tsx}'],

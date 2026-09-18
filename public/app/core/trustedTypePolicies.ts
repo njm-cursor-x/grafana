@@ -1,5 +1,6 @@
 import { textUtil } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { log } from 'app/core/logging/logger';
 
 const CSP_REPORT_ONLY_ENABLED = config.cspReportOnlyEnabled;
 
@@ -8,7 +9,7 @@ export const defaultTrustedTypesPolicy = {
     if (!CSP_REPORT_ONLY_ENABLED) {
       return string.replace(/<script/gi, '&lt;script');
     }
-    console.error('[HTML not sanitized with Trusted Types]', string, source, sink);
+    log.error('HTML not sanitized with Trusted Types', { html: string, source, sink });
     return string;
   },
   createScript: (string: string) => string,
@@ -16,7 +17,7 @@ export const defaultTrustedTypesPolicy = {
     if (!CSP_REPORT_ONLY_ENABLED) {
       return textUtil.sanitizeUrl(string);
     }
-    console.error('[ScriptURL not sanitized with Trusted Types]', string, source, sink);
+    log.error('ScriptURL not sanitized with Trusted Types', { url: string, source, sink });
     return string;
   },
 };
