@@ -21,7 +21,7 @@ Epic does not contain the Backend or Frontend commits. Evidence below is from th
 | e2e smoke | FAIL | Not executed. `grafana-server` cannot be built here (`proxy.golang.org` TLS fails; the module graph is not on GitHub). Smoke spec now includes save; see below. |
 | JSON log parse | PASS (logger unit) / UI not browser-checked | Sample from Backend `New("tsdb.prometheus").Error` through `newJSONLevelLogger`. |
 | no-console | PASS (scoped rule) | ESLint exit 0 on the files in `grafana/structured-logging-no-console`. No added `console.*` vs `main`. Repo-wide ban is not configured (461 non-test `console.*` sites remain). |
-| Redaction spot-check | FAIL | Security secretredact + Faro tests pass on `dd9476ec734`. Backend `a46bb31a458` drops the `nonce` key; Security's nonce test fails against that file. |
+| Redaction spot-check | PASS (recheck @ `55ce7ad35a7`) | `nonce` stays; value is `[REDACTED]`. `go test -mod=readonly -count=1 ./pkg/infra/log/secretredact/` passed. Prior FAIL was Backend `a46bb31a458` before fix `c7ade407925`. |
 | Drilldown/Explore | FAIL | Not run. Promtail JSON stage is on the Observability branch. Loki was not started. |
 
 ## Backend unit
@@ -92,6 +92,24 @@ opaque credential leaked: {"authToken":"[REDACTED]","msg":"session created","non
 ## Observability
 
 `devenv/docker/blocks/loki-promtail/promtail-config.yaml` on `61d47968424` sets `service_name: grafana` and a JSON stage that promotes `level` (or go-kit `lvl`, with `eror` mapped to `error`) and `logger`. Explore / Drilldown were not opened. No Loki process was started.
+
+## Redaction recheck @ epic `55ce7ad35a7`
+
+PASS. QA branch merged epic tip `55ce7ad35a778c16481b28f08454d574d266bffd` (fix `c7ade40792562a1b551861d4c81465c40c54454c`).
+
+`pkg/infra/log/secretredact/redact.go` lists `"nonce"` in `sensitiveKeys`. `RedactValue` replaces the value with `[REDACTED]` and keeps the key. `TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues` asserts `"nonce":"[REDACTED]"` and fails if the key is dropped.
+
+```text
+go test -mod=readonly -count=1 ./pkg/infra/log/secretredact/
+ok  	github.com/grafana/grafana/pkg/infra/log/secretredact	0.003s
+
+go test -mod=readonly -count=1 -v ./pkg/infra/log/secretredact/ -run 'TestRedactValue_AuthTokenAndNonce|TestBearerTokenDoesNotAppear'
+--- PASS: TestBearerTokenDoesNotAppearInEncodedLogOutput (0.00s)
+--- PASS: TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues (0.00s)
+ok  	github.com/grafana/grafana/pkg/infra/log/secretredact	0.003s
+```
+
+Go 1.26.6. `-mod=readonly` did not need a module download; this package is stdlib-only.
 
 ## Not done
 
