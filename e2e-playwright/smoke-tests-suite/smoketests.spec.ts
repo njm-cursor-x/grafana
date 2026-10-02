@@ -47,6 +47,11 @@ test.describe(
       await expect(
         dashboardPage.getByGrafanaSelector(selectors.components.VizLegend.seriesName('A-series'))
       ).toBeVisible();
+
+      // Persist the queried panel. New dashboards stay dirty until this drawer confirms.
+      await dashboardPage.getByGrafanaSelector(selectors.components.NavToolbar.editDashboard.saveButton).click();
+      await dashboardPage.getByGrafanaSelector(selectors.components.Drawer.DashboardSaveDrawer.saveButton).click();
+      await expect(page.getByRole('status', { name: 'Dashboard saved' })).toBeVisible();
     });
   }
 );
