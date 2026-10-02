@@ -538,6 +538,10 @@ frontend-service: frontend-service-check
 
 ##@ Testing
 
+.PHONY: structured-logging-secret-inventory
+structured-logging-secret-inventory: ## Inventory Authorization, Bearer, API key, password, and session patterns in log-adjacent code.
+	bash scripts/structured-logging/secret-inventory.sh
+
 .PHONY: test-go
 test-go: test-go-unit test-go-integration
 
