@@ -57,9 +57,6 @@
 1	ts-console	public/app/AppWrapper.tsx	console.warn('Preloader element not found');
 1	ts-console	public/app/api/clients/provisioning/utils/createOnCacheEntryAdded.ts	console.error('Error in onCacheEntryAdded:', error);
 1	ts-console	public/app/api/clients/provisioning/v0alpha1/index.ts	console.error('Error in getRepositoryJobsWithPath:', e);
-1	ts-console	public/app/app.ts	console.error('Failed to initialize OpenFeature provider', err);
-1	ts-console	public/app/app.ts	console.error('Failed to start Grafana', error);
-1	ts-console	public/app/app.ts	console.warn('Failed to clean up old expanded folders', err);
 1	ts-console	public/app/core/components/AccessControl/Permissions.tsx	console.error('failed to load resource description: ', e);
 1	ts-console	public/app/core/components/AppChrome/TopBar/InviteUserButton.tsx	console.error('Failed to handle invite/upgrade user click:', error);
 1	ts-console	public/app/core/components/Login/LoginCtrl.tsx	.catch((err) => console.error(err));
@@ -85,14 +82,6 @@
 1	ts-console	public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts	console.log('[EchoSrv:experiment]', e.payload);
 1	ts-console	public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts	console.log('[EchoSrv:pageview]', e.payload.page);
 1	ts-console	public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts	console.warn(
-1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv AzureAppInsights backend', error);
-1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv Console backend', error);
-1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv Faro backend', error);
-1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv GoogleAnalaytics4 backend', error);
-1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv GoogleAnalytics backend', error);
-1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv Performance backend', error);
-1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv PostHog backend', error);
-1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv Rudderstack backend', error);
 1	ts-console	public/app/core/services/journey/JourneyRegistryImpl.ts	console.warn(
 1	ts-console	public/app/core/services/journey/JourneyTrackerImpl.ts	console.error(`[JourneyTracker] onEnd callback error for "${this.journeyType}":`, err);
 1	ts-console	public/app/core/services/meticulous.ts	console.error('Error stopping Meticulous recording:', error);
