@@ -84,6 +84,7 @@ import { initializeCrashDetection } from './core/crash';
 import { NAMESPACES, GRAFANA_NAMESPACE } from './core/internationalization/constants';
 import { loadTranslations } from './core/internationalization/loadTranslations';
 import { postInitTasks, preInitTasks } from './core/lifecycle-hooks';
+import { createBrowserLogger } from './core/logging/logger';
 import { setMonacoEnv } from './core/monacoEnv';
 import { handleRedirectTo } from './core/navigation/handleRedirectTo';
 import { interceptLinkClicks } from './core/navigation/patch/interceptLinkClicks';
@@ -146,6 +147,8 @@ const extensionsExports = extensionsIndex.keys().map((key) => {
   return extensionsIndex(key);
 });
 
+const bootstrapLog = createBrowserLogger('app.bootstrap');
+
 export interface AppInitOptions {
   // Preferences fetched during boot (see initPreferences). Passed through so we
   // can seed the RTK Query cache and avoid a duplicate preferences/merged request.
@@ -171,7 +174,7 @@ export class GrafanaApp {
         try {
           await initOpenFeature();
         } catch (err) {
-          console.error('Failed to initialize OpenFeature provider', err);
+          bootstrapLog.error('Failed to initialize OpenFeature provider', { error: err });
         }
       }
 
@@ -343,7 +346,7 @@ export class GrafanaApp {
       try {
         cleanupOldExpandedFolders();
       } catch (err) {
-        console.warn('Failed to clean up old expanded folders', err);
+        bootstrapLog.warn('Failed to clean up old expanded folders', { error: err });
       }
 
       this.context = {
@@ -373,7 +376,7 @@ export class GrafanaApp {
 
       await postInitTasks();
     } catch (error) {
-      console.error('Failed to start Grafana', error);
+      bootstrapLog.error('Failed to start Grafana', { error });
       window.__grafana_load_failed(error);
     } finally {
       stopMeasure('frontend_app_init');

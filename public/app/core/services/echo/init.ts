@@ -1,4 +1,5 @@
 import { config, registerEchoBackend, setEchoSrv } from '@grafana/runtime';
+import { browserLogger } from 'app/core/logging/logger';
 import { reportMetricPerformanceMark } from 'app/core/utils/metrics';
 
 import { contextSrv } from '../context_srv';
@@ -28,49 +29,49 @@ export async function initEchoSrv() {
   try {
     await initPerformanceBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Performance backend', error);
+    browserLogger.error('Error initializing EchoSrv Performance backend', { error });
   }
 
   try {
     await initFaroBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Faro backend', error);
+    browserLogger.error('Error initializing EchoSrv Faro backend', { error });
   }
 
   try {
     await initGoogleAnalyticsBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv GoogleAnalytics backend', error);
+    browserLogger.error('Error initializing EchoSrv GoogleAnalytics backend', { error });
   }
 
   try {
     await initGoogleAnalaytics4Backend();
   } catch (error) {
-    console.error('Error initializing EchoSrv GoogleAnalaytics4 backend', error);
+    browserLogger.error('Error initializing EchoSrv GoogleAnalaytics4 backend', { error });
   }
 
   try {
     await initRudderstackBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Rudderstack backend', error);
+    browserLogger.error('Error initializing EchoSrv Rudderstack backend', { error });
   }
 
   try {
     await initAzureAppInsightsBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv AzureAppInsights backend', error);
+    browserLogger.error('Error initializing EchoSrv AzureAppInsights backend', { error });
   }
 
   try {
     await initPostHogBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv PostHog backend', error);
+    browserLogger.error('Error initializing EchoSrv PostHog backend', { error });
   }
 
   try {
     await initConsoleBackend();
   } catch (error) {
-    console.error('Error initializing EchoSrv Console backend', error);
+    browserLogger.error('Error initializing EchoSrv Console backend', { error });
   }
 }
 
@@ -118,6 +119,10 @@ async function initFaroBackend() {
       trackResources: config.grafanaJavascriptAgent.trackResources,
     })
   );
+  browserLogger.info('Faro browser logging initialized', {
+    source: 'app.echo.faro',
+    customEndpoint: config.grafanaJavascriptAgent.customEndpoint ? 'configured' : 'unset',
+  });
 }
 
 async function initGoogleAnalyticsBackend() {
