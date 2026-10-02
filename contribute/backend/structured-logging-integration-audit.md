@@ -3,7 +3,7 @@
 Integrate of the five lane drafts onto `chore/structured-logging-epic`.
 This document is the audit trail for that integrate. Merging the epic into `main` is human-only. Do not merge this work to `main`.
 
-QA regression is recorded below. Overall result: **FAIL (partial)**. The only product gate still open is the Backend/Security `nonce` mismatch. Backend owns that fix.
+QA regression is recorded below. Overall result: **FAIL (partial)**. Backend follow-up `c7ade407925` is on the epic. A QA redaction-only recheck is still pending, so the product gate is not closed.
 
 ## Lane pull requests
 
@@ -107,13 +107,17 @@ That run is against the pre-integrate epic tip. It is not a result for combined 
 - JSON log parse unit: `msg`, `logger`, `err`, and stable `level` present on a Backend JSON line. Bearer probe redacted.
 - Scoped `no-console` ESLint: exit 0 on `public/app/core/logging`, `public/app/index.ts`, `public/app/app.ts`, and `dashboardControls.ts`.
 
-### Product gate still open
+### Product gate
 
-Redaction mismatch. Backend head `a46bb31a458` (#47) drops the exact `nonce` key. Security's `TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues` on #45 (`dd9476ec734`) fails against that file: `authToken` and `token` redact via the `token` fragment, and `nonce` leaks (`n0nce-value-998877`). Filed on #47 and #45.
+QA failed this gate on Backend `a46bb31a458` (#47): that head dropped the exact `nonce` key, so Security's `TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues` on #45 (`dd9476ec734`) leaked `n0nce-value-998877`. `authToken` and `token` already redacted via the `token` fragment. Filed on #47 and #45.
 
-This is the only product gate still open. Backend owns the fix and is pushing a follow-up on `chore/structured-logging-backend`. At the time of this note that branch was still `a46bb31a458`. This audit update does not change product logging code and does not take that follow-up.
+Backend follow-up `c7ade40792562a1b551861d4c81465c40c54454c` is merged onto this epic. `nonce` is a sensitive key in `pkg/infra/log/secretredact/redact.go`. The field stays and the value is `[REDACTED]`. The test asserts the opaque value does not leak and the key is not dropped. The merge kept that behavior. The epic already had the `nonce` key from the Security conflict resolution; this commit adds the "key stays" assertion.
 
-The integrate conflict resolution copied Security's `nonce` key into `pkg/infra/log/secretredact/redact.go` on the epic. That is not Backend's follow-up, and QA did not execute it. The gate stays open until the follow-up lands and the combined tip is rechecked.
+Security Bot read-confirmed `c7ade40` and did not re-run `go test`: `nonce` is sensitive, the field stays, the value is redacted, and the test asserts no leak and that the key is not dropped.
+
+Backend reports `go test -mod=readonly -count=1 ./pkg/infra/log/secretredact/` passed on Go 1.26.6. Full `./pkg/infra/log/...` was not run (`proxy.golang.org` blocked, and `slog_bridge_test.go` has an import cycle).
+
+QA redaction-only recheck is still pending. The product gate is not closed.
 
 ### Not run (infra, non-blocking)
 
@@ -131,7 +135,8 @@ The integrate conflict resolution copied Security's `nonce` key into `pkg/infra/
 | `secretredact` tests on Go 1.22.2 outside the module | Pass on the integrate pass |
 | Frontend Jest (`faroLogger`, `dashboardControls`, `redactSecrets`) | Not run in the integrate pass. QA reports Jest pass on Frontend `3ea4a758335` |
 | Explore / Drilldown | Not run. No Loki images |
-| QA regression | FAIL (partial). See the QA section. Combined tip not rechecked |
+| QA regression | FAIL (partial) on pre-integrate epic `6126b3cc`. Nonce follow-up `c7ade40` is merged. Redaction-only recheck still pending; product gate not closed |
+| `go test ./pkg/infra/log/secretredact/` | Backend reports pass on Go 1.26.6 for `c7ade40` (`-mod=readonly -count=1`). Not re-run in this integrate |
 
 ## Human merge gate
 

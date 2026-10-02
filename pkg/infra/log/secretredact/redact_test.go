@@ -116,6 +116,10 @@ func TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues(t *testing.T) {
 	if !strings.Contains(out, `"userID":7`) && !strings.Contains(out, `"userID": 7`) {
 		t.Fatalf("safe field missing: %s", out)
 	}
+	// The key stays. Replacing the value is redaction; omitting the key is a drop.
+	if !strings.Contains(out, `"nonce":"`+Redacted+`"`) && !strings.Contains(out, `"nonce": "`+Redacted+`"`) {
+		t.Fatalf("nonce field was dropped instead of redacted: %s", out)
+	}
 }
 
 func TestRedactValue_FragmentKeys(t *testing.T) {
