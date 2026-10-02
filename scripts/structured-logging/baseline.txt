@@ -1,0 +1,424 @@
+# Existing unstructured-logging call sites.
+# The check fails when scoped code contains a call that is not listed here.
+# Columns: count, kind, path, normalized source line.
+# Refresh after calls are removed:
+#   python3 scripts/structured-logging/check_unstructured_logs.py --update
+1	go-fmt-print	pkg/apimachinery/utils/meta.go	fmt.Printf("ERR: %v", r)
+4	go-fmt-print	pkg/cmd/grafana-cli/logger/logger.go	fmt.Printf(addMissingNewline(fmtString), args...)
+4	go-fmt-print	pkg/cmd/grafana-cli/logger/logger.go	fmt.Println(args...)
+3	go-fmt-print	pkg/cmd/grafana-cli/logger/loggerV2.go	fmt.Print(args...)
+1	go-fmt-print	pkg/cmd/grafana-cli/logger/loggerV2.go	fmt.Print(color.HiBlueString(fmt.Sprint(args...)))
+1	go-fmt-print	pkg/cmd/grafana-cli/logger/loggerV2.go	fmt.Print(color.HiBlueString(fmt.Sprintf(addNewlines(format), args...)))
+3	go-fmt-print	pkg/cmd/grafana-cli/logger/loggerV2.go	fmt.Printf(addNewlines(format), args...)
+1	go-fmt-print	pkg/cmd/grafana-cli/logger/loggerV2.go	fmt.Printf(fmt.Sprintf("%s %s %s\n\n", color.RedString("Error"), color.RedString("✗"), format), args...)
+1	go-fmt-print	pkg/cmd/grafana-cli/logger/loggerV2.go	fmt.Printf(fmt.Sprintf("%s %s\n\n", color.GreenString("✔"), format), args...)
+1	go-fmt-print	pkg/cmd/grafana/main.go	fmt.Printf(
+1	go-fmt-print	pkg/cmd/grafana/main.go	fmt.Printf("%s: %s %s\n", color.RedString("Error"), color.RedString("✗"), err)
+1	go-fmt-print	pkg/components/dashdiffs/formatter_json.go	fmt.Printf("%v\n", err)
+1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Printf("\nGenerated key hash: %d \n", i+1)
+1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Printf("\nGenerated key: %d:\n", i+1)
+1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Println("ERROR: generating key failed:", err)
+1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Println("ERROR: invalid number of keys to generate:", err)
+1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Println(key.ClientSecret)
+1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Println(key.HashedKey)
+1	go-fmt-print	pkg/expr/sql/frame_table.go	fmt.Printf("------- Unsupported field type: %v", fieldType)
+1	go-fmt-print	pkg/server/bootstrap/diagnostics.go	fmt.Println("diagnostics: pprof profiling enabled", "addr", profileDiagnostics.addr, "port", profileDiagnostics.port, "blockProfileRate", profileDiagnostics.blockRate, "mutexProfileRate", profileDiagnostics.mutexRate)
+1	go-fmt-print	pkg/server/bootstrap/diagnostics.go	fmt.Println("diagnostics: tracing enabled", "file", traceDiagnostics.file)
+1	go-fmt-print	pkg/server/bootstrap/lifecycle.go	fmt.Println("Grafana server is running with elevated privileges. This is not recommended")
+1	go-fmt-print	pkg/server/bootstrap/servers.go	fmt.Printf("Version %s (commit: %s, branch: %s)\n", opts.Version, opts.Commit, opts.BuildBranch)
+1	go-fmt-print	pkg/server/bootstrap/servers.go	fmt.Printf("Version %s (commit: %s, branch: %s, enterprise-commit: %s)\n", opts.Version, opts.Commit, opts.BuildBranch, opts.EnterpriseCommit)
+1	go-fmt-print	pkg/server/bootstrap/servers.go	fmt.Println("Dependencies:")
+1	go-fmt-print	pkg/server/bootstrap/servers.go	fmt.Println(dep.Path, dep.Version)
+1	go-fmt-print	pkg/services/apiserver/builder/helper.go	fmt.Printf("ERROR: %s\n", err)
+1	go-fmt-print	pkg/services/ldap/settings.go	fmt.Println("unknown")
+1	go-fmt-print	pkg/services/sqlstore/sqlstore.go	fmt.Printf("ERROR: Test DB already set up, SetupTestDB called twice\n")
+1	go-fmt-print	pkg/services/sqlstore/sqlstore.go	fmt.Printf("ERROR: Test DB not set up, SetupTestDB not called\n")
+1	go-fmt-print	pkg/services/sqlstore/sqlstore.go	fmt.Printf("Failed to close testSQLStore engine: %s\n", err)
+1	go-fmt-print	pkg/services/sqlstore/sqlutil/sqlutil.go	fmt.Printf("Error removing sqlite db file %s: %v\n", sqliteDb, err)
+1	go-fmt-print	pkg/services/sqlstore/sqlutil/sqlutil.go	fmt.Printf("Error removing sqlite shm file %s: %v\n", sqliteDb+"-shm", err)
+1	go-fmt-print	pkg/services/sqlstore/sqlutil/sqlutil.go	fmt.Printf("Error removing sqlite wal file %s: %v\n", sqliteDb+"-wal", err)
+1	go-fmt-print	pkg/setting/setting.go	fmt.Printf("Failed to parse defaults.ini, %v\n", err)
+1	go-fmt-print	pkg/setting/setting.go	fmt.Println("Grafana-server Init Failed: Could not find config defaults, make sure homepath command line parameter is set or working directory is homepath")
+1	go-fmt-print	pkg/storage/unified/resource/table.go	fmt.Printf("Updated table snapshot: %s\n", path)
+1	go-stdlib-log	pkg/api/http_server.go	hs.httpSrv.ErrorLog = stdlog.New(customErrorLogger, "", 0)
+1	go-stdlib-log	pkg/api/http_server.go	stdlog.Print(string(msg))
+1	go-stdlib-log	pkg/plugins/codegen/package_json.go	log.Println("error closing package.json", err)
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal("expecting 'info' field")
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal("invalid path")
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal("no definitions")
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal("no file specified, input", input, ", output", output)
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal("no paths")
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal("unable to turn info field into map[string]any")
+4	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal(err)
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Println("invalid op, skipping")
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Println("removing circular ref key", refKey)
+1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Println("removing stable tag")
+1	go-stdlib-log	pkg/util/proxyutil/reverse_proxy.go	ErrorLog: log.New(&logWrapper{logger: logger}, "", 0),
+1	ts-console	public/app/AppWrapper.tsx	console.warn('Preloader element not found');
+1	ts-console	public/app/api/clients/provisioning/utils/createOnCacheEntryAdded.ts	console.error('Error in onCacheEntryAdded:', error);
+1	ts-console	public/app/api/clients/provisioning/v0alpha1/index.ts	console.error('Error in getRepositoryJobsWithPath:', e);
+1	ts-console	public/app/app.ts	console.error('Failed to initialize OpenFeature provider', err);
+1	ts-console	public/app/app.ts	console.error('Failed to start Grafana', error);
+1	ts-console	public/app/app.ts	console.warn('Failed to clean up old expanded folders', err);
+1	ts-console	public/app/core/components/AccessControl/Permissions.tsx	console.error('failed to load resource description: ', e);
+1	ts-console	public/app/core/components/AppChrome/TopBar/InviteUserButton.tsx	console.error('Failed to handle invite/upgrade user click:', error);
+1	ts-console	public/app/core/components/Login/LoginCtrl.tsx	.catch((err) => console.error(err));
+1	ts-console	public/app/core/components/NavLandingPage/NavLandingPage.tsx	console.warn(
+1	ts-console	public/app/core/components/RolePicker/TeamRolePicker.tsx	console.error('Error updating team roles', error);
+1	ts-console	public/app/core/components/RolePicker/UserRolePicker.tsx	console.error('Error updating user roles', error);
+1	ts-console	public/app/core/components/TimePicker/TimePickerWithHistory.tsx	throw console.error('Invalid DateTime object passed to convertToISOString');
+1	ts-console	public/app/core/history/RichHistoryIndexedDBStorage.ts	console.error('Query history migration failed:', error);
+1	ts-console	public/app/core/history/RichHistoryIndexedDBStorage.ts	console.error('Query history retention cleanup failed:', error);
+1	ts-console	public/app/core/history/indexedDBMigration.ts	console.warn(
+1	ts-console	public/app/core/journeys/utils.ts	console.warn(
+1	ts-console	public/app/core/navigation/errorModels.ts	console.error(error);
+1	ts-console	public/app/core/reducers/appNotification.ts	console.error('Unable to persist notifications to local storage');
+1	ts-console	public/app/core/reducers/appNotification.ts	console.error(err);
+1	ts-console	public/app/core/services/FetchQueue.ts	console.log('FetchQueue noOfNotStarted', update.noOfPending);
+1	ts-console	public/app/core/services/FetchQueue.ts	console.log('FetchQueue noOfStarted', update.noOfInProgress);
+1	ts-console	public/app/core/services/FetchQueue.ts	console.log('FetchQueue state', entriesWithoutOptions);
+1	ts-console	public/app/core/services/backend_srv.ts	console.error(error);
+1	ts-console	public/app/core/services/backend_srv.ts	console.log(requestId, 'catch', e);
+2	ts-console	public/app/core/services/context_srv.ts	console.error(e);
+1	ts-console	public/app/core/services/echo/Echo.ts	console.error(`[Echo] onInteraction subscriber error for "${payload.interactionName}":`, err);
+1	ts-console	public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts	console.log('[EchoSrv:event]', eventName, e.payload.properties);
+1	ts-console	public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts	console.log('[EchoSrv:experiment]', e.payload);
+1	ts-console	public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts	console.log('[EchoSrv:pageview]', e.payload.page);
+1	ts-console	public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts	console.warn(
+1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv AzureAppInsights backend', error);
+1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv Console backend', error);
+1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv Faro backend', error);
+1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv GoogleAnalaytics4 backend', error);
+1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv GoogleAnalytics backend', error);
+1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv Performance backend', error);
+1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv PostHog backend', error);
+1	ts-console	public/app/core/services/echo/init.ts	console.error('Error initializing EchoSrv Rudderstack backend', error);
+1	ts-console	public/app/core/services/journey/JourneyRegistryImpl.ts	console.warn(
+1	ts-console	public/app/core/services/journey/JourneyTrackerImpl.ts	console.error(`[JourneyTracker] onEnd callback error for "${this.journeyType}":`, err);
+1	ts-console	public/app/core/services/meticulous.ts	console.error('Error stopping Meticulous recording:', error);
+1	ts-console	public/app/core/trustedTypePolicies.ts	console.error('[HTML not sanitized with Trusted Types]', string, source, sink);
+1	ts-console	public/app/core/trustedTypePolicies.ts	console.error('[ScriptURL not sanitized with Trusted Types]', string, source, sink);
+1	ts-console	public/app/core/utils/debugLog.ts	console.log(`[${prefix}] ${message}`, ...args);
+1	ts-console	public/app/core/utils/explore.ts	console.error(`One of the queries has a datasource that is no longer available and was removed.`);
+1	ts-console	public/app/core/utils/explore.ts	console.error(error);
+1	ts-console	public/app/core/utils/fetch.ts	console.warn(`${response.url} returned an invalid JSON`);
+1	ts-console	public/app/core/utils/metrics.ts	console.error(`[Metrics] Failed to startMeasure ${eventName}`, error);
+1	ts-console	public/app/core/utils/metrics.ts	console.error(`[Metrics] Failed to stopMeasure ${eventName}`, error);
+1	ts-console	public/app/core/utils/shortLinks.ts	console.error('Error in createAndCopyShortLink:', error);
+1	ts-console	public/app/core/utils/shortLinks.ts	console.error('Error when creating shortened link: ', err);
+1	ts-console	public/app/core/utils/timeRegions.ts	console.error(e);
+2	ts-console	public/app/features/actions/utils.ts	console.error(error);
+2	ts-console	public/app/features/admin/UserOrgs.tsx	.catch((e) => console.error(e));
+1	ts-console	public/app/features/admin/Users/OrgUsersTable.tsx	console.error('Error loading options');
+3	ts-console	public/app/features/admin/state/actions.ts	console.error(error);
+1	ts-console	public/app/features/admin/state/apis.tsx	console.error(err);
+1	ts-console	public/app/features/alerting/unified/components/receivers/form/fields/OptionField.tsx	console.error('Element not supported', option.element);
+1	ts-console	public/app/features/alerting/unified/components/rule-editor/labels/LabelsField.tsx	console.error('Failed to fetch label values for key:', key, error);
+1	ts-console	public/app/features/alerting/unified/components/rule-editor/useDashboardQuery.ts	console.error('Failed to fetch dashboard', error);
+1	ts-console	public/app/features/alerting/unified/components/rule-editor/useDashboardQuery.ts	console.error('Something went wrong, unexpected dashboard format');
+1	ts-console	public/app/features/alerting/unified/components/rule-editor/util.ts	console.error('Failed to parse thresholds', err);
+1	ts-console	public/app/features/alerting/unified/rule-list/hooks/grafanaFilter.ts	console.warn('Failed to parse label matcher:', label, result);
+1	ts-console	public/app/features/alerting/unified/state/AlertingQueryRunner.ts	console.warn(`Query with refId: ${query.refId} did not have any relative time range, using default.`);
+1	ts-console	public/app/features/annotations/components/StandardAnnotationQueryEditor.tsx	console.error('Failed to replace annotation query:', error);
+1	ts-console	public/app/features/annotations/standardAnnotationSupport.ts	console.error('Cannot process annotation fields. No time or text present.');
+1	ts-console	public/app/features/annotations/utils/savedQueryUtils.ts	console.warn('Could not prepare annotation with new datasource:', error);
+1	ts-console	public/app/features/apiserver/client.ts	console.error('Watch stream error:', error);
+1	ts-console	public/app/features/apiserver/client.ts	console.warn(
+1	ts-console	public/app/features/apiserver/client.ts	console.warn('Invalid JSON in watch stream:', e, line);
+1	ts-console	public/app/features/apiserver/client.ts	console.warn('Live channel watch failed, falling back to polling:', error);
+1	ts-console	public/app/features/auth-config/FieldRenderer.tsx	console.error(`Unknown field type: ${fieldData.type}`);
+1	ts-console	public/app/features/auth-config/FieldRenderer.tsx	console.log('missing field:', name);
+1	ts-console	public/app/features/auth-config/state/actions.ts	console.log(error);
+1	ts-console	public/app/features/browse-dashboards/api/browseDashboardsAPI.ts	console.error('Failed to refresh user permissions after save', err);
+1	ts-console	public/app/features/browse-dashboards/api/recentlyViewed.ts	console.error('Failed to load recently viewed dashboards', error);
+1	ts-console	public/app/features/browse-dashboards/api/useRecentlyDeletedStateManager.ts	console.error('Failed to get tags from deleted dashboards:', error);
+1	ts-console	public/app/features/browse-dashboards/state/actions.ts	console.error(`Failed to load ${label}`, error);
+1	ts-console	public/app/features/browse-dashboards/state/actions.ts	console.warn(`fetchNextChildrenPage called for ${uid} but that collection is fully loaded`);
+1	ts-console	public/app/features/canvas/runtime/frame.tsx	console.log('Can not duplicate frames (yet)', action, element);
+1	ts-console	public/app/features/canvas/runtime/frame.tsx	console.log('DO action', action, element);
+1	ts-console	public/app/features/commandPalette/actions/dashboardActions.ts	console.error('Failed to load folder info for hybrid search results.', error);
+1	ts-console	public/app/features/commandPalette/actions/dashboardActions.ts	console.error('Hybrid dashboard search failed, falling back to the classic search.', error);
+1	ts-console	public/app/features/commandPalette/actions/deepSearchActions.ts	console.error('Deep search failed. The vector search backend may be unavailable.', error);
+1	ts-console	public/app/features/commandPalette/actions/useActions.tsx	console.error('Error loading recent dashboard actions', err);
+1	ts-console	public/app/features/dashboard-scene/behaviors/DashboardAnalyticsInitializerBehavior.ts	console.warn('dashboardAnalyticsInitializer: Dashboard UID is missing');
+1	ts-console	public/app/features/dashboard-scene/behaviors/DefaultControlsBehavior.ts	console.warn('Failed to load default links', err);
+1	ts-console	public/app/features/dashboard-scene/behaviors/DefaultControlsBehavior.ts	console.warn('Failed to load default variables', err);
+1	ts-console	public/app/features/dashboard-scene/inspect/HelpWizard/SupportSnapshotService.ts	console.log('Error creating scene:', ex);
+1	ts-console	public/app/features/dashboard-scene/inspect/InspectJsonTab.tsx	console.error('Cannot update layout: panel parent is not a DashboardGridItem');
+1	ts-console	public/app/features/dashboard-scene/inspect/InspectJsonTab.tsx	console.error('Cannot update state of panel', panel, gridItem);
+1	ts-console	public/app/features/dashboard-scene/mutation-api/clientBridge.ts	console.warn(
+1	ts-console	public/app/features/dashboard-scene/pages/DashboardScenePage.tsx	console.log('skipping rendering');
+1	ts-console	public/app/features/dashboard-scene/pages/DashboardScenePageStateManager.ts	console.error('Error loading dashboard:', err);
+1	ts-console	public/app/features/dashboard-scene/pages/utils.ts	console.warn('Error fetching parent folder', folderUid, 'for dashboard', err);
+1	ts-console	public/app/features/dashboard-scene/panel-edit/PanelDataPane/PanelDataQueriesTab.tsx	console.error(err);
+1	ts-console	public/app/features/dashboard-scene/panel-edit/PanelEditNext/PanelDataPaneNext.tsx	console.error('Failed to load datasource:', err);
+1	ts-console	public/app/features/dashboard-scene/panel-edit/PanelEditNext/PanelDataPaneNext.tsx	console.error('Failed to load default datasource:', fallbackErr);
+1	ts-console	public/app/features/dashboard-scene/panel-edit/PanelEditNext/QueryEditor/Header/PluginActions.tsx	console.error('Failed to render adaptive telemetry components:', error);
+1	ts-console	public/app/features/dashboard-scene/panel-edit/PanelEditNext/localStorageWithTTL.ts	console.error('Failed to persist value with TTL', error);
+1	ts-console	public/app/features/dashboard-scene/scene/DashboardLayoutOrchestrator.tsx	console.warn(warningMessage);
+1	ts-console	public/app/features/dashboard-scene/scene/DashboardMacro.ts	console.error('Error registering dashboard macro', e);
+1	ts-console	public/app/features/dashboard-scene/scene/DashboardScene.tsx	console.error('Error pasting panel styles:', e);
+2	ts-console	public/app/features/dashboard-scene/scene/DashboardScene.tsx	console.error('Trying to copy a panel that is not DashboardGridItem child');
+2	ts-console	public/app/features/dashboard-scene/scene/DashboardScene.tsx	console.error('Trying to discard back to a state that does not exist, initialState undefined');
+1	ts-console	public/app/features/dashboard-scene/scene/DashboardScene.tsx	console.error('Trying to unlink a lib panel in a layout that is not DashboardGridItem or AutoGridItem');
+2	ts-console	public/app/features/dashboard-scene/scene/DashboardScene.tsx	console.error(err);
+1	ts-console	public/app/features/dashboard-scene/scene/DashboardSceneUrlSync.ts	console.warn(`Panel ${values.editPanel} not found`);
+1	ts-console	public/app/features/dashboard-scene/scene/GoToSnapshotOriginButton.tsx	console.error('Failed to open original dashboard', err);
+2	ts-console	public/app/features/dashboard-scene/scene/export/exporters.ts	console.error('Export failed:', err);
+1	ts-console	public/app/features/dashboard-scene/scene/export/exporters.ts	console.error(`Failed to load library panel ${libraryPanel.uid}:`, error);
+1	ts-console	public/app/features/dashboard-scene/scene/layout-auto-grid/AutoGridItem.tsx	console.error('DashboardGridItem: Variable is not a MultiValueVariable');
+1	ts-console	public/app/features/dashboard-scene/scene/layout-auto-grid/AutoGridLayoutManager.tsx	console.error('Trying to duplicate a panel that is not inside a DashboardGridItem');
+1	ts-console	public/app/features/dashboard-scene/scene/layout-default/DashboardGridItem.tsx	console.error('DashboardGridItem: Variable is not a MultiValueVariable');
+1	ts-console	public/app/features/dashboard-scene/scene/layout-default/DefaultGridLayoutManager.tsx	console.error('Trying to duplicate a panel that is not inside a DashboardGridItem');
+1	ts-console	public/app/features/dashboard-scene/scene/layout-default/RowRepeaterBehavior.ts	console.error('RepeatedRowBehavior: Variable is not a MultiValueVariable');
+1	ts-console	public/app/features/dashboard-scene/scene/layout-default/RowRepeaterBehavior.ts	console.error('RepeatedRowBehavior: Variable not found');
+2	ts-console	public/app/features/dashboard-scene/scene/layout-rows/RowItem.tsx	console.warn(warningMessage);
+3	ts-console	public/app/features/dashboard-scene/scene/layout-tabs/TabItem.tsx	console.warn(warningMessage);
+1	ts-console	public/app/features/dashboard-scene/serialization/DashboardSceneSerializer.ts	console.warn(warningMsg);
+2	ts-console	public/app/features/dashboard-scene/serialization/angularMigration.ts	console.warn(
+1	ts-console	public/app/features/dashboard-scene/serialization/layoutSerializers/utils.ts	console.warn(
+3	ts-console	public/app/features/dashboard-scene/serialization/transformSaveModelSchemaV2ToScene.ts	console.error(err);
+1	ts-console	public/app/features/dashboard-scene/serialization/transformSceneToSaveModelSchemaV2.ts	console.error(
+1	ts-console	public/app/features/dashboard-scene/serialization/transformSceneToSaveModelSchemaV2.ts	console.error('Error transforming dashboard to schema v2: ' + reason, dashboardSchemaV2);
+1	ts-console	public/app/features/dashboard-scene/serialization/transformToV1TypesUtils.ts	console.warn(`Skipping special value mapping with unknown match type: "${match}"`);
+1	ts-console	public/app/features/dashboard-scene/settings/AnnotationsEditView.tsx	console.error('Default datasource does not support annotations');
+1	ts-console	public/app/features/dashboard-scene/settings/GeneralSettingsEditView.tsx	console.error(err);
+1	ts-console	public/app/features/dashboard-scene/settings/VariablesEditView.tsx	console.error('Invalid index');
+5	ts-console	public/app/features/dashboard-scene/settings/VariablesEditView.tsx	console.error('Variable not found');
+1	ts-console	public/app/features/dashboard-scene/settings/VersionsEditView.tsx	.catch((err) => console.log(err))
+1	ts-console	public/app/features/dashboard-scene/settings/annotations/AnnotationQueryOptions.tsx	console.error('Failed to replace annotation query!', error);
+1	ts-console	public/app/features/dashboard-scene/settings/variables/editors/AdHocFiltersVariableEditor.tsx	console.warn('getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
+1	ts-console	public/app/features/dashboard-scene/settings/variables/editors/ConstantVariableEditor.tsx	console.warn('getConstantVariableOptions: variable is not a ConstantVariable');
+1	ts-console	public/app/features/dashboard-scene/settings/variables/editors/GroupByVariableEditor.tsx	console.warn('getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
+1	ts-console	public/app/features/dashboard-scene/settings/variables/editors/IntervalVariableEditor.tsx	console.warn('getIntervalVariableOptions: variable is not an IntervalVariable');
+1	ts-console	public/app/features/dashboard-scene/settings/variables/editors/QueryVariableEditor/getQueryVariableOptions.tsx	console.warn('getQueryVariableOptions: variable is not a QueryVariable');
+1	ts-console	public/app/features/dashboard-scene/settings/variables/editors/SwitchVariableEditor.tsx	console.warn('getSwitchVariableOptions: variable is not a SwitchVariable');
+1	ts-console	public/app/features/dashboard-scene/settings/variables/editors/TextBoxVariableEditor.tsx	console.warn('getTextBoxVariableOptions: variable is not a TextBoxVariable');
+1	ts-console	public/app/features/dashboard-scene/sharing/DownloadDiagnostics.tsx	console.warn(PANEL_DATA_FAILURE_MESSAGE, error);
+1	ts-console	public/app/features/dashboard-scene/sharing/DownloadDiagnostics.tsx	console.warn(SAVE_MODEL_FAILURE_MESSAGE, error);
+1	ts-console	public/app/features/dashboard-scene/sharing/ExportButton/ExportAsImage.tsx	console.error('Error exporting image:', error);
+1	ts-console	public/app/features/dashboard-scene/sidebar/DashboardSidebar.tsx	console.warn('Cannot find element by key="%s"!', element.id);
+1	ts-console	public/app/features/dashboard-scene/sidebar/DashboardSidebar.tsx	console.warn('Cannot find element by source key="%s"!', sourceKey);
+1	ts-console	public/app/features/dashboard-scene/utils/DashboardModelCompatibilityWrapper.ts	console.error('Trying to remove a panel that was not found in scene', panel);
+1	ts-console	public/app/features/dashboard-scene/utils/PanelModelCompatibilityWrapper.ts	console.error('VizPanel key could not be translated to a legacy numeric panel id', this._vizPanel);
+1	ts-console	public/app/features/dashboard-scene/utils/dashboardControls.ts	console.warn('Failed to load datasource', ref, e);
+1	ts-console	public/app/features/dashboard-scene/utils/dashboardControls.ts	console.warn('Failed to load default links from datasource', ds.type, e);
+1	ts-console	public/app/features/dashboard-scene/utils/dashboardControls.ts	console.warn('Failed to load default variables from datasource', ds.type, e);
+1	ts-console	public/app/features/dashboard-scene/utils/predefinedVariables.ts	console.warn('Failed to load predefined dashboard variables', err);
+3	ts-console	public/app/features/dashboard-scene/utils/variables.ts	console.error(err);
+1	ts-console	public/app/features/dashboard/api/ResponseTransformers.ts	console.error(`Variable transformation not implemented: ${v.type}`);
+1	ts-console	public/app/features/dashboard/api/ResponseTransformers.ts	console.error(`Variable transformation not implemented: ${v}`);
+1	ts-console	public/app/features/dashboard/api/ResponseTransformers.ts	console.warn(
+1	ts-console	public/app/features/dashboard/api/ResponseTransformers.ts	console.warn(`Skipping special value mapping with unknown match type: "${match}"`);
+1	ts-console	public/app/features/dashboard/components/GenAI/hooks.ts	console.error(e);
+1	ts-console	public/app/features/dashboard/components/HelpWizard/SupportSnapshotService.ts	console.log('Error creating scene:', ex);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/DashboardCard.tsx	console.error('Failed to load image for:', title, 'URL:', imageUrl);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/GrafanaTemplatesTab.tsx	console.error('Error loading template dashboards ', error);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/SuggestedDashboardsList/SuggestedDashboardsList.tsx	console.error('Error checking dashboard compatibility:', err);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/SuggestedDashboardsList/SuggestedDashboardsList.tsx	console.error('Error loading community dashboards', err);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/api/compatibilityApi.ts	console.error('Dashboard compatibility check failed:', error);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/api/dashboardLibraryApi.ts	console.error('Error loading provisioned dashboards', error);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/api/dashboardLibraryApi.ts	console.warn(
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/api/dashboardLibraryApi.ts	console.warn('Unexpected API response format from Grafana.com:', result);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/utils/communityDashboardHelpers.ts	console.error('Error loading community dashboard:', err);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/utils/communityDashboardHelpers.ts	console.warn('Failed to stringify panel', e);
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/utils/communityDashboardHelpers.ts	console.warn('Panel contains JavaScript code in key');
+1	ts-console	public/app/features/dashboard/dashgrid/DashboardLibrary/utils/communityDashboardHelpers.ts	console.warn('Panel contains JavaScript code in value');
+1	ts-console	public/app/features/dashboard/services/DashboardAnalyticsAggregator.ts	console.warn('Panel not found for operation completion:', data.panelKey);
+2	ts-console	public/app/features/dashboard/services/DashboardLoaderSrv.ts	console.error('Failed to load dashboard', e);
+1	ts-console	public/app/features/dashboard/services/DashboardLoaderSrv.ts	console.error('Script dashboard error ' + err);
+1	ts-console	public/app/features/dashboard/services/performanceUtils.ts	console.error(`❌ Failed to create performance mark: ${name}`, { timestamp, error });
+1	ts-console	public/app/features/dashboard/services/performanceUtils.ts	console.error(`❌ Failed to create performance measure: ${name}`, { startMark, endMark, error });
+1	ts-console	public/app/features/dashboard/services/performanceUtils.ts	console.groupCollapsed(`${logger}: ${message}`);
+1	ts-console	public/app/features/dashboard/services/performanceUtils.ts	console.groupEnd();
+1	ts-console	public/app/features/dashboard/services/performanceUtils.ts	console.log(message);
+1	ts-console	public/app/features/dashboard/services/performanceUtils.ts	console.log(message, data);
+1	ts-console	public/app/features/dashboard/state/DashboardModel.ts	console.log('DashboardModel.off is deprecated');
+1	ts-console	public/app/features/dashboard/state/DashboardModel.ts	console.log('DashboardModel.on is deprecated use events.subscribe');
+1	ts-console	public/app/features/datasources/components/EditDataSource.tsx	console.warn('Error retrying datasource advisor check', error);
+1	ts-console	public/app/features/dimensions/editors/FileUploader.tsx	}).catch((error) => console.error('cannot delete file', error));
+1	ts-console	public/app/features/dimensions/editors/ResourcePickerPopover.tsx	.catch((err) => console.error(err));
+1	ts-console	public/app/features/explore/Logs/LogsMetaRow.tsx	console.error(`Meta type ${typeof value} ${value} not recognized.`);
+1	ts-console	public/app/features/explore/Logs/LogsTableWrap.tsx	console.warn('failed to get column', columnsWithMeta);
+1	ts-console	public/app/features/explore/Logs/utils/table/logsTable.ts	console.error('failed to parse table sort from local storage!', e);
+1	ts-console	public/app/features/explore/PrometheusListView/utils/getRawPrometheusListItemsFromDataFrame.ts	console.warn('Field display method is missing!');
+1	ts-console	public/app/features/explore/QueryLibrary/OpenQueryLibraryExposedComponent.tsx	console.warn(
+1	ts-console	public/app/features/explore/TraceView/components/CriticalPath/index.tsx	console.log('error while computing critical path for a trace', error);
+1	ts-console	public/app/features/explore/TraceView/components/ScrollManager.tsx	console.warn('Invalid row index');
+1	ts-console	public/app/features/explore/TraceView/components/TraceTimelineViewer/ListView/index.tsx	console.warn('itemKey not found');
+1	ts-console	public/app/features/explore/TraceView/components/model/link-patterns.tsx	console.error(`Ignoring invalid link pattern: ${error}`, pattern);
+1	ts-console	public/app/features/explore/TraceView/components/model/transform-trace-data.tsx	console.warn('\t two spans with same ID have `isEqual(...) === true`');
+1	ts-console	public/app/features/explore/TraceView/components/model/transform-trace-data.tsx	console.warn(`Dupe spanID, ${idCount + 1} x ${spanID}`, span, spanMap.get(spanID));
+1	ts-console	public/app/features/explore/TraceView/createSpanLink.tsx	console.error(error);
+1	ts-console	public/app/features/explore/hooks/useExplorePageContext.ts	console.error(error);
+1	ts-console	public/app/features/explore/state/correlations.ts	console.error(err);
+1	ts-console	public/app/features/explore/state/correlations.ts	console.error(response.error);
+2	ts-console	public/app/features/explore/state/query.ts	console.error(error);
+1	ts-console	public/app/features/explore/state/utils.ts	console.error(err);
+1	ts-console	public/app/features/expressions/components/QueryToolbox.tsx	console.error(e);
+1	ts-console	public/app/features/expressions/components/SqlExpressions/hooks/useFunctionSignatures.ts	console.warn('Failed to load SQL function signatures for signature help', error);
+1	ts-console	public/app/features/geo/gazetteer/gazetteer.ts	console.warn('Error loading placename lookup', path, err);
+1	ts-console	public/app/features/inspector/InspectJSONTab.tsx	console.error('Error applying updates', err);
+1	ts-console	public/app/features/library-panels/components/LibraryPanelsView/actions.ts	console.error('Error fetching library panels:', err);
+1	ts-console	public/app/features/library-panels/components/LibraryPanelsView/actions.ts	console.error(e);
+1	ts-console	public/app/features/live/centrifuge/LiveDataStream.ts	console.log('LiveQuery [complete]', this.deps.channelId);
+1	ts-console	public/app/features/live/centrifuge/LiveDataStream.ts	console.log('LiveQuery [error]', { err }, this.deps.channelId);
+1	ts-console	public/app/features/live/centrifuge/LiveDataStream.ts	console.warn(`expected to find at least one non error message ${messages.map(({ type }) => type)}`);
+1	ts-console	public/app/features/live/centrifuge/LiveDataStream.ts	console.warn(`unsupported message type ${messages.map(({ type }) => type)}`);
+1	ts-console	public/app/features/live/centrifuge/channel.ts	console.log('publish error', this.addr, err);
+1	ts-console	public/app/features/live/centrifuge/service.ts	console.log('Publication from server-side channel', context);
+1	ts-console	public/app/features/live/dashboard/dashboardWatcher.ts	console.log('dashboard event for different dashboard?', event, dash);
+1	ts-console	public/app/features/live/live.ts	console.warn(`expected first packet to contain a full frame, received ${data?.type}`);
+1	ts-console	public/app/features/logs/components/fieldSelector/LogListFieldSelector.tsx	console.warn(
+1	ts-console	public/app/features/logs/components/panel/panelState/getLogsPanelState.ts	console.error('error parsing logsPanelState', e);
+1	ts-console	public/app/features/logs/components/panel/virtualization.ts	console.warn('Virtualized log list: falling back to DOM for measurement');
+1	ts-console	public/app/features/logs/utils.ts	console.error('Time field missing in data frame');
+1	ts-console	public/app/features/logs/utils.ts	console.error('Value field missing in data frame');
+1	ts-console	public/app/features/loki-helpers/mergeResponses.ts	console.error(new Error(`Time fields not found in the data frames`));
+1	ts-console	public/app/features/panel-screenshot/PanelScreenshotServiceImpl.ts	console.warn(
+1	ts-console	public/app/features/panel/panellinks/linkSuppliers.ts	console.log('VALUE', value);
+1	ts-console	public/app/features/panel/suggestions/getAllSuggestions.ts	console.error(`Failed to load ${pluginId} for visualization suggestions:`, settled.reason);
+1	ts-console	public/app/features/panel/suggestions/getAllSuggestions.ts	console.warn(`error when loading suggestions from plugin "${plugin.meta.id}"`, e);
+1	ts-console	public/app/features/plugins/admin/api.ts	console.error('Failed to fetch plugins from catalog (default https://grafana.com/api/plugins)');
+1	ts-console	public/app/features/plugins/admin/api.ts	console.warn(`Failed to fetch entitlement for plugin "${id}" (status ${error.status})`);
+1	ts-console	public/app/features/plugins/admin/api.ts	console.warn(`Failed to fetch entitlement for plugin "${id}": unexpected error`);
+1	ts-console	public/app/features/plugins/admin/components/GetStartedWithPlugin/GetStartedWithApp.tsx	console.error('Error while updating the plugin', e);
+1	ts-console	public/app/features/plugins/admin/pages/Browse.tsx	console.error(error.message);
+2	ts-console	public/app/features/plugins/admin/state/actions.ts	console.error(e);
+1	ts-console	public/app/features/plugins/admin/state/actions.ts	console.error(err);
+1	ts-console	public/app/features/plugins/admin/state/actions.ts	console.log(error);
+1	ts-console	public/app/features/plugins/components/AppRootPage.tsx	console.error(error);
+1	ts-console	public/app/features/plugins/components/PluginErrorBoundary.tsx	console.error(`Plugin "${this.context?.meta.id}" failed to load:`, error, info);
+1	ts-console	public/app/features/plugins/components/restrictedGrafanaApis/dashboardMutation/dashboardMutationApi.ts	console.error('Failed to register Dashboard Mutation API:', error);
+1	ts-console	public/app/features/plugins/extensions/logs/LogViewFilters.tsx	console.warn('LogViewFilter does not support multiple series in query result.');
+1	ts-console	public/app/features/plugins/extensions/logs/log.ts	config.buildInfo.env === 'development' && console.warn(message, { ...this.baseLabels, ...labels });
+1	ts-console	public/app/features/plugins/extensions/logs/log.ts	console.error(message, { ...this.baseLabels, ...labels });
+1	ts-console	public/app/features/plugins/extensions/utils.tsx	console.warn(`${errorMessagePrefix}${e.message}`);
+1	ts-console	public/app/features/plugins/importer/addTranslationsToI18n.ts	console.warn(`Could not find any translation for plugin ${pluginId}`, { resolvedLanguage, fallbackLanguage });
+1	ts-console	public/app/features/plugins/importer/addTranslationsToI18n.ts	console.warn(`Could not find default export for plugin ${pluginId}`, {
+1	ts-console	public/app/features/plugins/importer/addTranslationsToI18n.ts	console.warn(`Could not load translation for plugin ${pluginId}`, {
+1	ts-console	public/app/features/plugins/importer/importPluginModule.ts	console.error(error);
+1	ts-console	public/app/features/plugins/importer/pluginImporter.ts	console.warn('Error loading panel plugin: ' + meta.id, error);
+1	ts-console	public/app/features/plugins/loader/systemjsHooks.ts	console.warn(`SystemJS: failed to resolve '${id}'`);
+1	ts-console	public/app/features/plugins/loader/utils.ts	console.log(e);
+1	ts-console	public/app/features/plugins/pluginPreloader.ts	console.error(`[Plugins] Failed to preload plugin: ${config.path} (version: ${config.version})`, error);
+2	ts-console	public/app/features/plugins/sandbox/distortions.ts	console.log(`[plugin ${pluginId}]`, ...args);
+1	ts-console	public/app/features/plugins/sandbox/sandboxPluginLoader.ts	console.error(
+2	ts-console	public/app/features/profile/api.ts	console.error(err);
+1	ts-console	public/app/features/provisioning/components/Shared/SaveProvisionedResourceDrawer.tsx	console.warn(
+1	ts-console	public/app/features/query/components/QueryGroup.tsx	console.error('failed to load data source', error);
+2	ts-console	public/app/features/query/state/DashboardQueryRunner/LegacyAnnotationQueryRunner.ts	console.warn('datasource does not have an annotation query');
+1	ts-console	public/app/features/query/state/DashboardQueryRunner/utils.ts	console.error('handleAnnotationQueryRunnerError', error);
+1	ts-console	public/app/features/query/state/PanelQueryRunner.ts	console.warn('Error running transformation:', err);
+1	ts-console	public/app/features/query/state/QueryRunner.ts	error: (error) => console.error('PanelQueryRunner Error', error),
+1	ts-console	public/app/features/query/state/runRequest.ts	console.error('runRequest.catchError', err);
+2	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error('Failed to fetch dashboards for scopes:', scopeNames, errorMessage);
+1	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error('Failed to fetch default scope:', errorMessage);
+2	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error('Failed to fetch multiple scope nodes:', names, errorMessage);
+1	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error('Failed to fetch multiple scopes:', scopesIds, errorMessage);
+2	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error('Failed to fetch scope navigations for scopes:', scopeNames, errorMessage);
+1	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error('Failed to fetch scope node:', scopeNodeId, errorMessage);
+2	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error('Failed to fetch scope nodes:', context, errorMessage);
+1	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error('Failed to fetch scope:', name, errorMessage);
+2	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.error(`Failed to fetch %s:`, context, errorMessage);
+1	ts-console	public/app/features/scopes/ScopesApiClient.ts	console.warn(
+1	ts-console	public/app/features/scopes/ScopesService.ts	console.error('Failed to apply default scope:', err);
+1	ts-console	public/app/features/scopes/ScopesService.ts	console.error('Failed to pre-load node path from defaultPath', error);
+1	ts-console	public/app/features/scopes/ScopesService.ts	console.error('Failed to pre-load node path', error);
+1	ts-console	public/app/features/scopes/selector/ScopesSelectorService.ts	console.error('Circular reference detected in node path', scopeNodeId);
+1	ts-console	public/app/features/scopes/selector/ScopesSelectorService.ts	console.error('Expected fetchedScopes to be an array, got:', typeof fetchedScopes);
+1	ts-console	public/app/features/scopes/selector/ScopesSelectorService.ts	console.error('Failed to expand to selected scope', error);
+1	ts-console	public/app/features/scopes/selector/ScopesSelectorService.ts	console.error('Failed to load node', error);
+1	ts-console	public/app/features/scopes/selector/scopesTreeUtils.ts	console.warn('Failed to insert full path into tree. Did not find child to' + stringPath[index]);
+1	ts-console	public/app/features/scopes/selector/useScopeNode.ts	console.error('Failed to load node', error);
+1	ts-console	public/app/features/search/service/deletedDashboardsCache.ts	console.error('Failed to fetch deleted dashboards from the trash endpoint:', error);
+1	ts-console	public/app/features/search/service/deletedDashboardsCache.ts	console.error('Failed to fetch deleted dashboards:', error);
+1	ts-console	public/app/features/search/service/deletedDashboardsCache.ts	console.error('Failed to resolve deleted dashboard user displays:', getMessageFromError(error));
+1	ts-console	public/app/features/search/service/deletedDashboardsCache.ts	console.error('Failed to resolve deleted dashboard user displays:', getMessageFromError(settled.reason));
+1	ts-console	public/app/features/search/service/deletedDashboardsCache.ts	console.error('Failed to resolve deleted dashboard user displays:', getMessageFromError(settled.value.error));
+1	ts-console	public/app/features/search/service/unified.ts	console.log('no results', frame);
+1	ts-console	public/app/features/search/service/utils.ts	console.error(e);
+1	ts-console	public/app/features/serviceaccounts/ServiceAccountCreatePage.tsx	console.error('Error loading options', e);
+1	ts-console	public/app/features/serviceaccounts/ServiceAccountCreatePage.tsx	console.error(e);
+1	ts-console	public/app/features/serviceaccounts/components/ServiceAccountProfile.tsx	console.error('Error loading options for service account');
+2	ts-console	public/app/features/serviceaccounts/state/actions.ts	console.error(error);
+2	ts-console	public/app/features/serviceaccounts/state/actionsServiceAccountPage.ts	console.error(error);
+1	ts-console	public/app/features/stars/hooks.ts	console.error('Failed to sync starred items to nav', err);
+1	ts-console	public/app/features/teams/TeamList.tsx	console.error(error);
+1	ts-console	public/app/features/templating/formatVariableValue.ts	console.error(`Variable format ${format} not found. Using glob format as fallback.`);
+1	ts-console	public/app/features/theme-playground/ThemePlayground.tsx	console.error(`Invalid theme definition for theme ${name}: ${result.error.message}`);
+1	ts-console	public/app/features/transformers/editors/FilterByNameTransformerEditor.tsx	console.error(error);
+1	ts-console	public/app/features/transformers/extractFields/fieldExtractors.ts	console.warn(error.message);
+1	ts-console	public/app/features/variables/pickers/OptionsPicker/OptionsPicker.tsx	console.error('OptionPickerFactory: variable has no rootStateKey');
+2	ts-console	public/app/features/variables/pickers/OptionsPicker/OptionsPicker.tsx	console.error('Variable has no rootStateKey');
+1	ts-console	public/app/features/variables/pickers/OptionsPicker/actions.ts	console.error(error);
+1	ts-console	public/app/features/variables/query/operators.ts	console.error('updateOptionsState: variable.rootStateKey is not defined');
+2	ts-console	public/app/features/variables/state/actions.ts	console.error(err);
+2	ts-console	public/app/features/variables/state/actions.ts	console.error(error);
+1	ts-console	public/app/features/variables/switch/SwitchVariablePicker.tsx	console.error('Cannot update variable without rootStateKey');
+1	ts-console	public/app/features/variables/textbox/TextBoxVariablePicker.tsx	console.error('Cannot update variable without rootStateKey');
+1	ts-console	public/app/index.ts	console.error('Error bootstrapping Grafana', error);
+1	ts-console	public/app/initPreferences.ts	console.warn('Failed to fetch merged preferences', err);
+1	ts-console	public/app/legacyAPIHandling.ts	console.warn(`Request made to legacy api ${url.pathname}`);
+1	ts-console	public/app/plugins/datasource/azuremonitor/azure_monitor/azure_monitor_datasource.ts	console.error(`Failed to get metric namespaces: ${reason}`);
+1	ts-console	public/app/plugins/datasource/azuremonitor/components/LogsQueryEditor/LogsQueryEditor.tsx	console.error(err);
+1	ts-console	public/app/plugins/datasource/azuremonitor/components/LogsQueryEditor/LogsQueryEditor.tsx	getBasicLogsUsage(query).catch((err) => console.error(err));
+1	ts-console	public/app/plugins/datasource/azuremonitor/components/LogsQueryEditor/QueryField.tsx	console.error(err);
+1	ts-console	public/app/plugins/datasource/azuremonitor/components/LogsQueryEditor/QueryField.tsx	setupEditor(monaco, schema).catch((err) => console.error(err));
+1	ts-console	public/app/plugins/datasource/azuremonitor/credentials.ts	console.error('Unable to restore legacy credentials: %s', e.message);
+1	ts-console	public/app/plugins/datasource/azuremonitor/resourcePicker/resourcePickerData.ts	console.warn(`Failed to fetch metric namespaces for region ${region}, falling back to predefined list:`, e);
+1	ts-console	public/app/plugins/datasource/cloudwatch/components/ConfigEditor/ConfigEditor.tsx	.catch((err) => console.error('Could not load CloudWatch data source instance', err));
+1	ts-console	public/app/plugins/datasource/cloudwatch/components/shared/LogGroups/LogGroupsField.tsx	console.error(err);
+1	ts-console	public/app/plugins/datasource/cloudwatch/tracking.ts	console.error('error in cloudwatch tracking handler', error);
+1	ts-console	public/app/plugins/datasource/cloudwatch/utils/datalinks.ts	console.error(
+1	ts-console	public/app/plugins/datasource/cloudwatch/utils/datalinks.ts	console.error('Could not load linked X-Ray data source', e);
+1	ts-console	public/app/plugins/datasource/cloudwatch/variables.ts	console.error(`Could not run CloudWatchMetricFindQuery ${query}`, error);
+1	ts-console	public/app/plugins/datasource/dashboard/datasource.ts	console.warn('Failed to create value matcher for filter:', filter, error);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/components/RawFrameEditor.tsx	console.log('Error parsing json', e);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/components/RawFrameEditor.tsx	console.log('Original', json);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/components/RawFrameEditor.tsx	console.log('Save', data);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/runStreams.ts	console.info('chunk missing data', chunk);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/runStreams.ts	console.info('complete stream', streamId);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/runStreams.ts	console.log('Finished stream');
+4	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/runStreams.ts	console.log('unsubscribing to stream ' + streamId);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/runStreams.ts	console.log('unsubscribing to stream', streamId);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/runStreams.ts	console.warn('error in stream', streamId, err);
+1	ts-console	public/app/plugins/datasource/grafana-testdata-datasource/runStreams.ts	console.warn('error parsing line', line, err);
+1	ts-console	public/app/plugins/datasource/grafana/components/QueryEditor.tsx	console.warn('ERROR', err);
+2	ts-console	public/app/plugins/datasource/graphite/datasource.ts	console.error('Fetching graphite functions error', error);
+1	ts-console	public/app/plugins/datasource/graphite/datasource.ts	console.error(`Unable to get annotations.`);
+1	ts-console	public/app/plugins/panel/canvas/components/connections/Connections.tsx	console.log('no connection source');
+1	ts-console	public/app/plugins/panel/canvas/components/connections/Connections.tsx	console.log('no element');
+1	ts-console	public/app/plugins/panel/canvas/components/connections/Connections2.tsx	console.log('no connection source');
+1	ts-console	public/app/plugins/panel/canvas/components/connections/Connections2.tsx	console.log('no element');
+1	ts-console	public/app/plugins/panel/canvas/editor/element/elementEditor.tsx	console.warn('layer does not exist', value);
+1	ts-console	public/app/plugins/panel/canvas/editor/element/utils.ts	console.error('API call error: ', error);
+1	ts-console	public/app/plugins/panel/canvas/editor/layer/TreeNavigationEditor.tsx	console.warn('no scene!');
+1	ts-console	public/app/plugins/panel/canvas/editor/layer/layerEditor.tsx	console.warn('unable to change layer type');
+1	ts-console	public/app/plugins/panel/dashlist/migrations.ts	console.warn('Dashlist: Error migrating folder ID to UID', err);
+1	ts-console	public/app/plugins/panel/geomap/GeomapPanel.tsx	console.error('error loading layers', ex);
+1	ts-console	public/app/plugins/panel/geomap/layers/basemaps/maplibre.ts	console.warn('Failed to load MapLibre style from both JSON and direct URL approaches:', fallbackError);
+1	ts-console	public/app/plugins/panel/geomap/layers/basemaps/maplibre.ts	console.warn('Failed to parse or apply MapLibre style JSON:', error);
+1	ts-console	public/app/plugins/panel/geomap/layers/basemaps/maplibre.ts	console.warn(`Failed to load MapLibre style from ${cfg.url}: ${res.status} ${res.statusText}`);
+1	ts-console	public/app/plugins/panel/geomap/style/markers.ts	console.error(error);
+1	ts-console	public/app/plugins/panel/geomap/style/utils.ts	console.warn(`Unsupported color format: ${colorString}`);
+2	ts-console	public/app/plugins/panel/geomap/style/utils.ts	console.warn(`Unsupported color format: ${rgbString}`);
+1	ts-console	public/app/plugins/panel/geomap/utils/layers.ts	console.warn('ERROR', err);
+1	ts-console	public/app/plugins/panel/heatmap/HeatmapPanel.tsx	console.error(ex);
+2	ts-console	public/app/plugins/panel/live/LivePanel.tsx	console.log('INVALID', addr);
+1	ts-console	public/app/plugins/panel/live/LivePanel.tsx	console.log('LOAD', addr);
+1	ts-console	public/app/plugins/panel/live/LivePanel.tsx	console.log('Same channel', this.state.addr);
+1	ts-console	public/app/plugins/panel/live/LivePanel.tsx	console.log('ignore', event);
+1	ts-console	public/app/plugins/panel/live/LivePublish.tsx	console.log('onPublishClicked (response from publish)', rsp);
+1	ts-console	public/app/plugins/panel/logs/LogsPanel.tsx	console.error(e);
+1	ts-console	public/app/plugins/panel/logs/LogsPanel.tsx	console.warn(`Could not resolve data source for target ${panelData.request.targets[0].refId}`);
+1	ts-console	public/app/plugins/panel/logstable/LogDetailsContext.tsx	console.error(`LogDetailsContext: undefined log with reference ${logRef}`);
+1	ts-console	public/app/plugins/panel/logstable/fieldSelector/buildColumnsWithMeta.ts	console.error(`Unknown field ${fieldName}`, { pendingLabelState, displayedFields });
+1	ts-console	public/app/plugins/panel/logstable/hooks/useExtractFields.ts	console.error('LogsTable: Extract fields transform error', err);
+1	ts-console	public/app/plugins/panel/logstable/hooks/useOrganizeFields.tsx	console.error('LogsTable: Organize fields transform error', err);
+1	ts-console	public/app/plugins/panel/logstable/rows/LogsTableRowActionButtons.tsx	console.error('failed to copy log line link!');
+1	ts-console	public/app/plugins/panel/news/utils.ts	console.warn('Error reading news item:', err, item);
+1	ts-console	public/app/plugins/panel/table/migrations.ts	console.log('Was angular table', panel);
+1	ts-console	public/app/plugins/panel/timeseries/NullsThresholdInput.tsx	console.warn('ERROR', err);
+1	ts-console	public/app/plugins/panel/timeseries/plugins/AnnotationsPlugin.tsx	console.error(`Invalid color: ${color}.`, e);
+1	ts-console	public/app/plugins/panel/timeseries/plugins/annotations/useAnnotationClustering.tsx	console.warn('Hover mode not implemented');
