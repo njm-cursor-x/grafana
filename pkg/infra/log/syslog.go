@@ -4,7 +4,6 @@
 package log
 
 import (
-	"fmt"
 	"log/syslog"
 	"os"
 
@@ -56,15 +55,15 @@ func NewSyslog(sec *ini.Section, format Formatedlogger) *SysLogHandler {
 	handler.Tag = sec.Key("tag").MustString("")
 
 	if err := handler.Init(); err != nil {
-		fmt.Printf("Failed to init syslog handler. Error: %v\n", err)
-		root.Error("Failed to init syslog log handler", "error", err)
+		logToStderr("syslog handler init failed", "err", err)
+		root.Error("Failed to init syslog log handler", "err", err)
 		os.Exit(1)
 	}
 	handler.logger = gokitsyslog.NewSyslogLogger(handler.syslog, format, gokitsyslog.PrioritySelectorOption(selector))
 
 	if err := handler.Log("msg", "syslog logger initialized"); err != nil {
-		fmt.Printf("Failed to log to syslog handler. Error: %v\n", err)
-		root.Error("Failed to log to syslog log handler", "error", err)
+		logToStderr("syslog handler log failed", "err", err)
+		root.Error("Failed to log to syslog log handler", "err", err)
 		os.Exit(1)
 	}
 
