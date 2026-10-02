@@ -175,6 +175,7 @@ type ConcreteLogger struct {
 
 func newConcreteLogger(logger gokitlog.Logger, ctx ...any) *ConcreteLogger {
 	var swapLogger gokitlog.SwapLogger
+	ctx = RedactFields(ctx)
 
 	if len(ctx) == 0 {
 		ctx = []any{}
@@ -277,7 +278,7 @@ func with(ctxLogger *ConcreteLogger, withFunc func(gokitlog.Logger, ...any) goki
 		return ctxLogger
 	}
 
-	ctxLogger.Swap(withFunc(ctxLogger.GetLogger(), ctx...))
+	ctxLogger.Swap(withFunc(ctxLogger.GetLogger(), RedactFields(ctx)...))
 	return ctxLogger
 }
 

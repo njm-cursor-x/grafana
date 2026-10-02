@@ -42,6 +42,8 @@ var sensitiveKeys = map[string]struct{}{
 	"credentials":         {},
 	"grafana_session":     {},
 	"bearer":              {},
+	// CSP nonces are credentials for the page they were minted for.
+	"nonce": {},
 }
 
 var sensitiveKeyFragments = []string{"token", "credential"}
