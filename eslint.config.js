@@ -673,6 +673,24 @@ module.exports = [
       'no-barrel-files/no-barrel-files': 'error',
     },
   },
+  {
+    // App code reports through app/core/logging (Faro). Tests and localStorage-gated
+    // dev consoles stay exempt; existing violations live in eslint-suppressions.json.
+    name: 'grafana/no-console-app',
+    files: ['public/app/**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      ...commonTestIgnores,
+      'public/app/**/webpack.config.ts',
+      'public/app/core/services/echo/backends/analytics/BrowseConsoleBackend.ts',
+      'public/app/core/utils/debugLog.ts',
+      'public/app/features/dashboard/services/performanceUtils.ts',
+    ],
+    rules: {
+      // Severity-only overrides keep the base config's allow-list (log/info/warn/error).
+      // An explicit options object replaces it; an empty object allows no console methods.
+      'no-console': ['error', {}],
+    },
+  },
 
   {
     // @grafana/i18n shouldn't import from our 'library' NPM packages
