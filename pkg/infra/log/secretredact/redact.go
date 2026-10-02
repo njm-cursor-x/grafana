@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"reflect"
 	"regexp"
 	"strings"
 )
@@ -233,14 +234,14 @@ func redactAnyMap(in map[string]any) map[string]any {
 	for k, v := range in {
 		if IsSensitiveKey(k) {
 			out[k] = Redacted
-			if v != Redacted {
+			if !sameValue(v, Redacted) {
 				changed = true
 			}
 			continue
 		}
 		next := redactValue(v)
 		out[k] = next
-		if next != v {
+		if !sameValue(v, next) {
 			changed = true
 		}
 	}
@@ -248,4 +249,25 @@ func redactAnyMap(in map[string]any) map[string]any {
 		return in
 	}
 	return out
+}
+
+// sameValue reports whether a and b are the same log value.
+// Maps and slices are compared by reference; == on those types panics inside an any.
+func sameValue(a, b any) bool {
+	if a == nil || b == nil {
+		return a == nil && b == nil
+	}
+	va, vb := reflect.ValueOf(a), reflect.ValueOf(b)
+	if va.Type() != vb.Type() {
+		return false
+	}
+	switch va.Kind() {
+	case reflect.Map, reflect.Slice, reflect.Func, reflect.Chan, reflect.Pointer, reflect.UnsafePointer:
+		if va.IsNil() || vb.IsNil() {
+			return va.IsNil() && vb.IsNil()
+		}
+		return va.Pointer() == vb.Pointer()
+	default:
+		return a == b
+	}
 }
