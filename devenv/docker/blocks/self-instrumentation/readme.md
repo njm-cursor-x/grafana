@@ -23,6 +23,8 @@ address = localhost:4317
 insecure = true
 ```
 
+Alloy ships `data/log` to Loki with `service_name=grafana` plus `level` and `logger` from each JSON line. Explore and **Drilldown → Logs** queries are in [contribute/backend/structured-logging-loki.md](../../../../contribute/backend/structured-logging-loki.md). The lighter logs-only block is `make devenv sources=loki-promtail` (do not run both; both bind port 3100).
+
 To collect profiles with pyroscope, you need to run Grafana with the following env vars:
 
 ```bash

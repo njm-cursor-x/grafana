@@ -1,0 +1,13 @@
+# Local only. Copy these keys into conf/custom.ini (gitignored).
+# Do not change conf/defaults.ini. File logs are what loki-promtail tails
+# (data/log/grafana.log). Console JSON is the same shape on stdout.
+
+[log]
+mode = console file
+level = info
+
+[log.console]
+format = json
+
+[log.file]
+format = json
