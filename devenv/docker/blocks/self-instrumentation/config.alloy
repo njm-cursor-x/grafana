@@ -33,7 +33,40 @@ loki.relabel "grafana" {
     replacement  = "grafana"
   }
 
+  // Logs Drilldown groups services on service_name.
+  rule {
+    action       = "replace"
+    target_label = "service_name"
+    replacement  = "grafana"
+  }
+
+  forward_to = [loki.process.grafana_json.receiver]
+}
+
+// Same label set as loki-promtail: level + logger only.
+// Other JSON fields stay on the line for Explore / Drilldown.
+loki.process "grafana_json" {
   forward_to = [loki.write.default.receiver]
+
+  stage.json {
+    expressions = {
+      level  = "level",
+      lvl    = "lvl",
+      logger = "logger",
+    }
+  }
+
+  stage.template {
+    source   = "level"
+    template = "{{ if .level }}{{ .level }}{{ else if eq .lvl \"eror\" }}error{{ else }}{{ .lvl }}{{ end }}"
+  }
+
+  stage.labels {
+    values = {
+      level  = "",
+      logger = "",
+    }
+  }
 }
 
 logging {
