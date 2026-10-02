@@ -14,14 +14,12 @@
 1	go-fmt-print	pkg/cmd/grafana-cli/logger/loggerV2.go	fmt.Printf(fmt.Sprintf("%s %s\n\n", color.GreenString("✔"), format), args...)
 1	go-fmt-print	pkg/cmd/grafana/main.go	fmt.Printf(
 1	go-fmt-print	pkg/cmd/grafana/main.go	fmt.Printf("%s: %s %s\n", color.RedString("Error"), color.RedString("✗"), err)
-1	go-fmt-print	pkg/components/dashdiffs/formatter_json.go	fmt.Printf("%v\n", err)
 1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Printf("\nGenerated key hash: %d \n", i+1)
 1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Printf("\nGenerated key: %d:\n", i+1)
 1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Println("ERROR: generating key failed:", err)
 1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Println("ERROR: invalid number of keys to generate:", err)
 1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Println(key.ClientSecret)
 1	go-fmt-print	pkg/components/satokengen/cmd/main.go	fmt.Println(key.HashedKey)
-1	go-fmt-print	pkg/expr/sql/frame_table.go	fmt.Printf("------- Unsupported field type: %v", fieldType)
 1	go-fmt-print	pkg/server/bootstrap/diagnostics.go	fmt.Println("diagnostics: pprof profiling enabled", "addr", profileDiagnostics.addr, "port", profileDiagnostics.port, "blockProfileRate", profileDiagnostics.blockRate, "mutexProfileRate", profileDiagnostics.mutexRate)
 1	go-fmt-print	pkg/server/bootstrap/diagnostics.go	fmt.Println("diagnostics: tracing enabled", "file", traceDiagnostics.file)
 1	go-fmt-print	pkg/server/bootstrap/lifecycle.go	fmt.Println("Grafana server is running with elevated privileges. This is not recommended")
@@ -30,7 +28,6 @@
 1	go-fmt-print	pkg/server/bootstrap/servers.go	fmt.Println("Dependencies:")
 1	go-fmt-print	pkg/server/bootstrap/servers.go	fmt.Println(dep.Path, dep.Version)
 1	go-fmt-print	pkg/services/apiserver/builder/helper.go	fmt.Printf("ERROR: %s\n", err)
-1	go-fmt-print	pkg/services/ldap/settings.go	fmt.Println("unknown")
 1	go-fmt-print	pkg/services/sqlstore/sqlstore.go	fmt.Printf("ERROR: Test DB already set up, SetupTestDB called twice\n")
 1	go-fmt-print	pkg/services/sqlstore/sqlstore.go	fmt.Printf("ERROR: Test DB not set up, SetupTestDB not called\n")
 1	go-fmt-print	pkg/services/sqlstore/sqlstore.go	fmt.Printf("Failed to close testSQLStore engine: %s\n", err)
@@ -41,7 +38,6 @@
 1	go-fmt-print	pkg/setting/setting.go	fmt.Println("Grafana-server Init Failed: Could not find config defaults, make sure homepath command line parameter is set or working directory is homepath")
 1	go-fmt-print	pkg/storage/unified/resource/table.go	fmt.Printf("Updated table snapshot: %s\n", path)
 1	go-stdlib-log	pkg/api/http_server.go	hs.httpSrv.ErrorLog = stdlog.New(customErrorLogger, "", 0)
-1	go-stdlib-log	pkg/api/http_server.go	stdlog.Print(string(msg))
 1	go-stdlib-log	pkg/plugins/codegen/package_json.go	log.Println("error closing package.json", err)
 1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal("expecting 'info' field")
 1	go-stdlib-log	pkg/services/ngalert/api/tooling/cmd/clean-swagger/main.go	log.Fatal("invalid path")
@@ -57,9 +53,6 @@
 1	ts-console	public/app/AppWrapper.tsx	console.warn('Preloader element not found');
 1	ts-console	public/app/api/clients/provisioning/utils/createOnCacheEntryAdded.ts	console.error('Error in onCacheEntryAdded:', error);
 1	ts-console	public/app/api/clients/provisioning/v0alpha1/index.ts	console.error('Error in getRepositoryJobsWithPath:', e);
-1	ts-console	public/app/app.ts	console.error('Failed to initialize OpenFeature provider', err);
-1	ts-console	public/app/app.ts	console.error('Failed to start Grafana', error);
-1	ts-console	public/app/app.ts	console.warn('Failed to clean up old expanded folders', err);
 1	ts-console	public/app/core/components/AccessControl/Permissions.tsx	console.error('failed to load resource description: ', e);
 1	ts-console	public/app/core/components/AppChrome/TopBar/InviteUserButton.tsx	console.error('Failed to handle invite/upgrade user click:', error);
 1	ts-console	public/app/core/components/Login/LoginCtrl.tsx	.catch((err) => console.error(err));
@@ -201,9 +194,6 @@
 1	ts-console	public/app/features/dashboard-scene/sidebar/DashboardSidebar.tsx	console.warn('Cannot find element by source key="%s"!', sourceKey);
 1	ts-console	public/app/features/dashboard-scene/utils/DashboardModelCompatibilityWrapper.ts	console.error('Trying to remove a panel that was not found in scene', panel);
 1	ts-console	public/app/features/dashboard-scene/utils/PanelModelCompatibilityWrapper.ts	console.error('VizPanel key could not be translated to a legacy numeric panel id', this._vizPanel);
-1	ts-console	public/app/features/dashboard-scene/utils/dashboardControls.ts	console.warn('Failed to load datasource', ref, e);
-1	ts-console	public/app/features/dashboard-scene/utils/dashboardControls.ts	console.warn('Failed to load default links from datasource', ds.type, e);
-1	ts-console	public/app/features/dashboard-scene/utils/dashboardControls.ts	console.warn('Failed to load default variables from datasource', ds.type, e);
 1	ts-console	public/app/features/dashboard-scene/utils/predefinedVariables.ts	console.warn('Failed to load predefined dashboard variables', err);
 3	ts-console	public/app/features/dashboard-scene/utils/variables.ts	console.error(err);
 1	ts-console	public/app/features/dashboard/api/ResponseTransformers.ts	console.error(`Variable transformation not implemented: ${v.type}`);
@@ -357,7 +347,6 @@
 2	ts-console	public/app/features/variables/state/actions.ts	console.error(error);
 1	ts-console	public/app/features/variables/switch/SwitchVariablePicker.tsx	console.error('Cannot update variable without rootStateKey');
 1	ts-console	public/app/features/variables/textbox/TextBoxVariablePicker.tsx	console.error('Cannot update variable without rootStateKey');
-1	ts-console	public/app/index.ts	console.error('Error bootstrapping Grafana', error);
 1	ts-console	public/app/initPreferences.ts	console.warn('Failed to fetch merged preferences', err);
 1	ts-console	public/app/legacyAPIHandling.ts	console.warn(`Request made to legacy api ${url.pathname}`);
 1	ts-console	public/app/plugins/datasource/azuremonitor/azure_monitor/azure_monitor_datasource.ts	console.error(`Failed to get metric namespaces: ${reason}`);
