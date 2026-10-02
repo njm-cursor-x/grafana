@@ -114,7 +114,7 @@ func (w *FileLogWriter) docheck(size int) {
 		(w.Maxsize > 0 && w.maxsizeCursize >= w.Maxsize) ||
 		(w.Daily && time.Now().Day() != w.dailyOpendate)) {
 		if err := w.DoRotate(); err != nil {
-			fmt.Fprintf(os.Stderr, "FileLogWriter(%q): %s\n", w.Filename, err)
+			logToStderr("file log rotate failed", "filename", w.Filename, "err", err)
 			return
 		}
 	}
@@ -235,7 +235,7 @@ func (w *FileLogWriter) deleteOldLog() {
 		return
 	})
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "FileLogWriter(%q): %s\n", w.Filename, err)
+		logToStderr("file log cleanup failed", "filename", w.Filename, "err", err)
 	}
 }
 
@@ -249,7 +249,7 @@ func (w *FileLogWriter) Close() error {
 // flush file means sync file from disk.
 func (w *FileLogWriter) Flush() {
 	if err := w.fd.Sync(); err != nil {
-		fmt.Fprintf(os.Stderr, "FileLogWriter(%q): %s\n", w.Filename, err)
+		logToStderr("file log flush failed", "filename", w.Filename, "err", err)
 	}
 }
 

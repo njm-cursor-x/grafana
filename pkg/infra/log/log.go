@@ -175,6 +175,7 @@ type ConcreteLogger struct {
 
 func newConcreteLogger(logger gokitlog.Logger, ctx ...any) *ConcreteLogger {
 	var swapLogger gokitlog.SwapLogger
+	ctx = redactKeyvals(ctx)
 
 	if len(ctx) == 0 {
 		ctx = []any{}
@@ -203,7 +204,7 @@ func (cl *ConcreteLogger) Debug(msg string, args ...any) {
 
 func (cl *ConcreteLogger) Log(ctx ...any) error {
 	logger := gokitlog.With(&cl.SwapLogger, "t", gokitlog.TimestampFormat(now, logTimeFormat))
-	return logger.Log(ctx...)
+	return logger.Log(redactKeyvals(ctx)...)
 }
 
 func (cl *ConcreteLogger) Error(msg string, args ...any) {
@@ -275,7 +276,7 @@ func with(ctxLogger *ConcreteLogger, withFunc func(gokitlog.Logger, ...any) goki
 		return ctxLogger
 	}
 
-	ctxLogger.Swap(withFunc(ctxLogger.GetLogger(), ctx...))
+	ctxLogger.Swap(withFunc(ctxLogger.GetLogger(), redactKeyvals(ctx)...))
 	return ctxLogger
 }
 
@@ -330,7 +331,7 @@ func getLogLevelFromString(levelName string) level.Option {
 	loglevel, ok := logLevels[levelName]
 
 	if !ok {
-		_ = level.Error(root).Log("Unknown log level", "level", levelName)
+		root.Error("Unknown log level", "level", levelName)
 		return level.AllowError()
 	}
 
@@ -455,7 +456,7 @@ func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File) error {
 		mode = strings.TrimSpace(mode)
 		sec, err := cfg.GetSection("log." + mode)
 		if err != nil {
-			_ = level.Error(root).Log("Unknown log mode", "mode", mode)
+			root.Error("Unknown log mode", "mode", mode)
 			return fmt.Errorf("failed to get config section log. %s: %w", mode, err)
 		}
 
@@ -474,7 +475,7 @@ func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File) error {
 			fileName := sec.Key("file_name").MustString(filepath.Join(logsPath, "grafana.log"))
 			dpath := filepath.Dir(fileName)
 			if err := os.MkdirAll(dpath, 0o750); err != nil {
-				_ = level.Error(root).Log("Failed to create directory", "dpath", dpath, "err", err)
+				root.Error("Failed to create directory", "dpath", dpath, "err", err)
 				continue
 			}
 			fileHandler := NewFileWriter()
@@ -486,7 +487,7 @@ func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File) error {
 			fileHandler.Daily = sec.Key("daily_rotate").MustBool(true)
 			fileHandler.Maxdays = sec.Key("max_days").MustInt64(7)
 			if err := fileHandler.Init(); err != nil {
-				_ = level.Error(root).Log("Failed to initialize file handler", "dpath", dpath, "err", err)
+				root.Error("Failed to initialize file handler", "dpath", dpath, "err", err)
 				continue
 			}
 
