@@ -1,0 +1,51 @@
+// Ship Grafana file logs to the structured-logs Loki.
+// JSON lines get low-cardinality labels so Logs Drilldown can group them.
+// High-cardinality fields (msg, traceID, caller, ids) stay in the line body.
+
+loki.write "grafana" {
+	endpoint {
+		url = "http://structured-logs-loki:3100/loki/api/v1/push"
+	}
+}
+
+local.file_match "grafana_logs" {
+	path_targets = [
+		{
+			__path__     = "/var/log/grafana/*.log",
+			job          = "grafana",
+			service_name = "grafana",
+		},
+	]
+}
+
+loki.source.file "grafana" {
+	targets    = local.file_match.grafana_logs.targets
+	forward_to = [loki.process.grafana_json.receiver]
+}
+
+loki.process "grafana_json" {
+	forward_to = [loki.write.grafana.receiver]
+
+	// Text lines (the default [log.file] format) keep service_name and job only.
+	// JSON lines from format = json also get level and logger labels.
+	stage.json {
+		expressions = {
+			level     = "level",
+			logger    = "logger",
+			timestamp = "t",
+		}
+	}
+
+	stage.labels {
+		values = {
+			level  = "",
+			logger = "",
+		}
+	}
+
+	stage.timestamp {
+		source            = "timestamp"
+		format            = "RFC3339Nano"
+		action_on_failure = "skip"
+	}
+}
