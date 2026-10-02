@@ -644,6 +644,10 @@ shellcheck: $(SH_FILES) ## Run checks for shell scripts.
 	@docker run --rm -v "$$PWD:/mnt" koalaman/shellcheck:stable \
 	$(SH_FILES) -e SC1071 -e SC2162
 
+.PHONY: lint-structured-logging
+lint-structured-logging: ## Fail on new unstructured logging in pkg/ and public/app.
+	python3 scripts/structured-logging/check_unstructured_logs.py
+
 ##@ Docker
 
 TAG_SUFFIX=$(if $(WIRE_TAGS)!=oss,-$(WIRE_TAGS))
@@ -822,6 +826,16 @@ check-tparse:
 		echo >&2 "Error: tparse is not installed. Refer to https://github.com/mfridman/tparse"; \
 		exit 1; \
 	}
+
+.PHONY: logging-secret-inventory
+logging-secret-inventory: ## Inventory log/Faro sites and Authorization/Bearer/token/password nearby.
+	./scripts/logging-security/inventory.sh
+
+.PHONY: logging-security-audit
+logging-security-audit: ## Print how to refresh govulncheck / yarn audit notes for the logging-security lane.
+	@echo "See scripts/logging-security/AUDIT.md"
+	@echo "  govulncheck ./pkg/infra/log/..."
+	@echo "  yarn npm audit --recursive --environment production"
 
 .PHONY: help
 help: ## Display this help.

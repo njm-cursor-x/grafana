@@ -22,4 +22,21 @@ scrape_configs:
       - localhost
     labels:
       job: grafana
+      service_name: grafana
       __path__: /var/log/grafana/*log
+  pipeline_stages:
+    # Promote only level and logger. Other JSON fields stay on the line so
+    # Explore and Logs Drilldown can parse them. Prefer stable `level`
+    # (error) over go-kit `lvl` (eror) when both are present. Non-JSON lines
+    # still ship with the static labels.
+    - json:
+        expressions:
+          level: level
+          lvl: lvl
+          logger: logger
+    - template:
+        source: level
+        template: '{{ if .level }}{{ .level }}{{ else if eq .lvl "eror" }}error{{ else }}{{ .lvl }}{{ end }}'
+    - labels:
+        level:
+        logger:

@@ -81,6 +81,12 @@ host = "localhost:1025"
 
 You can access the web UI at http://localhost:12080/#/
 
+#### Structured backend logs (Loki)
+
+`make devenv sources=loki-promtail` tails `data/log/grafana.log` into Loki on port 3100. With `[log.file] format = json` in `conf/custom.ini`, Explore and **Drilldown → Logs** can parse `level`, `logger`, and `msg` on datasource **gdev-loki**.
+
+Do not start this block together with `sources=loki` or `sources=self-instrumentation` (they also bind port 3100). Steps and LogQL: [contribute/backend/structured-logging-loki.md](../contribute/backend/structured-logging-loki.md) and [docker/blocks/loki-promtail/README.md](docker/blocks/loki-promtail/README.md).
+
 ## Debugging setup in VS Code
 
 An example of launch.json is provided in `.vscode/launch.json`. It basically does what Makefile and .air.toml do. The 'program' field is set to the folder name so VS Code loads all \*.go files in it instead of just main.go.

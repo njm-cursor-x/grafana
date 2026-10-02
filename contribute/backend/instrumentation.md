@@ -100,6 +100,12 @@ filters = rendering:debug \
           data-proxy-log:debug
 ```
 
+### View JSON logs in Explore and Logs Drilldown
+
+Local JSON lines are not visible in Explore until they are shipped to Loki. Set `[log.file] format = json` in `conf/custom.ini` and run `make devenv sources=loki-promtail`. Promtail keeps `service_name=grafana` and promotes `level` and `logger`. The rest of the JSON object stays on the line.
+
+Queries and the Drilldown clicks are in [View backend JSON logs in Loki](/contribute/backend/structured-logging-loki.md).
+
 ## Metrics
 
 Metrics are quantifiable measurements that reflect the health and performance of applications or infrastructure.

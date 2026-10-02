@@ -1,7 +1,9 @@
 package log
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"testing"
 	"time"
@@ -401,4 +403,36 @@ func newLoggerScenario(t testing.TB, resetCtxLogProviders ...bool) *scenarioCont
 
 	root = newManager(l)
 	return scenario
+}
+
+func TestRemapJSONLevelKeyvals_AddsStableLevel(t *testing.T) {
+	got := remapJSONLevelKeyvals([]any{"lvl", "eror", "msg", "boom"})
+	require.Equal(t, []any{"lvl", "eror", "msg", "boom", "level", "error"}, got)
+
+	already := []any{"lvl", "info", "level", "info", "msg", "ok"}
+	require.Equal(t, already, remapJSONLevelKeyvals(already))
+
+	require.Equal(t, []any{"msg", "plain"}, remapJSONLevelKeyvals([]any{"msg", "plain"}))
+}
+
+func TestJSONLogger_RedactsSecretsAndEmitsStableLevel(t *testing.T) {
+	var buf bytes.Buffer
+	logger := newConcreteLogger(newJSONLevelLogger(&buf))
+	logger.Error(
+		"upstream rejected Authorization: Bearer test-secret",
+		"Authorization", "Bearer test-secret",
+		"dashboardTitle", "Sales %s",
+	)
+
+	line := buf.String()
+	require.NotContains(t, line, "test-secret")
+	require.Contains(t, line, Redacted)
+
+	var parsed map[string]any
+	require.NoError(t, json.Unmarshal([]byte(line), &parsed))
+	require.Equal(t, "error", parsed["level"])
+	require.Equal(t, Redacted, parsed["Authorization"])
+	require.Equal(t, "Sales %s", parsed["dashboardTitle"])
+	require.NotContains(t, fmt.Sprint(parsed["msg"]), "test-secret")
+	require.Contains(t, fmt.Sprint(parsed["msg"]), Redacted)
 }

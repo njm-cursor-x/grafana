@@ -1,0 +1,37 @@
+name: Structured logging lint
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - chore/structured-logging-epic
+      - chore/structured-logging-ci
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
+permissions: {}
+
+jobs:
+  unstructured-logging:
+    # Pull requests always run. Pushes also run in this fork so the epic branch
+    # is checked here; upstream keeps the grafana/grafana guard used by other workflows.
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'push' &&
+        (github.repository == 'grafana/grafana' || github.repository == 'njm-cursor-x/grafana'))
+    name: Forbid new unstructured logging
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Self-test the checker
+        run: python3 scripts/structured-logging/check_unstructured_logs.py --self-test
+      - name: Fail on new console and print usage
+        run: python3 scripts/structured-logging/check_unstructured_logs.py

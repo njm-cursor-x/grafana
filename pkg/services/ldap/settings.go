@@ -223,7 +223,7 @@ func assertNotEmptyCfg(val any, propName string) error {
 			return fmt.Errorf("LDAP config file is missing option: %q", propName)
 		}
 	default:
-		fmt.Println("unknown")
+		logger.Warn("unexpected LDAP config value type", "property", propName, "type", fmt.Sprintf("%T", val))
 	}
 	return nil
 }

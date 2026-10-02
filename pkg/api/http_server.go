@@ -447,13 +447,11 @@ const tlsHandshakeErrorPrefix = "http: TLS handshake error from"
 const tlsHandshakeErrorSuffix = "EOF"
 
 func (w *customErrorLogger) Write(msg []byte) (int, error) {
-	// checks if the error is a TLS handshake error that ends with EOF
-	if strings.Contains(string(msg), tlsHandshakeErrorPrefix) && strings.Contains(string(msg), tlsHandshakeErrorSuffix) {
-		// log at debug level and remove new lines
-		w.log.Debug(strings.ReplaceAll(string(msg), "\n", ""))
+	cleaned := strings.ReplaceAll(string(msg), "\n", "")
+	if strings.Contains(cleaned, tlsHandshakeErrorPrefix) && strings.Contains(cleaned, tlsHandshakeErrorSuffix) {
+		w.log.Debug(cleaned)
 	} else {
-		// log the error as is using the standard logger (the same way as the default http server does)
-		stdlog.Print(string(msg))
+		w.log.Error("HTTP server error", "err", cleaned)
 	}
 
 	return len(msg), nil

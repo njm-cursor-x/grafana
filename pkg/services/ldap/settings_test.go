@@ -50,3 +50,14 @@ func TestReadingLDAPSettingsUsingCache(t *testing.T) {
 	assert.Equal(t, config, secondConfig)
 	assert.Nil(t, err)
 }
+
+func TestAssertNotEmptyCfg_UnknownTypeDoesNotPrint(t *testing.T) {
+	err := assertNotEmptyCfg(42, "search_filter")
+	require.NoError(t, err)
+}
+
+func TestAssertNotEmptyCfg_EmptyString(t *testing.T) {
+	err := assertNotEmptyCfg("", "search_filter")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "search_filter")
+}
