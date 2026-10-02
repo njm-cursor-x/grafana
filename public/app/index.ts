@@ -7,6 +7,7 @@ import 'vendor/css/font_awesome.css';
 import { loadLegacyMoment } from '@grafana/data/internal/legacyMoment';
 
 import { setLegacyMoment } from './core/legacyMomentShim';
+import { createFaroLogger, errorFields } from './core/logging/faroLogger';
 import { initPreferences } from './initPreferences';
 import { patchFetchForLegacyAPIMode } from './legacyAPIHandling';
 
@@ -34,6 +35,8 @@ const legacyMomentPromise = window.__grafanaUseLuxon ? undefined : loadLegacyMom
 // This is an indication to the window.onLoad failure check that the app bundle has loaded.
 window.__grafana_app_bundle_loaded = true;
 
+const bootstrapLogger = createFaroLogger('grafana.app.bootstrap');
+
 async function bootstrapWindowData() {
   // Wait for window.grafanaBootData is ready. The new index.html loads it from
   // an API call, but the old one just sets an immediately resolving promise.
@@ -59,7 +62,7 @@ bootstrapWindowData().catch((error) => {
   const isRedirect = error && error.redirect && typeof error.redirect === 'string';
   // If a redirect was thrown, just ignore this. The index.html will handle the redirect
   if (!isRedirect) {
-    console.error('Error bootstrapping Grafana', error);
+    bootstrapLogger.error('Error bootstrapping Grafana', errorFields(error));
     window.__grafana_load_failed(error);
   }
 });

@@ -660,6 +660,19 @@ module.exports = [
     },
   },
   {
+    name: 'grafana/structured-logging-no-console',
+    files: [
+      'public/app/core/logging/**/*.{ts,tsx}',
+      'public/app/index.ts',
+      'public/app/app.ts',
+      'public/app/features/dashboard-scene/utils/dashboardControls.ts',
+    ],
+    ignores: [...commonTestIgnores],
+    rules: {
+      'no-console': 'error',
+    },
+  },
+  {
     files: ['public/app/**/*.{ts,tsx}'],
     ignores: [
       ...commonTestIgnores,
