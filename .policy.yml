@@ -46,6 +46,7 @@ policy:
             - Workflow .github/workflows/run-schema-v2-e2e.yml succeeded or skipped
             - Workflow .github/workflows/shellcheck.yml succeeded or skipped
             - Workflow .github/workflows/storybook-a11y.yml succeeded or skipped
+            - Workflow .github/workflows/structured-logging-lint.yml succeeded or skipped
             - Workflow .github/workflows/swagger-gen.yml succeeded or skipped
             - Workflow .github/workflows/trufflehog.yml succeeded or skipped
             - default to approval
@@ -751,6 +752,19 @@ approval_rules:
             - success
           workflows:
             - .github/workflows/storybook-a11y.yml
+  - name: Workflow .github/workflows/structured-logging-lint.yml succeeded or skipped
+    if:
+      file_not_deleted:
+        paths:
+          - ^\.github\/workflows\/structured-logging-lint\.yml$
+    requires:
+      conditions:
+        has_workflow_result:
+          conclusions:
+            - skipped
+            - success
+          workflows:
+            - .github/workflows/structured-logging-lint.yml
   - name: Workflow .github/workflows/swagger-gen.yml succeeded or skipped
     if:
       file_not_deleted:
