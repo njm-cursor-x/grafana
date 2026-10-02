@@ -1,4 +1,5 @@
 import { type DataQuery, type DataSourceApi, type DataSourceJsonData } from '@grafana/data';
+import { faro } from '@grafana/faro-web-sdk';
 import { type DataSourceSrv, getDataSourceSrv } from '@grafana/runtime';
 import { type DashboardLink, type DataSourceRef } from '@grafana/schema';
 import {
@@ -6,6 +7,7 @@ import {
   type QueryVariableKind,
   type VariableKind,
 } from '@grafana/schema/apis/dashboard.grafana.app/v2';
+import config from 'app/core/config';
 
 import {
   loadDefaultControlsShared$,
@@ -13,6 +15,18 @@ import {
   loadDefaultVariables$,
   type DefaultControlEvent,
 } from './dashboardControls';
+
+jest.mock('@grafana/faro-web-sdk', () => {
+  const actual = jest.requireActual('@grafana/faro-web-sdk');
+  return {
+    ...actual,
+    faro: {
+      api: {
+        pushLog: jest.fn(),
+      },
+    },
+  };
+});
 
 jest.mock('@grafana/runtime', () => {
   const actual = jest.requireActual('@grafana/runtime');
@@ -110,9 +124,18 @@ const mockLink1: DashboardLink = {
   keepTime: false,
 };
 
+const pushLog = jest.mocked(faro.api.pushLog);
+
 describe('dashboardControls', () => {
+  const originalFaroEnabled = config.grafanaJavascriptAgent.enabled;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    config.grafanaJavascriptAgent.enabled = true;
+  });
+
+  afterEach(() => {
+    config.grafanaJavascriptAgent.enabled = originalFaroEnabled;
   });
 
   describe('loadDefaultControlsShared$', () => {
@@ -206,6 +229,16 @@ describe('dashboardControls', () => {
         complete: () => {
           expect(events).toHaveLength(1);
           expect(events[0].type).toBe('variables');
+          expect(warnSpy).not.toHaveBeenCalled();
+          expect(pushLog).toHaveBeenCalledWith(['Failed to load datasource'], {
+            level: 'warn',
+            context: {
+              source: 'grafana.dashboard.datasource',
+              datasourceUid: 'ds-fail',
+              datasourceType: 'broken',
+              error: 'Datasource not found',
+            },
+          });
           warnSpy.mockRestore();
           done();
         },
@@ -236,6 +269,54 @@ describe('dashboardControls', () => {
         complete: () => {
           expect(events).toHaveLength(1);
           expect(events[0].type).toBe('links');
+          expect(warnSpy).not.toHaveBeenCalled();
+          expect(pushLog).toHaveBeenCalledWith(['Failed to load default variables from datasource'], {
+            level: 'warn',
+            context: {
+              source: 'grafana.dashboard.datasource',
+              datasourceType: 'prometheus',
+              error: 'variables error',
+            },
+          });
+          warnSpy.mockRestore();
+          done();
+        },
+      });
+    });
+
+    it('should continue emitting variables when getDefaultLinks throws', (done) => {
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const refs: DataSourceRef[] = [{ uid: 'ds-1', type: 'loki' }];
+
+      const mockDs = createMockDatasource({
+        uid: 'ds-1',
+        type: 'loki',
+        getDefaultVariables: () => Promise.resolve([mockVariable1]),
+        getDefaultLinks: () => Promise.reject(new Error('links error')),
+      });
+
+      const mockSrv = createMockDataSourceSrv({
+        get: jest.fn(() => Promise.resolve(mockDs as DataSourceApi<DataQuery, DataSourceJsonData>)),
+      });
+
+      getDataSourceSrvMock.mockReturnValue(mockSrv);
+
+      const events: DefaultControlEvent[] = [];
+
+      loadDefaultControlsShared$(refs).subscribe({
+        next: (event) => events.push(event),
+        complete: () => {
+          expect(events).toHaveLength(1);
+          expect(events[0].type).toBe('variables');
+          expect(warnSpy).not.toHaveBeenCalled();
+          expect(pushLog).toHaveBeenCalledWith(['Failed to load default links from datasource'], {
+            level: 'warn',
+            context: {
+              source: 'grafana.dashboard.datasource',
+              datasourceType: 'loki',
+              error: 'links error',
+            },
+          });
           warnSpy.mockRestore();
           done();
         },

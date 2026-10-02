@@ -5,6 +5,9 @@ import { getDataSourceSrv } from '@grafana/runtime';
 import { type SceneVariable } from '@grafana/scenes';
 import { type DashboardLink, type DataSourceRef } from '@grafana/schema';
 import { type VariableKind } from '@grafana/schema/apis/dashboard.grafana.app/v2';
+import { createFaroLogger, errorFields } from 'app/core/logging/faroLogger';
+
+const datasourceLogger = createFaroLogger('grafana.dashboard.datasource');
 
 export type DefaultControlEvent =
   | { type: 'variables'; data: VariableKind[] }
@@ -68,7 +71,11 @@ async function loadControlsFromRef(ref: DataSourceRef, subscriber: Subscriber<De
   try {
     ds = await getDataSourceSrv().get(ref);
   } catch (e) {
-    console.warn('Failed to load datasource', ref, e);
+    datasourceLogger.warn('Failed to load datasource', {
+      datasourceUid: ref.uid ?? '',
+      datasourceType: ref.type ?? '',
+      ...errorFields(e),
+    });
     return;
   }
 
@@ -98,7 +105,10 @@ async function emitDefaultVariables(ds: DataSourceApi, subscriber: Subscriber<De
       subscriber.next({ type: 'variables', data });
     }
   } catch (e) {
-    console.warn('Failed to load default variables from datasource', ds.type, e);
+    datasourceLogger.warn('Failed to load default variables from datasource', {
+      datasourceType: ds.type,
+      ...errorFields(e),
+    });
   }
 }
 
@@ -120,7 +130,10 @@ async function emitDefaultLinks(ds: DataSourceApi, subscriber: Subscriber<Defaul
       });
     }
   } catch (e) {
-    console.warn('Failed to load default links from datasource', ds.type, e);
+    datasourceLogger.warn('Failed to load default links from datasource', {
+      datasourceType: ds.type,
+      ...errorFields(e),
+    });
   }
 }
 
