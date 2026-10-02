@@ -1,0 +1,25 @@
+  # Tails Grafana's on-disk logs and pushes them to Loki with Drilldown labels.
+  # Grafana itself keeps running on the host (`make run`); this block does not start it.
+  structured-logs-loki:
+    image: grafana/loki:3.5.3
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  structured-logs-alloy:
+    image: grafana/alloy:v1.10.0
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+    ports:
+      - "12348:12345"
+    volumes:
+      - ./docker/blocks/structured-logs/config.alloy:/etc/alloy/config.alloy:ro
+      # Repo-root data/log (Grafana's default [paths] logs). Compose runs from devenv/.
+      - ../data/log:/var/log/grafana:ro
+    depends_on:
+      - structured-logs-loki
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

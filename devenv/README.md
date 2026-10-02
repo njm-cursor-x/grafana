@@ -81,6 +81,19 @@ host = "localhost:1025"
 
 You can access the web UI at http://localhost:12080/#/
 
+#### Structured logs
+
+The `structured-logs` block runs Loki and Grafana Alloy. Alloy tails `data/log` (Grafana's default log directory) and pushes lines to Loki on port `3100`, which is the `gdev-loki` data source.
+
+```bash
+mkdir -p data/log
+make devenv sources=structured-logs
+```
+
+Set `[log.file] format = json` in `conf/custom.ini` and restart Grafana before you expect `level` and `logger` labels. Inspect the lines in **Drilldown → Logs** or **Explore**. Don't run this block with `loki`, `loki-promtail`, or `self-instrumentation` (they also bind port `3100`).
+
+Refer to [View structured logs in Loki](../docs/sources/developer-resources/view-structured-logs.md).
+
 ## Debugging setup in VS Code
 
 An example of launch.json is provided in `.vscode/launch.json`. It basically does what Makefile and .air.toml do. The 'program' field is set to the folder name so VS Code loads all \*.go files in it instead of just main.go.

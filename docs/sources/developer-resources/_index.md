@@ -25,6 +25,10 @@ cards:
       height: 24
       href: ./api-reference/
       description: Read the API reference guides available in Grafana.
+    - title: View structured logs
+      height: 24
+      href: ./view-structured-logs/
+      description: Ship Grafana JSON file logs to a local Loki instance and inspect them in Drilldown and Explore.
 ---
 
 # Developer resources

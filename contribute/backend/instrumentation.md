@@ -420,6 +420,8 @@ attribute.Key("org_id").Int64(proxy.ctx.SignedInUser.OrgID)
 
    Open Grafana Explore and select the `gdev-loki` data source and use the query `{filename="/var/log/grafana/grafana.log"} | logfmt`.
 
+   That query matches text lines tailed by the `self-instrumentation` block. For JSON file logs with `service_name`, `level`, and `logger` labels, start `make devenv sources=structured-logs` and follow [View structured logs in Loki](../../docs/sources/developer-resources/view-structured-logs.md).
+
    You can then inspect any log message that includes a `traceID` and from there click the trace data source (`gdev-jaeger` or `gdev-tempo`) to split the view and inspect the trace in question.
 
 1. Search or browse collected traces
