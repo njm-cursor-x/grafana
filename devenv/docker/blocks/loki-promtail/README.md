@@ -50,13 +50,13 @@ curl -sfSG 'http://localhost:3100/loki/api/v1/query_range' \
   --data-urlencode 'limit=5'
 ```
 
-A JSON line from `pkg/infra/log` with `format = json` looks like:
+A JSON line from Backend [#47](https://github.com/njm-cursor-x/grafana/pull/47) (`format = json`) looks like:
 
 ```json
-{"level":"error","logger":"http.server","msg":"Request Completed","t":"2026-10-02T21:00:00.000000000Z","error":"boom"}
+{"error":"boom","level":"error","logger":"http.server","lvl":"eror","msg":"Request Completed","t":"2026-10-02T21:00:00.000000000Z"}
 ```
 
-`t` is RFC3339Nano. `logger` is the name passed to `log.New`. The error field in current call sites is `error` (see `contribute/backend/instrumentation.md`).
+`t` is RFC3339Nano. `logger` is the name passed to `log.New`. Go-kit keeps `lvl` (`eror` on errors). `json_level.go` adds `level` (`error`). The pipeline labels `level`, so `{service_name="grafana", level="error"}` does not require `lvl`. Call sites that pass `"error"` keep that field on the line.
 
 ## Explore
 
