@@ -3,7 +3,7 @@
 Integrate of the five lane drafts onto `chore/structured-logging-epic`.
 This document is the audit trail for that integrate. Merging the epic into `main` is human-only. Do not merge this work to `main`.
 
-QA regression results were not available when this trail was written. They stay a separate follow-up.
+QA regression is recorded below. Overall result: **FAIL (partial)**. The only product gate still open is the Backend/Security `nonce` mismatch. Backend owns that fix.
 
 ## Lane pull requests
 
@@ -89,21 +89,49 @@ OAuth connectors still log claim material on keys the redactor does not treat as
 
 Needs a host that can pull Loki / Grafana images and run Explore plus Drilldown. Infra residual.
 
-### QA
+## QA regression
 
-Regression results for this integrate were still outstanding when the trail was written.
+Overall: **FAIL (partial)**.
+
+| | |
+| --- | --- |
+| Draft PR | https://github.com/njm-cursor-x/grafana/pull/49 (`chore/structured-logging-qa` → epic) |
+| Agent | https://cursor.com/agents/bc-b9c30798-220a-5c7d-ae06-634e3d5bd3b0 |
+| Evidence | `contribute/backend/nds-10-qa-evidence.md` on that branch (`cc3e43d7c85`) |
+| Tree QA executed | Epic `6126b3cc6c75e4e76b972cd07c627cf079aeb537` |
+
+That run is against the pre-integrate epic tip. It is not a result for combined tip `79663a7c92f874b292b06bd3434546835a3c82e0`. CI on the combined tip still needs a recheck.
+
+### Pass
+
+- JSON log parse unit: `msg`, `logger`, `err`, and stable `level` present on a Backend JSON line. Bearer probe redacted.
+- Scoped `no-console` ESLint: exit 0 on `public/app/core/logging`, `public/app/index.ts`, `public/app/app.ts`, and `dashboardControls.ts`.
+
+### Product gate still open
+
+Redaction mismatch. Backend head `a46bb31a458` (#47) drops the exact `nonce` key. Security's `TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues` on #45 (`dd9476ec734`) fails against that file: `authToken` and `token` redact via the `token` fragment, and `nonce` leaks (`n0nce-value-998877`). Filed on #47 and #45.
+
+This is the only product gate still open. Backend owns the fix and is pushing a follow-up on `chore/structured-logging-backend`. At the time of this note that branch was still `a46bb31a458`. This audit update does not change product logging code and does not take that follow-up.
+
+The integrate conflict resolution copied Security's `nonce` key into `pkg/infra/log/secretredact/redact.go` on the epic. That is not Backend's follow-up, and QA did not execute it. The gate stays open until the follow-up lands and the combined tip is rechecked.
+
+### Not run (infra, non-blocking)
+
+- CI green: not confirmed. Draft PRs into the epic were pending or skipped.
+- e2e smoke: not executed. `grafana-server` cannot be built while `proxy.golang.org` is blocked. The smoke spec on #49 includes a dashboard save; it was not started.
+- Drilldown / Explore UI: not run (Docker / TLS; Loki images not pulled).
 
 ## CI / test status
 
 | Check | Result |
 | --- | --- |
-| `check_unstructured_logs.py --self-test` | Pass (11) |
+| `check_unstructured_logs.py --self-test` | Pass (11) on the integrate pass |
 | `check_unstructured_logs.py` on the integrated tree | Pass after dropping 11 migrated baseline rows |
-| `go test` for `./pkg/infra/log/...` | Not run. Toolchain download EOF |
-| `secretredact` tests on Go 1.22.2 outside the module | Pass |
-| Frontend Jest (`faroLogger`, `dashboardControls`, `redactSecrets`) | Not run in this pass |
+| `go test` for `./pkg/infra/log/...` | Not run here. Toolchain download EOF |
+| `secretredact` tests on Go 1.22.2 outside the module | Pass on the integrate pass |
+| Frontend Jest (`faroLogger`, `dashboardControls`, `redactSecrets`) | Not run in the integrate pass. QA reports Jest pass on Frontend `3ea4a758335` |
 | Explore / Drilldown | Not run. No Loki images |
-| QA regression | Pending, separate follow-up |
+| QA regression | FAIL (partial). See the QA section. Combined tip not rechecked |
 
 ## Human merge gate
 
