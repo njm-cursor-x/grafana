@@ -10,4 +10,4 @@ make logging-secret-inventory
 
 The script writes `scripts/logging-security/inventory-report.txt` (generated; not committed).
 
-Vulnerability scan notes for this lane live in `AUDIT.md`.
+Audit notes for this lane live in `AUDIT.md`.

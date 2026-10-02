@@ -21,7 +21,12 @@ const SENSITIVE_KEYS = new Set([
   'x-access-token',
   'auth_token',
   'bearer',
+  'nonce',
 ]);
+
+// Keys such as authToken / sessionToken are not in the exact set. Match the
+// backend fragments so a Faro context key cannot bypass redaction.
+const SENSITIVE_KEY_FRAGMENTS = ['token', 'credential'];
 
 const AUTH_SCHEME = /(\b(?:authorization\s*[:=]\s*)?(?:bearer|basic|token)\s+)\S+/gi;
 const ASSIGNED_SECRET =
@@ -29,7 +34,14 @@ const ASSIGNED_SECRET =
 const SESSION_COOKIE = /(\b(?:grafana_session|grafana_session_expiry)=)[^;\s]+/gi;
 
 export function isSensitiveKey(key: string): boolean {
-  return SENSITIVE_KEYS.has(key.toLowerCase());
+  const normalized = key.toLowerCase().trim();
+  if (!normalized) {
+    return false;
+  }
+  if (SENSITIVE_KEYS.has(normalized)) {
+    return true;
+  }
+  return SENSITIVE_KEY_FRAGMENTS.some((fragment) => normalized.includes(fragment));
 }
 
 function maybeContainsSecret(value: string): boolean {

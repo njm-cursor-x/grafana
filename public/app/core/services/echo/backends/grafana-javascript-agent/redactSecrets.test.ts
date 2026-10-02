@@ -25,6 +25,21 @@ describe('redactSecrets', () => {
     expect(got).toContain('theme=dark');
   });
 
+  it('redacts token, authToken, and nonce keys when the value has no secret keyword', () => {
+    const probe = 'glsa_aabbccdd11223344';
+    const nonce = 'n0nce-value-998877';
+    const got = redactSecretsDeep({
+      token: probe,
+      authToken: probe,
+      nonce,
+      dashboardTitle: 'Finance %s Q3',
+    });
+    const serialized = JSON.stringify(got);
+    expect(serialized).not.toContain(probe);
+    expect(serialized).not.toContain(nonce);
+    expect(got.dashboardTitle).toBe('Finance %s Q3');
+  });
+
   it('replaces sensitive object keys entirely', () => {
     const input = {
       Authorization: `Bearer ${LEAK_PROBE}`,

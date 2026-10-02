@@ -91,6 +91,33 @@ func TestRedactSecrets_BasicAuth(t *testing.T) {
 	}
 }
 
+func TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues(t *testing.T) {
+	// Values deliberately omit the substring "secret" so key matching has to do the work.
+	hash := "glsa_aabbccdd11223344eeff"
+	nonce := "n0nce-value-998877"
+	type oauthToken struct {
+		AccessToken string
+	}
+	redacted := RedactLogKeyvals([]any{
+		"msg", "session created",
+		"authToken", hash,
+		"token", oauthToken{AccessToken: hash},
+		"nonce", nonce,
+		"userID", 7,
+	})
+	encoded, err := json.Marshal(mapFromKeyvals(redacted))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := string(encoded)
+	if strings.Contains(out, hash) || strings.Contains(out, nonce) {
+		t.Fatalf("opaque credential leaked: %s", out)
+	}
+	if !strings.Contains(out, `"userID":7`) && !strings.Contains(out, `"userID": 7`) {
+		t.Fatalf("safe field missing: %s", out)
+	}
+}
+
 func TestRedactValue_FragmentKeys(t *testing.T) {
 	if got := RedactValue("sessionToken", leakProbe); got != Redacted {
 		t.Fatalf("sessionToken: got %#v", got)
