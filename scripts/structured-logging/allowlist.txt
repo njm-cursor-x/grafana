@@ -1,0 +1,65 @@
+# Paths that are not production logging call sites.
+# The checker does not flag these. Each entry is a rule: <kind>:<value>
+#
+# kind:
+#   prefix          path equals the value or is under that directory
+#   exact           path equals the value
+#   suffix          file name ends with the value
+#   segment         a directory in the path equals the value
+#   path-contains   the relative path contains the value
+#
+# Generated files are also skipped when the first 40 lines contain both
+# "Code generated" and "DO NOT EDIT".
+
+# Logger implementation. It is the supported backend logging API.
+prefix:pkg/infra/log/
+
+# Vendored Google Wire CLI, including fixture programs that print by design.
+prefix:pkg/build/wire/
+
+# Copied libraries. They are not Grafana application logging.
+prefix:pkg/util/xorm/
+prefix:pkg/components/simplejson/
+
+# Test helpers and integration harnesses that are not *_test.go files.
+prefix:pkg/tests/
+prefix:pkg/mocks/
+prefix:pkg/util/testutil/
+
+# Live pipeline poster marked temporary for development.
+exact:pkg/services/live/pipeline/devdata.go
+
+# Go tests, generated stubs, and testdata fixtures.
+suffix:_test.go
+suffix:.gen.go
+suffix:_gen.go
+suffix:.pb.go
+suffix:wire_gen.go
+path-contains:/testdata/
+
+# Frontend tests, stories, and generated files.
+suffix:.test.ts
+suffix:.test.tsx
+suffix:.test.js
+suffix:.test.jsx
+suffix:.spec.ts
+suffix:.spec.tsx
+suffix:.spec.js
+suffix:.spec.jsx
+suffix:.story.ts
+suffix:.story.tsx
+suffix:.stories.ts
+suffix:.stories.tsx
+suffix:.mock.ts
+suffix:.mock.tsx
+suffix:.gen.ts
+suffix:_gen.ts
+
+# Test and fixture directories inside public/app and pkg.
+segment:__mocks__
+segment:__tests__
+segment:mocks
+segment:fixtures
+segment:test
+segment:tests
+segment:testing

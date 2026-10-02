@@ -644,6 +644,10 @@ shellcheck: $(SH_FILES) ## Run checks for shell scripts.
 	@docker run --rm -v "$$PWD:/mnt" koalaman/shellcheck:stable \
 	$(SH_FILES) -e SC1071 -e SC2162
 
+.PHONY: lint-structured-logging
+lint-structured-logging: ## Fail on new unstructured logging in pkg/ and public/app.
+	python3 scripts/structured-logging/check_unstructured_logs.py
+
 ##@ Docker
 
 TAG_SUFFIX=$(if $(WIRE_TAGS)!=oss,-$(WIRE_TAGS))
