@@ -3,7 +3,7 @@
 Integrate of the five lane drafts onto `chore/structured-logging-epic`.
 This document is the audit trail for that integrate. Merging the epic into `main` is human-only. Do not merge this work to `main`.
 
-QA regression is recorded below. Overall result: **FAIL (partial)**. Backend follow-up `c7ade407925` is on the epic. A QA redaction-only recheck is still pending, so the product gate is not closed.
+QA regression is recorded below. The nonce product gate is **closed** and signed off bug-clean. Infra residuals stay open and are not part of that gate. `main` remains `6126b3cc6c75e4e76b972cd07c627cf079aeb537`.
 
 ## Lane pull requests
 
@@ -91,39 +91,46 @@ Needs a host that can pull Loki / Grafana images and run Explore plus Drilldown.
 
 ## QA regression
 
-Overall: **FAIL (partial)**.
+First pass: **FAIL (partial)** on pre-integrate epic `6126b3cc6c75e4e76b972cd07c627cf079aeb537`. Redaction-only recheck: **PASS** on epic `55ce7ad35a778c16481b28f08454d574d266bffd`.
 
 | | |
 | --- | --- |
 | Draft PR | https://github.com/njm-cursor-x/grafana/pull/49 (`chore/structured-logging-qa` → epic) |
 | Agent | https://cursor.com/agents/bc-b9c30798-220a-5c7d-ae06-634e3d5bd3b0 |
-| Evidence | `contribute/backend/nds-10-qa-evidence.md` on that branch (`cc3e43d7c85`) |
-| Tree QA executed | Epic `6126b3cc6c75e4e76b972cd07c627cf079aeb537` |
+| First evidence | `contribute/backend/nds-10-qa-evidence.md` on `chore/structured-logging-qa` at `cc3e43d7c85` |
+| Recheck evidence | same branch at `91ae7d66115` |
+| First tree | Epic `6126b3cc6c75e4e76b972cd07c627cf079aeb537` |
+| Recheck tree | Epic `55ce7ad35a778c16481b28f08454d574d266bffd` (Backend nonce follow-up `c7ade40792562a1b551861d4c81465c40c54454c`) |
 
-That run is against the pre-integrate epic tip. It is not a result for combined tip `79663a7c92f874b292b06bd3434546835a3c82e0`. CI on the combined tip still needs a recheck.
+The first run is not a result for combined tip `79663a7c92f874b292b06bd3434546835a3c82e0`. CI on the combined epic tip has still not been re-run.
 
 ### Pass
 
 - JSON log parse unit: `msg`, `logger`, `err`, and stable `level` present on a Backend JSON line. Bearer probe redacted.
 - Scoped `no-console` ESLint: exit 0 on `public/app/core/logging`, `public/app/index.ts`, `public/app/app.ts`, and `dashboardControls.ts`.
+- Redaction-only recheck on `55ce7ad35a778c16481b28f08454d574d266bffd`.
 
-### Product gate
+### Product gate — closed, bug-clean
 
-QA failed this gate on Backend `a46bb31a458` (#47): that head dropped the exact `nonce` key, so Security's `TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues` on #45 (`dd9476ec734`) leaked `n0nce-value-998877`. `authToken` and `token` already redacted via the `token` fragment. Filed on #47 and #45.
+The first QA pass failed this gate on Backend `a46bb31a458` (#47): that head dropped the exact `nonce` key, so Security's `TestRedactValue_AuthTokenAndNonceDoNotLeakOpaqueValues` on #45 (`dd9476ec734`) leaked `n0nce-value-998877`. `authToken` and `token` already redacted via the `token` fragment. Filed on #47 and #45.
 
-Backend follow-up `c7ade40792562a1b551861d4c81465c40c54454c` is merged onto this epic. `nonce` is a sensitive key in `pkg/infra/log/secretredact/redact.go`. The field stays and the value is `[REDACTED]`. The test asserts the opaque value does not leak and the key is not dropped. The merge kept that behavior. The epic already had the `nonce` key from the Security conflict resolution; this commit adds the "key stays" assertion.
+Backend follow-up `c7ade40792562a1b551861d4c81465c40c54454c` is merged onto this epic. `nonce` stays in `sensitiveKeys` in `pkg/infra/log/secretredact/redact.go`. The field stays. The value is `[REDACTED]`. The key is not dropped. The test asserts no leak and that the key is not omitted. Security Bot read-confirmed `c7ade40` without re-running `go test`.
 
-Security Bot read-confirmed `c7ade40` and did not re-run `go test`: `nonce` is sensitive, the field stays, the value is redacted, and the test asserts no leak and that the key is not dropped.
+`go test -mod=readonly -count=1 ./pkg/infra/log/secretredact/` passed on Go 1.26.6. The redaction-only recheck of that result is PASS. Evidence is on `chore/structured-logging-qa` at `91ae7d66115`, draft PR #49.
 
-Backend reports `go test -mod=readonly -count=1 ./pkg/infra/log/secretredact/` passed on Go 1.26.6. Full `./pkg/infra/log/...` was not run (`proxy.golang.org` blocked, and `slog_bridge_test.go` has an import cycle).
+**Sign-off:** the nonce product gate is closed. This trail is bug-clean for the product gate.
 
-QA redaction-only recheck is still pending. The product gate is not closed.
+### Infra residuals (not a closed product gate)
 
-### Not run (infra, non-blocking)
+These stay open. They are not the nonce product gate.
 
-- CI green: not confirmed. Draft PRs into the epic were pending or skipped.
-- e2e smoke: not executed. `grafana-server` cannot be built while `proxy.golang.org` is blocked. The smoke spec on #49 includes a dashboard save; it was not started.
-- Drilldown / Explore UI: not run (Docker / TLS; Loki images not pulled).
+- CI was not re-run on the combined epic tip. The first pass saw draft PRs into the epic pending or skipped.
+- e2e smoke was not re-run. `grafana-server` cannot be built while `proxy.golang.org` is blocked. The smoke spec on #49 includes a dashboard save; it was not started.
+- Explore / Drilldown UI was not run (no Loki images; Docker / TLS).
+- Full `./pkg/infra/log/...` was not run (`proxy.golang.org` blocked, plus an import cycle in `slog_bridge_test.go`).
+- OAuth connectors still log `raw_json` / claims (`generic_oauth`, `gitlab_oauth`, `google_oauth`, `okta_oauth`).
+- Frontend redaction gaps remain: `redactSecrets.ts` omits exact keys `auth`, `x-api-key`, and `private_key`. Nested Faro attributes are stringified before `beforeSend`, so a nested `nonce` or `private_key` skips key redaction.
+- The CI unstructured-log gate does not flag a structured `raw_json` field. `make logging-secret-inventory` is not a required workflow.
 
 ## CI / test status
 
@@ -135,9 +142,12 @@ QA redaction-only recheck is still pending. The product gate is not closed.
 | `secretredact` tests on Go 1.22.2 outside the module | Pass on the integrate pass |
 | Frontend Jest (`faroLogger`, `dashboardControls`, `redactSecrets`) | Not run in the integrate pass. QA reports Jest pass on Frontend `3ea4a758335` |
 | Explore / Drilldown | Not run. No Loki images |
-| QA regression | FAIL (partial) on pre-integrate epic `6126b3cc`. Nonce follow-up `c7ade40` is merged. Redaction-only recheck still pending; product gate not closed |
-| `go test ./pkg/infra/log/secretredact/` | Backend reports pass on Go 1.26.6 for `c7ade40` (`-mod=readonly -count=1`). Not re-run in this integrate |
+| QA regression | First pass FAIL (partial) on epic `6126b3cc`. Redaction-only recheck PASS on epic `55ce7ad35a7`. Nonce product gate closed |
+| `go test ./pkg/infra/log/secretredact/` | Pass on Go 1.26.6 (`-mod=readonly -count=1`) for `c7ade40` / epic `55ce7ad35a7` |
+| CI on combined epic tip | Not re-run |
+| e2e smoke | Not re-run. `proxy.golang.org` blocked |
+| Full `./pkg/infra/log/...` | Not run. Proxy blocked, and `slog_bridge_test.go` import cycle |
 
 ## Human merge gate
 
-`chore/structured-logging-epic` is the integration branch. A later merge of that epic into `main` is human-only (HITL). This integrate does not merge to `main` and does not open a pull request whose base is `main`.
+`chore/structured-logging-epic` is the integration branch. A later merge of that epic into `main` is human-only (HITL). `main` is `6126b3cc6c75e4e76b972cd07c627cf079aeb537`. This integrate does not merge to `main` and does not open a pull request whose base is `main`.
