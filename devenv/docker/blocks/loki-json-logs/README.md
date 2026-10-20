@@ -56,7 +56,7 @@ Alloy parses each JSON line and promotes only low-cardinality keys to stream lab
 | `t` | log timestamp | `2026-10-20T20:56:37.397060462Z` |
 | `msg`, `error`, `orgId`, `uname`, `status`, … | detected fields | |
 
-Errors logged through `pkg/infra/log` are encoded under the `error` key (not `err`).
+Errors logged through `pkg/infra/log` are encoded under the `error` key (not `err`). `| json` doesn't extract array values, so `http.Header` fields (logged as `{"Name":["value"]}`) are only visible in the raw line.
 
 ## View logs
 
@@ -109,6 +109,7 @@ Run this checklist after changing logging code or this block.
 - [ ] Expanding a line in Drilldown or Explore shows parsed fields (`msg`, `logger`, `error`, …).
 - [ ] Provoke a datasource error, for example with the Loki query `{service_name=` in Explore. The UI shows the error as before, and `{service_name="grafana", logger="plugin.loki"} | json | error != ""` returns a line with `msg`, `logger`, and `error`.
 - [ ] Send a request with a fake `Authorization: Bearer test-secret` header. `{service_name="grafana"} |= "test-secret"` returns nothing.
+- [ ] Log a line with fake credentials, for example `password`, `api_key`, `accessToken`, an `http.Header` with `Authorization`, and a URL with a password. In Loki, `{service_name="grafana"} |= "<fake value>"` returns nothing for each value, and the line shows `[REDACTED]` (URL passwords show as `xxxxx`).
 
 ## Staging and production
 
