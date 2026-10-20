@@ -501,6 +501,7 @@ func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File) error {
 		if handler.val == nil {
 			panic(fmt.Sprintf("Handler is uninitialized for mode %q", mode))
 		}
+		handler.val = newRedactingLogger(handler.val)
 
 		// join default filters and mode filters together
 		for key, value := range defaultFilters {
