@@ -1,4 +1,4 @@
-import { createLogger } from './logger';
+import { createLogger, REDACTED } from './logger';
 
 const mockFaro: { api?: { pushLog: jest.Mock; pushError: jest.Mock } } = {};
 
@@ -70,13 +70,14 @@ describe('Faro logger security', () => {
     expect(faroPayloads()).not.toContain(BEARER_SECRET);
   });
 
-  // Known gap: `auth_token` isn't covered by the free-text value patterns, so it survives in error stacks and URLs.
-  it.failing('does not send an auth_token query parameter from an error stack', () => {
+  it('masks an auth_token query parameter in an error stack', () => {
     const { error } = craftedRequestError();
 
     createLogger('backend_srv').error('Request failed', { error });
 
-    expect(faroPayloads()).not.toContain(QUERY_SECRET);
+    const payloads = faroPayloads();
+    expect(payloads).not.toContain(QUERY_SECRET);
+    expect(payloads).toContain(`auth_token=${REDACTED}`);
   });
 
   // Known gap: a session cookie in free text is only redacted when it directly follows "Cookie:".

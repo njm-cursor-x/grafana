@@ -43,8 +43,9 @@ The backend redactor in `pkg/infra/log/redact.go` doesn't mask:
 
 The frontend logger in `public/app/core/logging/logger.ts` doesn't mask:
 
-- **Query tokens in stacks:** An `auth_token` query parameter in an error stack or URL.
 - **Cookies in free text:** A `grafana_session` value that doesn't directly follow `Cookie:`.
+
+An `auth_token` query parameter in a frontend error stack is now masked. The `FetchError` change (#52) made the value pattern match `token` after an underscore, so that test is now a normal passing test.
 
 `getLogger()` in `@grafana/runtime` has no redaction. A bearer token in the message, the context, or an `Error` reaches `faro.api.pushLog` or `faro.api.pushError` unchanged. The Faro `beforeSend` hook only filters bots, so nothing downstream masks it either.
 
@@ -58,7 +59,7 @@ make logging-security-inventory VERBOSE=1               # every match
 make logging-security-inventory OUTPUT_DIR=/tmp/loginv  # one file per section
 ```
 
-Counts are candidates for review. Many credential-keyword matches are log messages about credentials, not credential values.
+Counts are candidates for review. Many credential-keyword matches are log messages about credentials, not credential values. For example, the single frontend match is the `Failed to change password` message in `LoginCtrl.tsx`, whose `FetchError` the logger now reduces to an allowlisted summary.
 
 ## Held call sites
 
