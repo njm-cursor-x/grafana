@@ -689,7 +689,16 @@ module.exports = [
       'public/app/core/utils/debugLog.ts',
     ],
     rules: {
-      'no-console': 'error',
+      // Severity-only would inherit the base config's allow list (error/log/warn/info).
+      'no-console': ['error', {}],
+    },
+  },
+  {
+    // The base config still restricts console.debug; these files are the sanctioned console sinks.
+    name: 'grafana/no-console-allowlist',
+    files: ['public/app/core/logging/logger.ts', 'public/app/core/utils/debugLog.ts'],
+    rules: {
+      'no-console': 'off',
     },
   },
 
