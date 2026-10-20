@@ -16,11 +16,14 @@ import {
   preProcessPanelData,
 } from '@grafana/data';
 import { getTemplateSrv } from '@grafana/runtime';
+import { createLogger } from 'app/core/logging/logger';
 import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
 
 import { getNextRequestId } from './PanelQueryRunner';
 import { setStructureRevision } from './processing/revision';
 import { runRequest } from './runRequest';
+
+const logger = createLogger('query.QueryRunner');
 
 export class QueryRunner implements QueryRunnerSrv {
   private subject: ReplaySubject<PanelData>;
@@ -113,7 +116,7 @@ export class QueryRunner implements QueryRunnerSrv {
             },
           });
         },
-        error: (error) => console.error('PanelQueryRunner Error', error),
+        error: (error) => logger.error('Query runner failed to resolve data source', { error }),
       });
   }
 

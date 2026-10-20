@@ -84,6 +84,7 @@ import { initializeCrashDetection } from './core/crash';
 import { NAMESPACES, GRAFANA_NAMESPACE } from './core/internationalization/constants';
 import { loadTranslations } from './core/internationalization/loadTranslations';
 import { postInitTasks, preInitTasks } from './core/lifecycle-hooks';
+import { createLogger } from './core/logging/logger';
 import { setMonacoEnv } from './core/monacoEnv';
 import { handleRedirectTo } from './core/navigation/handleRedirectTo';
 import { interceptLinkClicks } from './core/navigation/patch/interceptLinkClicks';
@@ -152,6 +153,8 @@ export interface AppInitOptions {
   mergedPreferences?: Preferences;
 }
 
+const logger = createLogger('app.init');
+
 export class GrafanaApp {
   context!: GrafanaContextType;
 
@@ -171,7 +174,7 @@ export class GrafanaApp {
         try {
           await initOpenFeature();
         } catch (err) {
-          console.error('Failed to initialize OpenFeature provider', err);
+          logger.error('Failed to initialize OpenFeature provider', { error: err });
         }
       }
 
@@ -343,7 +346,7 @@ export class GrafanaApp {
       try {
         cleanupOldExpandedFolders();
       } catch (err) {
-        console.warn('Failed to clean up old expanded folders', err);
+        logger.warn('Failed to clean up old expanded folders', { error: err });
       }
 
       this.context = {
@@ -373,7 +376,7 @@ export class GrafanaApp {
 
       await postInitTasks();
     } catch (error) {
-      console.error('Failed to start Grafana', error);
+      logger.error('Failed to start Grafana', { error });
       window.__grafana_load_failed(error);
     } finally {
       stopMeasure('frontend_app_init');

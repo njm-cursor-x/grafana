@@ -13,6 +13,7 @@ import {
   type GetRepositoryFilesWithPathApiResponse,
   provisioningAPIv0alpha1,
 } from 'app/api/clients/provisioning/v0alpha1';
+import { createLogger } from 'app/core/logging/logger';
 import { markAsUrlRewrite } from 'app/core/navigation/urlRewrite';
 import { StateManagerBase } from 'app/core/services/StateManagerBase';
 import { contextSrv } from 'app/core/services/context_srv';
@@ -105,6 +106,8 @@ export interface DashboardScenePageState {
 }
 
 export const DASHBOARD_CACHE_TTL = 500;
+
+const logger = createLogger('dashboard.scene.loader');
 
 const LOAD_SCENE_MEASUREMENT = 'loadDashboardScene';
 
@@ -512,7 +515,12 @@ abstract class DashboardScenePageStateManagerBase<T>
       });
 
       if (!isFetchError(err)) {
-        console.error('Error loading dashboard:', err);
+        logger.error('Error loading dashboard', {
+          dashboardUid: options.uid,
+          route: options.route,
+          status,
+          error: err,
+        });
       }
 
       // If the error is a DashboardVersionError, we want to throw it so that the error boundary is triggered

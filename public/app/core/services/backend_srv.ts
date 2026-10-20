@@ -35,6 +35,7 @@ import {
 } from '@grafana/runtime';
 import { appEvents } from 'app/core/app_events';
 import { getConfig } from 'app/core/config';
+import { createLogger } from 'app/core/logging/logger';
 import { getSessionExpiry, hasRotatableSession } from 'app/core/utils/auth';
 import { loadUrlToken } from 'app/core/utils/urlToken';
 import { getDashboardAPI } from 'app/features/dashboard/api/dashboard_api';
@@ -51,6 +52,8 @@ import { FetchQueue } from './FetchQueue';
 import { FetchQueueWorker } from './FetchQueueWorker';
 import { ResponseQueue } from './ResponseQueue';
 import { type ContextSrv, contextSrv } from './context_srv';
+
+const logger = createLogger('core.backend_srv');
 
 const CANCEL_ALL_REQUESTS_REQUEST_ID = 'cancel_all_requests_request_id';
 
@@ -116,7 +119,7 @@ export class BackendSrv implements BackendService {
       const result = await fp.get();
       this.deviceID = result.visitorId;
     } catch (error) {
-      console.error(error);
+      logger.error('Failed to initialize device ID', { error });
     }
   }
 
@@ -241,7 +244,7 @@ export class BackendSrv implements BackendService {
             observer.complete();
           }) // runs in background
           .catch((e) => {
-            console.log(requestId, 'catch', e);
+            logger.debug('Chunked request stream ended with error', { requestId, error: e });
             observer.error(e);
           }); // from abort
       },
