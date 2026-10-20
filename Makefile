@@ -634,6 +634,10 @@ lint-go-diff:
 		sed 's,^,./,' | \
 		$(XARGSR) $(golangci-lint) run --config .golangci.yml
 
+.PHONY: logging-security-inventory
+logging-security-inventory: ## Report unstructured and possibly credential-leaking log call sites (report only).
+	@./scripts/logging-security-inventory.sh $(if $(VERBOSE),-v) $(if $(OUTPUT_DIR),-o $(OUTPUT_DIR))
+
 .PHONY: gofmt
 gofmt: ## Run gofmt for all Go files.
 	@go list -m -f '{{.Dir}}' | xargs -I{} sh -c 'test ! -f {}/.nolint && echo {}' | xargs gofmt -s -w 2>&1 | grep -v '/pkg/build/' || true
