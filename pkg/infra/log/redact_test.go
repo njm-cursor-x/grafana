@@ -41,7 +41,7 @@ func TestIsSensitiveKey(t *testing.T) {
 		assert.Truef(t, IsSensitiveKey(key), "expected %q to be sensitive", key)
 	}
 	for _, key := range []string{
-		"msg", "error", "userId", "orgId", "tokenId", "apiKeyId", "secretName", "path", "status", "logger",
+		"msg", "err", "userId", "orgId", "tokenId", "apiKeyId", "secretName", "path", "status", "logger",
 	} {
 		assert.Falsef(t, IsSensitiveKey(key), "expected %q not to be sensitive", key)
 	}
@@ -126,7 +126,7 @@ func TestRedactKeyvals(t *testing.T) {
 
 	t.Run("masks credentials inside error values", func(t *testing.T) {
 		err := fmt.Errorf("upstream rejected request: %w", errors.New("Authorization: Bearer "+fakeBearerJWT))
-		out := RedactKeyvals([]any{"error", err})
+		out := RedactKeyvals([]any{"err", err})
 		redacted, ok := out[1].(error)
 		require.True(t, ok, "redacted value should still be an error")
 		assert.NotContains(t, redacted.Error(), fakeBearerJWT)
@@ -186,7 +186,7 @@ file_name = %s
 	logger := New("redaction-test")
 	logger.Info("user login", "userId", 7, "password", fakePassword)
 	logger.Debug("calling upstream", "apiKey", fakeServiceToken, "headers", header)
-	logger.Error("failed to call upstream", "error", errors.New("401 for Authorization: Bearer "+fakeBearerJWT))
+	logger.Error("failed to call upstream", "err", errors.New("401 for Authorization: Bearer "+fakeBearerJWT))
 	logger.New("token", fakeCloudToken).Warn("token about to expire")
 	logger.Info("request with legacy key " + fakeLegacyAPIKey)
 
@@ -202,6 +202,7 @@ file_name = %s
 	require.Contains(t, output, `"msg":"user login"`)
 	require.Contains(t, output, `"userId":7`)
 	require.Contains(t, output, `"msg":"contextual attributes"`)
+	require.Contains(t, output, `"err":"401 for Authorization: Bearer `+RedactedValue+`"`)
 	require.Contains(t, output, RedactedValue)
 
 	for name, secret := range map[string]string{
