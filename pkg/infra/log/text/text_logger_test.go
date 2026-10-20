@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	gokitlog "github.com/go-kit/log"
+	"github.com/go-logfmt/logfmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -20,10 +21,21 @@ func TestLog_UserControlledValuesCannotForgeRecords(t *testing.T) {
 		var buf bytes.Buffer
 		require.NoError(t, NewTextLogger(&buf).Log("level", "info", "msg", "saved", "dashboardTitle", hostile))
 
-		out := strings.TrimSuffix(buf.String(), "\n")
-		assert.NotContains(t, out, "\n", "value must not split the record across lines")
-		assert.Equal(t, 1, strings.Count(out, "level="), "value must not inject a second level key")
-		assert.Contains(t, out, `%s %d %!v`, "format verbs must be logged literally, not interpreted")
+		assert.NotContains(t, strings.TrimSuffix(buf.String(), "\n"), "\n", "value must not split the record across lines")
+
+		dec := logfmt.NewDecoder(&buf)
+		require.True(t, dec.ScanRecord())
+		fields := map[string]string{}
+		for dec.ScanKeyval() {
+			key := string(dec.Key())
+			_, dup := fields[key]
+			assert.Falsef(t, dup, "value must not inject a duplicate %q key", key)
+			fields[key] = string(dec.Value())
+		}
+		require.NoError(t, dec.Err())
+		assert.False(t, dec.ScanRecord(), "value must not produce a second record")
+
+		assert.Equal(t, map[string]string{"level": "info", "msg": "saved", "dashboardTitle": hostile}, fields)
 	})
 
 	t.Run("json", func(t *testing.T) {
