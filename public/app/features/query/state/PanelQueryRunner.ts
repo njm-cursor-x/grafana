@@ -42,6 +42,9 @@ import { type PanelModel } from '../../dashboard/state/PanelModel';
 import { getDashboardQueryRunner } from './DashboardQueryRunner/DashboardQueryRunner';
 import { mergePanelAndDashData } from './mergePanelAndDashData';
 import { runRequest } from './runRequest';
+import { createLogger } from 'app/core/logging/logger';
+
+const logger = createLogger('query.PanelQueryRunner');
 
 export interface QueryRunnerOptions<
   TQuery extends DataQuery = DataQuery,
@@ -257,7 +260,7 @@ export class PanelQueryRunner {
         return { ...data, series, annotations };
       }),
       catchError((err) => {
-        console.warn('Error running transformation:', err);
+        logger.warn('Error running transformation', { error: err });
         return of({
           ...data,
           state: LoadingState.Error,

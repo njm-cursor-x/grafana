@@ -9,6 +9,9 @@ import { createErrorNotification } from '../../../../core/copy/appNotification';
 import { notifyApp } from '../../../../core/reducers/appNotification';
 
 import { type DashboardQueryRunnerWorkerResult } from './types';
+import { createLogger } from 'app/core/logging/logger';
+
+const logger = createLogger('query.DashboardQueryRunner');
 
 export function handleAnnotationQueryRunnerError(err: any): Observable<AnnotationEvent[]> {
   if (err.cancelled) {
@@ -38,7 +41,7 @@ export function handleDashboardQueryRunnerWorkerError(err: any): Observable<Dash
 
 function notifyWithError(title: string, err: any) {
   const error = toDataQueryError(err);
-  console.error('handleAnnotationQueryRunnerError', error);
+  logger.error('Annotation query failed', { title, error: error.message, status: error.status });
   const notification = createErrorNotification(title, error.message);
   dispatch(notifyApp(notification));
 }

@@ -35,6 +35,9 @@ import { updateQueries } from '../state/updateQueries';
 import { GroupActionComponents } from './QueryActionComponent';
 import { QueryEditorRows } from './QueryEditorRows';
 import { QueryGroupOptionsEditor } from './QueryGroupOptions';
+import { createLogger } from 'app/core/logging/logger';
+
+const logger = createLogger('query.QueryGroup');
 
 export interface Props {
   queryRunner: PanelQueryRunner;
@@ -123,7 +126,7 @@ export class QueryGroup extends PureComponent<Props, State> {
         defaultDataSource,
       });
     } catch (error) {
-      console.error('failed to load data source', error);
+      logger.error('Failed to load data source', { error });
     }
   }
 
