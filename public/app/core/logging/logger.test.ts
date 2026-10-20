@@ -6,7 +6,9 @@ const mockFaro: { api?: { pushLog: jest.Mock; pushError: jest.Mock } } = {};
 
 jest.mock('@grafana/faro-web-sdk', () => ({
   ...jest.requireActual('@grafana/faro-web-sdk'),
-  faro: mockFaro,
+  get faro() {
+    return mockFaro;
+  },
 }));
 
 const SECRET = 'test-secret';

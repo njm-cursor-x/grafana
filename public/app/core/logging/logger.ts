@@ -70,13 +70,15 @@ function getFaroApi() {
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const consoleSinks: Record<LogLevel.DEBUG | LogLevel.INFO | LogLevel.WARN | LogLevel.ERROR, (...args: unknown[]) => void> =
-  {
-    [LogLevel.DEBUG]: (...args) => console.debug(...args), // logging-lint: allow logger wrapper console fallback (redacted)
-    [LogLevel.INFO]: (...args) => console.info(...args), // logging-lint: allow logger wrapper console fallback (redacted)
-    [LogLevel.WARN]: (...args) => console.warn(...args), // logging-lint: allow logger wrapper console fallback (redacted)
-    [LogLevel.ERROR]: (...args) => console.error(...args), // logging-lint: allow logger wrapper console fallback (redacted)
-  };
+const consoleSinks: Record<
+  LogLevel.DEBUG | LogLevel.INFO | LogLevel.WARN | LogLevel.ERROR,
+  (...args: unknown[]) => void
+> = {
+  [LogLevel.DEBUG]: (...args) => console.debug(...args), // logging-lint: allow logger wrapper console fallback (redacted)
+  [LogLevel.INFO]: (...args) => console.info(...args), // logging-lint: allow logger wrapper console fallback (redacted)
+  [LogLevel.WARN]: (...args) => console.warn(...args), // logging-lint: allow logger wrapper console fallback (redacted)
+  [LogLevel.ERROR]: (...args) => console.error(...args), // logging-lint: allow logger wrapper console fallback (redacted)
+};
 
 type SupportedLevel = keyof typeof consoleSinks;
 
