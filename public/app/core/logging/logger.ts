@@ -12,12 +12,12 @@ export interface Logger {
 
 export const REDACTED = '[REDACTED]';
 
-const SENSITIVE_KEY = /authorization|cookie|token|passw(or)?d|api[-_]?key|secret|session|credential/i;
+const SENSITIVE_KEY = /authorization|cookie|token|passw(or)?d|confirmnew|api[-_]?key|secret|session|credential/i;
 
 const SENSITIVE_VALUE_PATTERNS: Array<[RegExp, string]> = [
   [/\b(Bearer|Basic)\s+[A-Za-z0-9\-._~+/]+=*/gi, `$1 ${REDACTED}`],
   [
-    /\b(authorization|cookie|set-cookie|x-api-key|api[-_]?key|access[-_]?token|refresh[-_]?token|id[-_]?token|token|password|passwd|secret)(["']?\s*[:=]\s*["']?)[^\s"'&,;}]+/gi,
+    /(?<![A-Za-z0-9])(authorization|cookie|set-cookie|x-api-key|api[-_]?key|access[-_]?token|refresh[-_]?token|id[-_]?token|token|password|passwd|confirmNew|secret)(["']?\s*[:=]\s*["']?)[^\s"'&,;}]+/gi,
     `$1$2${REDACTED}`,
   ],
   [/\bglsa_[A-Za-z0-9_]+/g, REDACTED],
@@ -26,6 +26,26 @@ const SENSITIVE_VALUE_PATTERNS: Array<[RegExp, string]> = [
 
 export function redactString(value: string): string {
   return SENSITIVE_VALUE_PATTERNS.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), value);
+}
+
+function isFetchErrorLike(value: object): value is { status: unknown; config: object } {
+  return 'status' in value && 'config' in value && typeof value.config === 'object' && value.config !== null;
+}
+
+// FetchError carries the raw request (config.data, config.headers) and response body, where secrets such as
+// `confirmNew` sit under keys no pattern can anticipate, so only an allowlisted summary is ever serialized.
+function summarizeFetchError(error: { status: unknown; config: object }) {
+  const data: unknown = Reflect.get(error, 'data');
+  const body = typeof data === 'object' && data !== null ? data : {};
+  return {
+    status: error.status,
+    statusText: Reflect.get(error, 'statusText'),
+    method: Reflect.get(error.config, 'method'),
+    url: Reflect.get(error.config, 'url'),
+    message: Reflect.get(body, 'message'),
+    messageId: Reflect.get(body, 'messageId'),
+    traceId: Reflect.get(body, 'traceID'),
+  };
 }
 
 function stringifyValue(value: unknown): string {
@@ -39,7 +59,12 @@ function stringifyValue(value: unknown): string {
     return String(value);
   }
   try {
-    return JSON.stringify(value, (key, v) => (key && SENSITIVE_KEY.test(key) ? REDACTED : v));
+    return JSON.stringify(value, (key, v: unknown) => {
+      if (key && SENSITIVE_KEY.test(key)) {
+        return REDACTED;
+      }
+      return typeof v === 'object' && v !== null && isFetchErrorLike(v) ? summarizeFetchError(v) : v;
+    });
   } catch {
     return String(value);
   }
@@ -85,12 +110,13 @@ type SupportedLevel = keyof typeof consoleSinks;
 function emit(level: SupportedLevel, source: string, message: string, attributes: LogAttributes = {}) {
   const { error, ...rest } = attributes;
   const safeMessage = redactString(message);
-  const context = toLogContext({ source, ...rest, ...(error instanceof Error ? {} : { error }) });
+  const reportAsFaroError = level === LogLevel.ERROR && error instanceof Error;
+  const context = toLogContext({ source, ...rest, ...(reportAsFaroError ? {} : { error }) });
 
   const api = getFaroApi();
   if (api) {
     try {
-      if (level === LogLevel.ERROR && error instanceof Error) {
+      if (reportAsFaroError) {
         api.pushError(redactError(error), { context: { ...context, message: safeMessage } });
       } else {
         api.pushLog([safeMessage], { level, context });
