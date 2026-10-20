@@ -634,6 +634,10 @@ lint-go-diff:
 		sed 's,^,./,' | \
 		$(XARGSR) $(golangci-lint) run --config .golangci.yml
 
+.PHONY: lint-structured-logging
+lint-structured-logging: ## Fail on fmt/log printing in pkg/ or console.* in public/app/ added since GIT_BASE
+	./scripts/ci/check-structured-logging.sh $(GIT_BASE)
+
 .PHONY: gofmt
 gofmt: ## Run gofmt for all Go files.
 	@go list -m -f '{{.Dir}}' | xargs -I{} sh -c 'test ! -f {}/.nolint && echo {}' | xargs gofmt -s -w 2>&1 | grep -v '/pkg/build/' || true
