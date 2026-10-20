@@ -10,6 +10,7 @@ import {
   userHasAnyPermission,
 } from '@grafana/data';
 import { featureEnabled, getBackendSrv } from '@grafana/runtime';
+import { createLogger } from 'app/core/logging/logger';
 import { canRotateSessionToken, getSessionExpiry } from 'app/core/utils/auth';
 import { type UserPermission, AccessControlAction } from 'app/types/accessControl';
 import { type CurrentUserInternal } from 'app/types/config';
@@ -18,6 +19,8 @@ import config from '../../core/config';
 
 // When set to auto, the interval will be based on the query range
 // NOTE: this is defined here rather than TimeSrv so we avoid circular dependencies
+const logger = createLogger('core.context_srv');
+
 export const AutoRefreshInterval = 'auto';
 export const RedirectToUrlKey = 'redirectTo';
 
@@ -108,7 +111,7 @@ export class ContextSrv {
         reloadcache: true,
       });
     } catch (e) {
-      console.error(e);
+      logger.error('Failed to fetch user permissions', { error: e });
     }
   }
 
@@ -263,7 +266,7 @@ export class ContextSrv {
         }
       })
       .catch((e) => {
-        console.error(e);
+        logger.error('Failed to rotate user session', { error: e });
       });
   }
 }
