@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -64,28 +63,31 @@ func postTestData() {
 			d.Value3 = nil
 		}
 		jsonData, _ := json.Marshal(d)
-		log.Println(string(jsonData))
+		logger.Debug("posting live pipeline dev data", "payload", string(jsonData))
 		httpClient := httpclient.New()
 
 		req, _ := http.NewRequest("POST", "http://localhost:3000/api/live/pipeline/push/stream/json/auto", bytes.NewReader(jsonData))
 		req.Header.Set("Authorization", "Bearer "+os.Getenv("GF_TOKEN"))
 		resp, err := httpClient.Do(req)
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "error", err)
+			return
 		}
 		_ = resp.Body.Close()
 		req, _ = http.NewRequest("POST", "http://localhost:3000/api/live/push/pipeline/push/stream/json/tip", bytes.NewReader(jsonData))
 		req.Header.Set("Authorization", "Bearer "+os.Getenv("GF_TOKEN"))
 		resp, err = httpClient.Do(req)
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "error", err)
+			return
 		}
 		_ = resp.Body.Close()
 		req, _ = http.NewRequest("POST", "http://localhost:3000/api/live/pipeline/push/stream/json/exact", bytes.NewReader(jsonData))
 		req.Header.Set("Authorization", "Bearer "+os.Getenv("GF_TOKEN"))
 		resp, err = httpClient.Do(req)
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "error", err)
+			return
 		}
 		_ = resp.Body.Close()
 		i++

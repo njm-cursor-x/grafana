@@ -315,3 +315,23 @@ func TestEmpty(t *testing.T) {
 		})
 	}
 }
+
+func TestMustAccessorsPanicOnTooManyDefaults(t *testing.T) {
+	js := New()
+	tests := map[string]func(){
+		"MustArray":       func() { js.MustArray(nil, nil) },
+		"MustMap":         func() { js.MustMap(nil, nil) },
+		"MustString":      func() { js.MustString("a", "b") },
+		"MustStringArray": func() { js.MustStringArray(nil, nil) },
+		"MustInt":         func() { js.MustInt(1, 2) },
+		"MustFloat64":     func() { js.MustFloat64(1, 2) },
+		"MustBool":        func() { js.MustBool(true, false) },
+		"MustInt64":       func() { js.MustInt64(1, 2) },
+		"MustUint64":      func() { js.MustUint64(1, 2) },
+	}
+	for name, call := range tests {
+		t.Run(name, func(t *testing.T) {
+			assert.PanicsWithValue(t, name+"() received too many arguments 2", call)
+		})
+	}
+}
