@@ -160,7 +160,7 @@ func (f *JSONFormatter) Format(diff diff.Diff) (result string, err error) {
 	b := &bytes.Buffer{}
 	err = f.tpl.ExecuteTemplate(b, "JSONDiffWrapper", f.Lines)
 	if err != nil {
-		logger.Error("failed to render JSON diff template", "error", err)
+		logger.Error("failed to render JSON diff template", "err", err)
 		return "", err
 	}
 

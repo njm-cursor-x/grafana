@@ -70,9 +70,9 @@ This table shows the count for each package on `main` and after the change.
 These call sites now use `pkg/infra/log` with constant messages and key-value fields, or no longer log at all.
 
 - **`pkg/components/simplejson/simplejson.go`:** Nine `log.Panicf` calls in the `Must*` accessors are now `panic(fmt.Sprintf(...))`. The recovered panic value is the same string. The unstructured line that `log.Panicf` wrote to stderr is gone.
-- **`pkg/services/live/pipeline/devdata.go`:** `log.Println(payload)` is now `logger.Debug("posting live pipeline dev data", "payload", ...)`. Three `log.Fatal(err)` calls are now `logger.Error("failed to post live pipeline dev data", "url", ..., "error", err)` followed by a return. Before, any HTTP error in this goroutine killed the whole Grafana process. This code only runs when `GF_LIVE_PIPELINE_DEV` is set.
+- **`pkg/services/live/pipeline/devdata.go`:** `log.Println(payload)` is now `logger.Debug("posting live pipeline dev data", "payload", ...)`. Three `log.Fatal(err)` calls are now `logger.Error("failed to post live pipeline dev data", "url", ..., "err", err)` followed by a return. Before, any HTTP error in this goroutine killed the whole Grafana process. This code only runs when `GF_LIVE_PIPELINE_DEV` is set.
 - **`pkg/expr/sql/frame_table.go`:** `fmt.Printf("------- Unsupported field type: ...")` is now `Warn("unsupported field type, falling back to JSON", "fieldType", ...)`.
-- **`pkg/components/dashdiffs/formatter_json.go`:** `fmt.Printf("%v\n", err)` is now `Error("failed to render JSON diff template", "error", err)`.
+- **`pkg/components/dashdiffs/formatter_json.go`:** `fmt.Printf("%v\n", err)` is now `Error("failed to render JSON diff template", "err", err)`.
 
 ## Call sites intentionally left in place
 

@@ -70,7 +70,7 @@ func postTestData() {
 		req.Header.Set("Authorization", "Bearer "+os.Getenv("GF_TOKEN"))
 		resp, err := httpClient.Do(req)
 		if err != nil {
-			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "error", err)
+			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "err", err)
 			return
 		}
 		_ = resp.Body.Close()
@@ -78,7 +78,7 @@ func postTestData() {
 		req.Header.Set("Authorization", "Bearer "+os.Getenv("GF_TOKEN"))
 		resp, err = httpClient.Do(req)
 		if err != nil {
-			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "error", err)
+			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "err", err)
 			return
 		}
 		_ = resp.Body.Close()
@@ -86,7 +86,7 @@ func postTestData() {
 		req.Header.Set("Authorization", "Bearer "+os.Getenv("GF_TOKEN"))
 		resp, err = httpClient.Do(req)
 		if err != nil {
-			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "error", err)
+			logger.Error("failed to post live pipeline dev data", "url", req.URL.String(), "err", err)
 			return
 		}
 		_ = resp.Body.Close()

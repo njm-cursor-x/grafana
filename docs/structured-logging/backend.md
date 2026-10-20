@@ -15,13 +15,13 @@ Use a named `pkg/infra/log` logger with a constant message and key-value fields.
 ```go
 var logger = log.New("plugin.loader")
 
-logger.Error("failed to load plugin", "pluginId", id, "error", err)
+logger.Error("failed to load plugin", "pluginId", id, "err", err)
 ```
 
 Follow these rules:
 
 - **Constant messages:** Keep the message the same for every occurrence, so you can search and aggregate on it. Put variable data in fields.
-- **Errors as fields:** Pass errors as an `error` field. Don't interpolate them into the message.
+- **Errors as fields:** Pass errors with the `err` key, for example `"err", err`. Don't use `error` as the key, and don't interpolate errors into the message.
 - **No secrets:** Don't log credentials, even though redaction is in place. Redaction is a safety net, not a license.
 - **No zap:** Grafana logs through `pkg/infra/log`. Don't add or migrate to other logging libraries.
 
@@ -62,7 +62,7 @@ format = json
 Each JSON line contains `t`, `level`, `logger`, `msg`, and the call's fields. The following example shows a typical error line:
 
 ```json
-{"error":"open /var/lib/grafana/plugins/x/plugin.json: no such file or directory","level":"error","logger":"plugin.loader","msg":"failed to load plugin","pluginId":"x","t":"2026-10-20T21:00:00.000000000Z"}
+{"err":"open /var/lib/grafana/plugins/x/plugin.json: no such file or directory","level":"error","logger":"plugin.loader","msg":"failed to load plugin","pluginId":"x","t":"2026-10-20T21:00:00.000000000Z"}
 ```
 
 In containers, prefer `mode = console` and let the platform collect stdout. Only enable `file` mode if something reads the files, and leave `log_rotate` on.
