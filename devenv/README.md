@@ -58,6 +58,10 @@ The grafana block is pre-configured with the dev-datasources and dashboards.
 
 Jaeger block runs both Jaeger and Loki container. Loki container sends traces to Jaeger and also logs its own logs into itself so it is possible to setup derived field for traceID from Loki to Jaeger. You need to install a docker plugin for the self logging to work, without it the container won't start. See https://grafana.com/docs/loki/latest/clients/docker-driver/#installing for installation instructions.
 
+#### Loki JSON logs
+
+The `loki-json-logs` block runs Loki and Grafana Alloy, which tails the Grafana server log written by `make run` (`data/log/grafana.log`) so you can browse structured backend logs in Explore and Logs Drilldown. Set `[log.file] format = json` first. See [docker/blocks/loki-json-logs/README.md](docker/blocks/loki-json-logs/README.md).
+
 #### Graphite
 
 | version | source name | graphite-web port | plaintext port | pickle port |

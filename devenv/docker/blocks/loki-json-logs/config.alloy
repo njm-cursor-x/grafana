@@ -1,0 +1,47 @@
+// Tails the Grafana server log written by `make run` (data/log/grafana.log) and
+// ships it to the local Loki. Requires `[log.file] format = json` in conf/custom.ini.
+
+local.file_match "grafana" {
+  path_targets = [{
+    "__path__"     = "/var/log/grafana/grafana*.log",
+    "service_name" = "grafana",
+    "job"          = "grafana",
+  }]
+}
+
+loki.source.file "grafana" {
+  targets    = local.file_match.grafana.targets
+  forward_to = [loki.process.grafana.receiver]
+}
+
+loki.process "grafana" {
+  stage.json {
+    expressions = {
+      level  = "level",
+      logger = "logger",
+      ts     = "t",
+    }
+  }
+
+  stage.timestamp {
+    source = "ts"
+    format = "RFC3339Nano"
+  }
+
+  // Only low-cardinality keys become labels; every other JSON key stays in the
+  // line and is surfaced by Loki/Drilldown as a detected field.
+  stage.labels {
+    values = {
+      level  = "",
+      logger = "",
+    }
+  }
+
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

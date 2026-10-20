@@ -100,6 +100,20 @@ filters = rendering:debug \
           data-proxy-log:debug
 ```
 
+### Structured logging lint
+
+CI fails when a pull request adds unstructured logging to production code: `fmt.Print*` or stdlib `log.Print*`/`log.Fatal*`/`log.Panic*` under `pkg/`, or `console.*` under `public/app/`. Only added lines are checked, so existing call sites don't fail the build. Tests, stories, mocks, `pkg/infra/log`, `pkg/cmd`, `pkg/build`, and codegen tooling are excluded.
+
+Run the same check locally before you push:
+
+```bash
+git fetch origin main
+make lint-structured-logging                                  # compares against origin/main
+./scripts/ci/check-structured-logging.sh origin/my-base-branch # compares against another base
+```
+
+Use `pkg/infra/log` in Go and the structured frontend logger in `public/app/`. If a line genuinely needs to print, for example a CLI writing to stdout, add a trailing `logging-lint: allow <reason>` comment.
+
 ## Metrics
 
 Metrics are quantifiable measurements that reflect the health and performance of applications or infrastructure.

@@ -1,0 +1,32 @@
+name: Structured logging lint
+
+on:
+  pull_request:
+    paths:
+      - 'pkg/**/*.go'
+      - 'public/app/**'
+      - 'scripts/ci/check-structured-logging.sh'
+      - '.github/workflows/structured-logging-lint.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: No new unstructured logging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          filter: blob:none
+      - name: Check added lines
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: ./scripts/ci/check-structured-logging.sh "origin/${BASE_REF}"

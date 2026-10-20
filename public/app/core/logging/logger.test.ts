@@ -118,6 +118,64 @@ describe('createLogger', () => {
       expect(payloads).toContain(REDACTED);
     });
 
+    describe('FetchError', () => {
+      const fetchError = {
+        status: 400,
+        statusText: 'Bad Request',
+        data: {
+          message: 'New password and confirmation do not match',
+          messageId: 'password.mismatch',
+          confirmNew: SECRET,
+        },
+        config: {
+          method: 'PUT',
+          url: `/api/user/password?auth_token=${SECRET}`,
+          data: { oldPassword: SECRET, newPassword: SECRET, confirmNew: SECRET, password: SECRET },
+          headers: { Authorization: `Bearer ${SECRET}`, Cookie: `grafana_session=${SECRET}`, 'X-Api-Key': SECRET },
+        },
+      };
+
+      it('sends only an allowlisted summary, never the request body, headers, or extra response fields', () => {
+        const logger = createLogger('core.login');
+        logger.error('Failed to change password', { error: fetchError });
+        logger.warn('Retrying password change', { error: fetchError });
+        logger.error('Wrapped failure', { error: { cause: fetchError } });
+
+        const payloads = allFaroPayloads();
+        expect(payloads).not.toContain(SECRET);
+        expect(payloads).not.toContain('confirmNew');
+        expect(payloads).not.toContain('oldPassword');
+        expect(mockFaro.api!.pushLog).toHaveBeenCalledWith(['Failed to change password'], {
+          level: LogLevel.ERROR,
+          context: {
+            source: 'core.login',
+            error: JSON.stringify({
+              status: 400,
+              statusText: 'Bad Request',
+              method: 'PUT',
+              url: `/api/user/password?auth_token=${REDACTED}`,
+              message: 'New password and confirmation do not match',
+              messageId: 'password.mismatch',
+            }),
+          },
+        });
+      });
+
+      it('redacts confirmNew when it appears as a key in any other object', () => {
+        expect(toLogContext({ body: { confirmNew: SECRET } })).toEqual({ body: `{"confirmNew":"${REDACTED}"}` });
+      });
+    });
+
+    it('keeps redacted error details on warn-level logs', () => {
+      createLogger('test').warn('Transformation failed', { error: new Error(`bad input, token=${SECRET}`) });
+
+      expect(mockFaro.api!.pushError).not.toHaveBeenCalled();
+      expect(mockFaro.api!.pushLog).toHaveBeenCalledWith(['Transformation failed'], {
+        level: LogLevel.WARN,
+        context: { source: 'test', error: `Error: bad input, token=${REDACTED}` },
+      });
+    });
+
     it('also redacts what is mirrored to the browser console', () => {
       createLogger('test').error('Request failed', { error: new Error(`Authorization: Bearer ${SECRET}`) });
 

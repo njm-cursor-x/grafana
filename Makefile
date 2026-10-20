@@ -634,6 +634,10 @@ lint-go-diff:
 		sed 's,^,./,' | \
 		$(XARGSR) $(golangci-lint) run --config .golangci.yml
 
+.PHONY: lint-structured-logging
+lint-structured-logging: ## Fail on fmt/log printing in pkg/ or console.* in public/app/ added since GIT_BASE
+	./scripts/ci/check-structured-logging.sh $(GIT_BASE)
+
 .PHONY: logging-security-inventory
 logging-security-inventory: ## Report unstructured and possibly credential-leaking log call sites (report only).
 	@./scripts/logging-security-inventory.sh $(if $(VERBOSE),-v) $(if $(OUTPUT_DIR),-o $(OUTPUT_DIR))
