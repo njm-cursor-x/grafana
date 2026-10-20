@@ -675,6 +675,25 @@ module.exports = [
   },
 
   {
+    // Production code must log through app/core/logging/logger (Faro + redaction). Legacy call sites are
+    // tracked in eslint-suppressions.json; prune them with `yarn lint:prune` as they are migrated.
+    name: 'grafana/no-console',
+    files: ['public/app/**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      ...commonTestIgnores,
+      ...enterpriseIgnores,
+      '**/*.story.tsx',
+      'public/app/**/webpack.config.ts',
+      'public/app/core/logging/logger.ts',
+      // Opt-in, localStorage-gated developer tracing
+      'public/app/core/utils/debugLog.ts',
+    ],
+    rules: {
+      'no-console': 'error',
+    },
+  },
+
+  {
     // @grafana/i18n shouldn't import from our 'library' NPM packages
     name: 'grafana/packages-that-i18n-cant-import',
     files: ['packages/grafana-i18n/**/*.{ts,tsx}'],
