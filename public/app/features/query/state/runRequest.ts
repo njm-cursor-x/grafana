@@ -19,6 +19,7 @@ import {
   type TimeRange,
 } from '@grafana/data';
 import { config, isMigrationHandler, migrateRequest, toDataQueryError, isExpressionReference } from '@grafana/runtime';
+import { createLogger } from 'app/core/logging/logger';
 import { backendSrv } from 'app/core/services/backend_srv';
 import { queryIsEmpty } from 'app/core/utils/query';
 import { dataSource as expressionDatasource } from 'app/features/expressions/ExpressionDatasource';
@@ -26,7 +27,6 @@ import { type ExpressionQuery } from 'app/features/expressions/types';
 
 import { cancelNetworkRequestsOnUnsubscribe } from './processing/canceler';
 import { emitDataRequestEvent } from './queryAnalytics';
-import { createLogger } from 'app/core/logging/logger';
 
 const logger = createLogger('query.runRequest');
 

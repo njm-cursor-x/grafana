@@ -515,7 +515,12 @@ abstract class DashboardScenePageStateManagerBase<T>
       });
 
       if (!isFetchError(err)) {
-        logger.error('Error loading dashboard', { dashboardUid: options.uid, route: options.route, status, error: err });
+        logger.error('Error loading dashboard', {
+          dashboardUid: options.uid,
+          route: options.route,
+          status,
+          error: err,
+        });
       }
 
       // If the error is a DashboardVersionError, we want to throw it so that the error boundary is triggered

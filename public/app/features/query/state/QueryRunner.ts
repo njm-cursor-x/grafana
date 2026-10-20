@@ -16,12 +16,12 @@ import {
   preProcessPanelData,
 } from '@grafana/data';
 import { getTemplateSrv } from '@grafana/runtime';
+import { createLogger } from 'app/core/logging/logger';
 import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
 
 import { getNextRequestId } from './PanelQueryRunner';
 import { setStructureRevision } from './processing/revision';
 import { runRequest } from './runRequest';
-import { createLogger } from 'app/core/logging/logger';
 
 const logger = createLogger('query.QueryRunner');
 

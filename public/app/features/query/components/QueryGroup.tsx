@@ -20,6 +20,7 @@ import { type DataQuery } from '@grafana/schema';
 import { Button, InlineFormLabel, Modal, ScrollContainer, Stack, stylesFactory } from '@grafana/ui';
 import { PluginHelp } from 'app/core/components/PluginHelp/PluginHelp';
 import config from 'app/core/config';
+import { createLogger } from 'app/core/logging/logger';
 import { backendSrv } from 'app/core/services/backend_srv';
 import { addQuery, queryIsEmpty } from 'app/core/utils/query';
 import { DataSourceModal } from 'app/features/datasources/components/picker/DataSourceModal';
@@ -35,7 +36,6 @@ import { updateQueries } from '../state/updateQueries';
 import { GroupActionComponents } from './QueryActionComponent';
 import { QueryEditorRows } from './QueryEditorRows';
 import { QueryGroupOptionsEditor } from './QueryGroupOptions';
-import { createLogger } from 'app/core/logging/logger';
 
 const logger = createLogger('query.QueryGroup');
 

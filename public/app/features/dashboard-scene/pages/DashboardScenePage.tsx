@@ -8,6 +8,7 @@ import { UrlSyncContextProvider } from '@grafana/scenes';
 import { Box } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
+import { createLogger } from 'app/core/logging/logger';
 import { type GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import {
   DashboardBrandingFooter,
@@ -39,7 +40,6 @@ import { useScenesFlickeringFix } from '../utils/utils';
 
 import { getDashboardScenePageStateManager } from './DashboardScenePageStateManager';
 import { shouldHideDashboardKioskFooter } from './utils';
-import { createLogger } from 'app/core/logging/logger';
 
 const logger = createLogger('dashboard.scene.page');
 

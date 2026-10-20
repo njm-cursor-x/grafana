@@ -1,10 +1,10 @@
 import { type UrlQueryMap, getTimeZone, getDefaultTimeRange, dateMath } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
 import { getFolderByUidFacade } from 'app/api/clients/folder/v1beta1/hooks';
+import { createLogger } from 'app/core/logging/logger';
 import { updateNavIndex } from 'app/core/reducers/navModel';
 import { buildNavModel } from 'app/features/folders/state/navModel';
 import { store } from 'app/store/store';
-import { createLogger } from 'app/core/logging/logger';
 
 const logger = createLogger('dashboard.scene.page');
 

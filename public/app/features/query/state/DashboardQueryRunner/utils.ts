@@ -3,13 +3,13 @@ import { type Observable, of } from 'rxjs';
 
 import { type AnnotationEvent, type AnnotationQuery, type DataSourceApi } from '@grafana/data';
 import { config, toDataQueryError } from '@grafana/runtime';
+import { createLogger } from 'app/core/logging/logger';
 import { dispatch } from 'app/store/store';
 
 import { createErrorNotification } from '../../../../core/copy/appNotification';
 import { notifyApp } from '../../../../core/reducers/appNotification';
 
 import { type DashboardQueryRunnerWorkerResult } from './types';
-import { createLogger } from 'app/core/logging/logger';
 
 const logger = createLogger('query.DashboardQueryRunner');
 

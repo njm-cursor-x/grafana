@@ -2,11 +2,11 @@ import { from, type Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { type AnnotationEvent, type DataSourceApi } from '@grafana/data';
+import { createLogger } from 'app/core/logging/logger';
 import { shouldUseLegacyRunner } from 'app/features/annotations/standardAnnotationSupport';
 
 import { type AnnotationQueryRunner, type AnnotationQueryRunnerOptions } from './types';
 import { handleAnnotationQueryRunnerError } from './utils';
-import { createLogger } from 'app/core/logging/logger';
 
 const logger = createLogger('query.LegacyAnnotationQueryRunner');
 

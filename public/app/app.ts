@@ -83,8 +83,8 @@ import {
 import { initializeCrashDetection } from './core/crash';
 import { NAMESPACES, GRAFANA_NAMESPACE } from './core/internationalization/constants';
 import { loadTranslations } from './core/internationalization/loadTranslations';
-import { createLogger } from './core/logging/logger';
 import { postInitTasks, preInitTasks } from './core/lifecycle-hooks';
+import { createLogger } from './core/logging/logger';
 import { setMonacoEnv } from './core/monacoEnv';
 import { handleRedirectTo } from './core/navigation/handleRedirectTo';
 import { interceptLinkClicks } from './core/navigation/patch/interceptLinkClicks';
