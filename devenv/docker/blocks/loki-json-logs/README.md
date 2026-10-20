@@ -54,9 +54,9 @@ Alloy parses each JSON line and promotes only low-cardinality keys to stream lab
 | `level` | label | `info`, `warn`, `error`, `debug` |
 | `logger` | label | `context`, `plugin.loki`, `settings` |
 | `t` | log timestamp | `2026-10-20T20:56:37.397060462Z` |
-| `msg`, `error`, `orgId`, `uname`, `status`, … | detected fields | |
+| `msg`, `err`, `error`, `orgId`, `uname`, `status`, … | detected fields | |
 
-Errors logged through `pkg/infra/log` are encoded under the `error` key (not `err`). `| json` doesn't extract array values, so `http.Header` fields (logged as `{"Name":["value"]}`) are only visible in the raw line.
+Errors are logged under one of two keys. New and migrated call sites use `err` (`logger.Error("...", "err", err)`), but many existing call sites outside the structured logging migration still use `error`. Query both until those are migrated (see [Known follow-ups](#known-follow-ups)). `| json` doesn't extract array values, so `http.Header` fields (logged as `{"Name":["value"]}`) are only visible in the raw line.
 
 ## View logs
 
@@ -64,7 +64,7 @@ Errors logged through `pkg/infra/log` are encoded under the `error` key (not `er
 
 1. Open **Drilldown → Logs** (`/a/grafana-lokiexplore-app/explore`) and pick the Loki datasource.
 2. The **grafana** service shows up with its log volume. Click **Show logs**.
-3. Use the **Labels** tab to break down by `level` or `logger`, and the **Fields** tab to filter by `msg`, `error`, `status`, and other fields. The **Patterns** tab groups similar messages.
+3. Use the **Labels** tab to break down by `level` or `logger`, and the **Fields** tab to filter by `msg`, `err`, `error`, `status`, and other fields. The **Patterns** tab groups similar messages.
 4. Expand a log line to see its parsed fields rather than one opaque string.
 
 Logs Drilldown is a preinstalled app that Grafana downloads from grafana.com on startup. If you're offline, install `grafana-lokiexplore-app` manually into `data/plugins`.
@@ -80,8 +80,11 @@ Open **Explore**, select the Loki datasource, and switch to **Code** mode:
 # Errors, with JSON fields extracted
 {service_name="grafana", level="error"} | json
 
-# Failed datasource queries
-{service_name="grafana", logger=~"plugin.*"} | json | error != ""
+# Any line with an error field, under either key
+{service_name="grafana"} | json | err != "" or error != ""
+
+# Failed datasource queries, with the error shown from whichever key is set
+{service_name="grafana", logger=~"plugin.*"} | json | err != "" or error != "" | line_format "{{.logger}}: {{ or .err .error }}"
 
 # Slow HTTP requests
 {service_name="grafana", logger="context"} | json | time_ms > 500
@@ -106,10 +109,16 @@ Run this checklist after changing logging code or this block.
 - [ ] `curl -s localhost:3100/loki/api/v1/label/level/values` lists the levels Grafana has emitted.
 - [ ] Alloy UI at `http://localhost:12345` shows the `loki.source.file.grafana` → `loki.process.grafana` → `loki.write.local` pipeline as healthy.
 - [ ] **Drilldown → Logs** lists the `grafana` service with volume, and the `level` and `logger` breakdowns are populated.
-- [ ] Expanding a line in Drilldown or Explore shows parsed fields (`msg`, `logger`, `error`, …).
-- [ ] Provoke a datasource error, for example with the Loki query `{service_name=` in Explore. The UI shows the error as before, and `{service_name="grafana", logger="plugin.loki"} | json | error != ""` returns a line with `msg`, `logger`, and `error`.
+- [ ] Expanding a line in Drilldown or Explore shows parsed fields (`msg`, `logger`, `err` or `error`, …).
+- [ ] `{service_name="grafana"} | json | err != "" or error != ""` returns error lines from both migrated (`err`) and legacy (`error`) call sites.
+- [ ] Provoke a datasource error, for example with the Loki query `{service_name=` in Explore. The UI shows the error as before, and `{service_name="grafana", logger="plugin.loki"} | json | err != "" or error != ""` returns a line with `msg`, `logger`, and `err` (or `error`).
 - [ ] Send a request with a fake `Authorization: Bearer test-secret` header. `{service_name="grafana"} |= "test-secret"` returns nothing.
 - [ ] Log a line with fake credentials, for example `password`, `api_key`, `accessToken`, an `http.Header` with `Authorization`, and a URL with a password. In Loki, `{service_name="grafana"} |= "<fake value>"` returns nothing for each value, and the line shows `[REDACTED]` (URL passwords show as `xxxxx`).
+
+## Known follow-ups
+
+- **Error key:** The structured logging convention is `err`, but many existing `pkg/` call sites still pass `"error", err`. Until they're migrated, dashboards, alerts, and saved queries must match both keys, as in the queries above.
+- **Credentials in free text:** Redaction masks `Bearer` and `Basic` credentials, Grafana tokens, and URL passwords inside messages and error strings, but not `key=value` pairs such as `password=...` in error text. Don't rely on redaction for DSN-style strings.
 
 ## Staging and production
 
