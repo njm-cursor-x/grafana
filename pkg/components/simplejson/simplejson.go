@@ -11,7 +11,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 )
 
@@ -376,7 +375,7 @@ func (j *Json) MustArray(args ...[]any) []any {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustArray() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustArray() received too many arguments %d", len(args)))
 	}
 
 	a, err := j.Array()
@@ -402,7 +401,7 @@ func (j *Json) MustMap(args ...map[string]any) map[string]any {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustMap() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustMap() received too many arguments %d", len(args)))
 	}
 
 	a, err := j.Map()
@@ -426,7 +425,7 @@ func (j *Json) MustString(args ...string) string {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustString() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustString() received too many arguments %d", len(args)))
 	}
 
 	s, err := j.String()
@@ -452,7 +451,7 @@ func (j *Json) MustStringArray(args ...[]string) []string {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustStringArray() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustStringArray() received too many arguments %d", len(args)))
 	}
 
 	a, err := j.StringArray()
@@ -476,7 +475,7 @@ func (j *Json) MustInt(args ...int) int {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustInt() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustInt() received too many arguments %d", len(args)))
 	}
 
 	i, err := j.Int()
@@ -500,7 +499,7 @@ func (j *Json) MustFloat64(args ...float64) float64 {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustFloat64() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustFloat64() received too many arguments %d", len(args)))
 	}
 
 	f, err := j.Float64()
@@ -524,7 +523,7 @@ func (j *Json) MustBool(args ...bool) bool {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustBool() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustBool() received too many arguments %d", len(args)))
 	}
 
 	b, err := j.Bool()
@@ -548,7 +547,7 @@ func (j *Json) MustInt64(args ...int64) int64 {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustInt64() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustInt64() received too many arguments %d", len(args)))
 	}
 
 	i, err := j.Int64()
@@ -572,7 +571,7 @@ func (j *Json) MustUint64(args ...uint64) uint64 {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("MustUint64() received too many arguments %d", len(args))
+		panic(fmt.Sprintf("MustUint64() received too many arguments %d", len(args)))
 	}
 
 	i, err := j.Uint64()
