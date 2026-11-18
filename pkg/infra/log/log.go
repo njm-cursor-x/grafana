@@ -410,6 +410,9 @@ func getLogFormat(format string) Formatedlogger {
 // this is for file logger only
 func Close() error {
 	var err error
+	if m := activeSlogManager(); m != nil {
+		err = m.Close(context.Background())
+	}
 	for _, logger := range loggersToClose {
 		if e := logger.Close(); e != nil && err == nil {
 			err = e
@@ -427,6 +430,9 @@ func Reload() error {
 			return err
 		}
 	}
+	if m := activeSlogManager(); m != nil {
+		return m.Reload()
+	}
 
 	return nil
 }
@@ -437,9 +443,14 @@ type logWithFilters struct {
 	maxLevel level.Option
 }
 
-func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File) error {
+func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File, opts ...ConfigOption) error {
 	if err := Close(); err != nil {
 		return err
+	}
+
+	var options configOptions
+	for _, opt := range opts {
+		opt(&options)
 	}
 
 	logEnabled := cfg.Section("log").Key("enabled").MustBool(true)
@@ -448,6 +459,11 @@ func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File) error {
 	}
 
 	defaultLevelName, _ := getLogLevelFromConfig("log", "info", cfg)
+	if options.slogCore {
+		return readSlogLoggingConfig(modes, logsPath, cfg, defaultLevelName)
+	}
+	slogCoreActive.Store(false)
+
 	defaultFilters := getFilters(util.SplitString(cfg.Section("log").Key("filters").String()))
 
 	configLoggers := make([]logWithFilters, 0, len(modes))
@@ -470,33 +486,12 @@ func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File) error {
 		switch mode {
 		case "console":
 			handler.val = format(os.Stdout)
-		case "file":
-			fileName := sec.Key("file_name").MustString(filepath.Join(logsPath, "grafana.log"))
-			dpath := filepath.Dir(fileName)
-			if err := os.MkdirAll(dpath, 0o750); err != nil {
-				_ = level.Error(root).Log("Failed to create directory", "dpath", dpath, "err", err)
+		case "file", "syslog":
+			logger, ok := newLegacyModeLogger(mode, sec, format, logsPath)
+			if !ok {
 				continue
 			}
-			fileHandler := NewFileWriter()
-			fileHandler.Filename = fileName
-			fileHandler.Format = format
-			fileHandler.Rotate = sec.Key("log_rotate").MustBool(true)
-			fileHandler.Maxlines = sec.Key("max_lines").MustInt(1000000)
-			fileHandler.Maxsize = 1 << uint(sec.Key("max_size_shift").MustInt(28))
-			fileHandler.Daily = sec.Key("daily_rotate").MustBool(true)
-			fileHandler.Maxdays = sec.Key("max_days").MustInt64(7)
-			if err := fileHandler.Init(); err != nil {
-				_ = level.Error(root).Log("Failed to initialize file handler", "dpath", dpath, "err", err)
-				continue
-			}
-
-			loggersToClose = append(loggersToClose, fileHandler)
-			loggersToReload = append(loggersToReload, fileHandler)
-			handler.val = fileHandler
-		case "syslog":
-			sysLogHandler := NewSyslog(sec, format)
-			loggersToClose = append(loggersToClose, sysLogHandler)
-			handler.val = sysLogHandler.logger
+			handler.val = logger
 		}
 		if handler.val == nil {
 			panic(fmt.Sprintf("Handler is uninitialized for mode %q", mode))
@@ -519,6 +514,41 @@ func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File) error {
 	}
 
 	return nil
+}
+
+// newLegacyModeLogger builds the go-kit writer for the file and syslog modes and registers
+// it for Close and Reload. It returns false when the sink should be skipped.
+func newLegacyModeLogger(mode string, sec *ini.Section, format Formatedlogger, logsPath string) (gokitlog.Logger, bool) {
+	switch mode {
+	case "file":
+		fileName := sec.Key("file_name").MustString(filepath.Join(logsPath, "grafana.log"))
+		dpath := filepath.Dir(fileName)
+		if err := os.MkdirAll(dpath, 0o750); err != nil {
+			_ = level.Error(root).Log("Failed to create directory", "dpath", dpath, "err", err)
+			return nil, false
+		}
+		fileHandler := NewFileWriter()
+		fileHandler.Filename = fileName
+		fileHandler.Format = format
+		fileHandler.Rotate = sec.Key("log_rotate").MustBool(true)
+		fileHandler.Maxlines = sec.Key("max_lines").MustInt(1000000)
+		fileHandler.Maxsize = 1 << uint(sec.Key("max_size_shift").MustInt(28))
+		fileHandler.Daily = sec.Key("daily_rotate").MustBool(true)
+		fileHandler.Maxdays = sec.Key("max_days").MustInt64(7)
+		if err := fileHandler.Init(); err != nil {
+			_ = level.Error(root).Log("Failed to initialize file handler", "dpath", dpath, "err", err)
+			return nil, false
+		}
+
+		loggersToClose = append(loggersToClose, fileHandler)
+		loggersToReload = append(loggersToReload, fileHandler)
+		return fileHandler, true
+	case "syslog":
+		sysLogHandler := NewSyslog(sec, format)
+		loggersToClose = append(loggersToClose, sysLogHandler)
+		return sysLogHandler.logger, true
+	}
+	return nil, false
 }
 
 // SetupConsoleLogger setup Grafana console logger with provided level.
