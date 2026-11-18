@@ -2613,6 +2613,8 @@ go.opentelemetry.io/collector/pdata v1.63.0 h1:fY2xSG2MnyoBwA4GUhzoogGZMuNS0qHpC
 go.opentelemetry.io/collector/pdata v1.63.0/go.mod h1:jzozYYhQEkTQ/CCbCBNC+hYUeju9S2J8HIqIDHdxZWk=
 go.opentelemetry.io/collector/pdata/pprofile v0.154.0 h1:dWrHnKBzzMhkZXfKmSuFpGVAApSUcrQ+mBFzAsO6/8s=
 go.opentelemetry.io/collector/pdata/pprofile v0.154.0/go.mod h1:BE9oOmAEHVqE+yHRe5Z3qz7co+2SU249DIxVGPRsYf8=
+go.opentelemetry.io/contrib/bridges/otelslog v0.20.0 h1:oEl2Pw/i4OQwhAuda2pAHFAcOMivA+Xa+iTccBfab/g=
+go.opentelemetry.io/contrib/bridges/otelslog v0.20.0/go.mod h1:yMSQaiiq5dpfrSJCYLBcqFeJkFFI67seT4ngvx6jfVo=
 go.opentelemetry.io/contrib/bridges/prometheus v0.70.0 h1:qU2CqTGdlstwoVhu1WfjJJ3z2ntcNjTJO0ksTsFKzPI=
 go.opentelemetry.io/contrib/bridges/prometheus v0.70.0/go.mod h1:Ekh3I2XXfhdWkqbRq4PrivJS4BS/se7Er9ZsbK6YEtQ=
 go.opentelemetry.io/contrib/detectors/gcp v1.44.0 h1:NmLfL734pJhM0JKaYd2Y28+nY9dPRWYAAbxhRCrKXPw=
