@@ -11,6 +11,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -76,7 +77,7 @@ type logManager struct {
 
 func newManager(logger gokitlog.Logger) *logManager {
 	return &logManager{
-		ConcreteLogger: newConcreteLogger(logger),
+		ConcreteLogger: newConcreteLogger(logger).onSlogPipeline(nil),
 		loggersByName:  map[string]*ConcreteLogger{},
 	}
 }
@@ -124,7 +125,7 @@ func (lm *logManager) New(ctx ...any) *ConcreteLogger {
 		return lm.ConcreteLogger
 	}
 	if ctx[0] != "logger" {
-		return newConcreteLogger(lm.ConcreteLogger, ctx...)
+		return newConcreteLogger(lm.ConcreteLogger, ctx...).onSlogPipeline(ctx)
 	}
 
 	lm.mutex.Lock()
@@ -146,7 +147,7 @@ func (lm *logManager) New(ctx ...any) *ConcreteLogger {
 	}
 
 	if len(lm.logFilters) == 0 {
-		ctxLogger := newConcreteLogger(&lm.SwapLogger, ctx...)
+		ctxLogger := newConcreteLogger(&lm.SwapLogger, ctx...).onSlogPipeline(ctx)
 		lm.loggersByName[loggerName] = ctxLogger
 		return ctxLogger
 	}
@@ -163,7 +164,7 @@ func (lm *logManager) New(ctx ...any) *ConcreteLogger {
 		compositeLogger.loggers = append(compositeLogger.loggers, logWithFilter.val)
 	}
 
-	ctxLogger := newConcreteLogger(compositeLogger, ctx...)
+	ctxLogger := newConcreteLogger(compositeLogger, ctx...).onSlogPipeline(ctx)
 	lm.loggersByName[loggerName] = ctxLogger
 	return ctxLogger
 }
@@ -171,6 +172,19 @@ func (lm *logManager) New(ctx ...any) *ConcreteLogger {
 type ConcreteLogger struct {
 	ctx []any
 	gokitlog.SwapLogger
+
+	// slogCtx is the logger's full context (name plus every New), kept because the go-kit
+	// chain cannot be inspected and bridges to the slog pipeline need it. Only loggers
+	// rooted in the global manager have slogPipeline set; others, like NewNopLogger,
+	// never reach the pipeline.
+	slogCtx      []any
+	slogPipeline bool
+}
+
+func (cl *ConcreteLogger) onSlogPipeline(ctx []any) *ConcreteLogger {
+	cl.slogPipeline = true
+	cl.slogCtx = ctx
+	return cl
 }
 
 func newConcreteLogger(logger gokitlog.Logger, ctx ...any) *ConcreteLogger {
@@ -241,7 +255,11 @@ func (cl *ConcreteLogger) New(ctx ...any) *ConcreteLogger {
 		return root.New(ctx...)
 	}
 
-	return newConcreteLogger(gokitlog.With(&cl.SwapLogger), ctx...)
+	child := newConcreteLogger(gokitlog.With(&cl.SwapLogger), ctx...)
+	if cl.slogPipeline {
+		child.onSlogPipeline(append(slices.Clip(cl.slogCtx), ctx...))
+	}
+	return child
 }
 
 // New creates a new logger.
@@ -281,11 +299,17 @@ func with(ctxLogger *ConcreteLogger, withFunc func(gokitlog.Logger, ...any) goki
 
 // WithPrefix adds context that will be added to the log message
 func WithPrefix(ctxLogger *ConcreteLogger, ctx ...any) *ConcreteLogger {
+	if ctxLogger.slogPipeline && len(ctx) > 0 {
+		ctxLogger.slogCtx = append(slices.Clip(ctx), ctxLogger.slogCtx...)
+	}
 	return with(ctxLogger, gokitlog.WithPrefix, ctx)
 }
 
 // WithSuffix adds context that will be appended at the end of the log message
 func WithSuffix(ctxLogger *ConcreteLogger, ctx ...any) *ConcreteLogger {
+	if ctxLogger.slogPipeline && len(ctx) > 0 {
+		ctxLogger.slogCtx = append(slices.Clip(ctxLogger.slogCtx), ctx...)
+	}
 	return with(ctxLogger, gokitlog.WithSuffix, ctx)
 }
 

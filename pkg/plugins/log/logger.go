@@ -83,3 +83,7 @@ func (l *slogLogger) Error(msg string, ctx ...any) {
 func (l *slogLogger) FromContext(_ context.Context) Logger {
 	return l
 }
+
+func (l *slogLogger) Enabled(ctx context.Context, level slog.Level) bool {
+	return l.logger.Enabled(ctx, level)
+}

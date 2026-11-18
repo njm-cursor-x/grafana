@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"gopkg.in/ini.v1"
 
+	"github.com/grafana/grafana-app-sdk/logging"
 	"github.com/grafana/grafana/pkg/infra/log/sinks/console"
 	"github.com/grafana/grafana/pkg/infra/log/slogcore"
 	"github.com/grafana/grafana/pkg/util"
@@ -155,7 +156,7 @@ func readSlogLoggingConfig(modes []string, logsPath string, cfg *ini.File, defau
 		return err
 	}
 	slogCoreActive.Store(true)
-	root.initializeSlog(manager.Handler(), defaultLevelName)
+	root.initializeSlog(manager.Handler())
 	return nil
 }
 
@@ -185,7 +186,7 @@ func newSlogSinkHandler(mode string, sec *ini.Section, logsPath string) (slog.Ha
 	return nil, fmt.Errorf("log mode %q is not supported", mode)
 }
 
-func (lm *logManager) initializeSlog(h slog.Handler, levelStr string) {
+func (lm *logManager) initializeSlog(h slog.Handler) {
 	lm.mutex.Lock()
 	defer lm.mutex.Unlock()
 
@@ -197,7 +198,7 @@ func (lm *logManager) initializeSlog(h slog.Handler, levelStr string) {
 		logger.Swap(gokitlog.With(adapter, logger.ctx...))
 	}
 
-	initAppSDKLogger(lm.ConcreteLogger, stringToSlogLevel(levelStr))
+	logging.DefaultLogger = logging.NewSLogLogger(h)
 }
 
 // slogGokitLogger lets ConcreteLogger, which is built on go-kit, write to the slog

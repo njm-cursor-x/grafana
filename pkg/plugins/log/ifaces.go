@@ -1,6 +1,9 @@
 package log
 
-import "context"
+import (
+	"context"
+	"log/slog"
+)
 
 // Logger is the default logger
 type Logger interface {
@@ -21,6 +24,13 @@ type Logger interface {
 
 	// FromContext returns a new contextual Logger that has this logger's context plus the given context.
 	FromContext(ctx context.Context) Logger
+}
+
+// LevelEnabler is implemented by loggers that can tell whether a record at level would be
+// written, so bridges such as hclog can skip building records nobody reads. Loggers that
+// do not implement it are treated as writing every level.
+type LevelEnabler interface {
+	Enabled(ctx context.Context, level slog.Level) bool
 }
 
 // PrettyLogger is used primarily to facilitate logging/user feedback for both
