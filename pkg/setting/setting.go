@@ -1958,7 +1958,26 @@ func (cfg *Cfg) initLogging(file *ini.File) error {
 	}
 	logsPath := valueAsString(file.Section("paths"), "logs", "")
 	cfg.LogsPath = makeAbsolute(logsPath, cfg.HomePath)
-	return log.ReadLoggingConfig(logModes, cfg.LogsPath, file)
+	return log.ReadLoggingConfig(logModes, cfg.LogsPath, file, log.WithSlogCore(slogLoggingCoreEnabled(file)), log.WithBuildVersion(BuildVersion))
+}
+
+// slogLoggingCoreEnabled reads the toggle straight from config because logging is set up
+// before feature management, and before the feature toggle env overrides are applied.
+func slogLoggingCoreEnabled(file *ini.File) bool {
+	if v := os.Getenv(EnvSectionPrefix("feature_toggles") + log.SlogCoreFeatureToggle); v != "" {
+		enabled, err := strconv.ParseBool(v)
+		return err == nil && enabled
+	}
+	toggles, err := ReadFeatureTogglesFromInitFile(file.Section("feature_toggles"))
+	if err != nil {
+		return false
+	}
+	toggle, ok := toggles[log.SlogCoreFeatureToggle]
+	if !ok {
+		return false
+	}
+	enabled, ok := toggle.Variants[toggle.DefaultVariant].(bool)
+	return ok && enabled
 }
 
 func (cfg *Cfg) readStartupParams(iniFile *ini.File) {

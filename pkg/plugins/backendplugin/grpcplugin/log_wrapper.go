@@ -1,9 +1,11 @@
 package grpcplugin
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 
 	"github.com/hashicorp/go-hclog"
 
@@ -58,11 +60,17 @@ func (lw logWrapper) Log(level hclog.Level, msg string, args ...any) {
 
 // Emit a message and key/value pairs at the TRACE level
 func (lw logWrapper) Trace(msg string, args ...any) {
+	if !lw.IsTrace() {
+		return
+	}
 	lw.Logger.Debug(msg, formatArgs(args...)...)
 }
 
 // Emit a message and key/value pairs at the DEBUG level
 func (lw logWrapper) Debug(msg string, args ...any) {
+	if !lw.IsDebug() {
+		return
+	}
 	lw.Logger.Debug(msg, formatArgs(args...)...)
 }
 
@@ -81,20 +89,27 @@ func (lw logWrapper) Error(msg string, args ...any) {
 	lw.Logger.Error(msg, formatArgs(args...)...)
 }
 
-// Indicate if TRACE logs would be emitted.
-func (lw logWrapper) IsTrace() bool { return true }
+func (lw logWrapper) enabled(level slog.Level) bool {
+	if e, ok := lw.Logger.(plog.LevelEnabler); ok {
+		return e.Enabled(context.Background(), level)
+	}
+	return true
+}
+
+// Indicate if TRACE logs would be emitted. Grafana writes trace as debug.
+func (lw logWrapper) IsTrace() bool { return lw.enabled(slog.LevelDebug) }
 
 // Indicate if DEBUG logs would be emitted.
-func (lw logWrapper) IsDebug() bool { return true }
+func (lw logWrapper) IsDebug() bool { return lw.enabled(slog.LevelDebug) }
 
 // Indicate if INFO logs would be emitted.
-func (lw logWrapper) IsInfo() bool { return true }
+func (lw logWrapper) IsInfo() bool { return lw.enabled(slog.LevelInfo) }
 
 // Indicate if WARN logs would be emitted.
-func (lw logWrapper) IsWarn() bool { return true }
+func (lw logWrapper) IsWarn() bool { return lw.enabled(slog.LevelWarn) }
 
 // Indicate if ERROR logs would be emitted.
-func (lw logWrapper) IsError() bool { return true }
+func (lw logWrapper) IsError() bool { return lw.enabled(slog.LevelError) }
 
 // ImpliedArgs returns With key/value pairs
 func (lw logWrapper) ImpliedArgs() []any {
@@ -149,9 +164,20 @@ func (lw logWrapper) ResetNamed(name string) hclog.Logger {
 	}
 }
 
-// No-op. The wrapped logger implementation cannot update the level on the fly.
+// GetLevel returns the lowest level the wrapped logger writes.
 func (lw logWrapper) GetLevel() hclog.Level {
-	return hclog.Trace
+	switch {
+	case lw.IsTrace():
+		return hclog.Trace
+	case lw.IsInfo():
+		return hclog.Info
+	case lw.IsWarn():
+		return hclog.Warn
+	case lw.IsError():
+		return hclog.Error
+	default:
+		return hclog.Off
+	}
 }
 
 // No-op. The wrapped logger implementation cannot update the level on the fly.
