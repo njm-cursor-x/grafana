@@ -1620,6 +1620,10 @@ GF_LOG_LEVEL: error
 
 Use this configuration option to set the default error message shown to users. This message is displayed instead of sensitive backend errors, which should be obfuscated. The default message is `Please inspect the Grafana server log for details.`.
 
+#### `trust_incoming_request_id`
+
+When `true`, Grafana uses a well-formed incoming `X-Request-Id` header as the request ID. When `false` (default), Grafana always generates a request ID. The ID is echoed in the `X-Request-Id` response header.
+
 <hr>
 
 ### `[log.console]`

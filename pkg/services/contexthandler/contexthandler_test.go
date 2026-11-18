@@ -13,6 +13,8 @@ import (
 
 	"github.com/grafana/grafana/pkg/api/routing"
 	"github.com/grafana/grafana/pkg/apimachinery/identity"
+	"github.com/grafana/grafana/pkg/infra/log/logctx"
+	"github.com/grafana/grafana/pkg/middleware"
 	"github.com/grafana/grafana/pkg/services/authn"
 	"github.com/grafana/grafana/pkg/services/authn/authntest"
 	"github.com/grafana/grafana/pkg/services/contexthandler"
@@ -63,6 +65,15 @@ func TestContextHandler(t *testing.T) {
 			requester, err := identity.GetRequester(c.Req.Context())
 			require.NoError(t, err)
 			require.Equal(t, id, requester)
+
+			orgID, ok := logctx.Org(c.Req.Context())
+			require.True(t, ok)
+			require.Equal(t, int64(1), orgID)
+			userID, ok := logctx.User(c.Req.Context())
+			require.True(t, ok)
+			require.Equal(t, id.SignedInUser().UserID, userID)
+			_, ok = logctx.RequestID(c.Req.Context())
+			require.False(t, ok)
 		})
 
 		res, err := server.Send(server.NewGetRequest("/api/handler"))
@@ -255,6 +266,34 @@ func TestContextHandler(t *testing.T) {
 
 		res, err := server.Send(server.NewGetRequest("/api/handler"))
 		require.NoError(t, err)
+		require.NoError(t, res.Body.Close())
+	})
+
+	t.Run("should keep request id from middleware on ctx", func(t *testing.T) {
+		id := &authn.Identity{ID: "1", Type: claims.TypeUser, OrgID: 2}
+		handler := contexthandler.ProvideService(
+			setting.NewCfg(),
+			&authntest.FakeService{ExpectedIdentity: id},
+			featuremgmt.WithFeatures(),
+		)
+
+		server := webtest.NewServer(t, routing.NewRouteRegister())
+		server.Mux.Use(middleware.RequestID(&setting.Cfg{TrustIncomingRequestID: true}))
+		server.Mux.Use(handler.Middleware)
+		server.Mux.Get("/api/handler", func(c *contextmodel.ReqContext) {
+			rid, ok := logctx.RequestID(c.Req.Context())
+			require.True(t, ok)
+			require.Equal(t, "incoming-req", rid)
+			orgID, ok := logctx.Org(c.Req.Context())
+			require.True(t, ok)
+			require.Equal(t, int64(2), orgID)
+		})
+
+		req := server.NewGetRequest("/api/handler")
+		req.Header.Set(middleware.RequestIDHeader, "incoming-req")
+		res, err := server.Send(req)
+		require.NoError(t, err)
+		require.Equal(t, "incoming-req", res.Header.Get(middleware.RequestIDHeader))
 		require.NoError(t, res.Body.Close())
 	})
 }

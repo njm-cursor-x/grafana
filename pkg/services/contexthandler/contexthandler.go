@@ -19,6 +19,7 @@ import (
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/apimachinery/identity"
 	"github.com/grafana/grafana/pkg/infra/log"
+	"github.com/grafana/grafana/pkg/infra/log/logctx"
 	"github.com/grafana/grafana/pkg/infra/tracing"
 	"github.com/grafana/grafana/pkg/services/authn"
 	"github.com/grafana/grafana/pkg/services/contexthandler/ctxkey"
@@ -174,6 +175,12 @@ func (h *ContextHandler) setRequestContext(ctx context.Context) context.Context 
 		"namespace": ns,
 	})
 	ctx = openfeature.MergeTransactionContext(ctx, evalCtx)
+
+	// Identity on ctx uses IDs only. reqContext.Logger keeps legacy keys (including uname)
+	// so go-kit output is unchanged while the slog core toggle is off.
+	ctx = logctx.WithOrg(ctx, reqContext.OrgID)
+	ctx = logctx.WithUser(ctx, userId)
+	*reqContext.Req = *reqContext.Req.WithContext(ctx)
 
 	return ctx
 }
