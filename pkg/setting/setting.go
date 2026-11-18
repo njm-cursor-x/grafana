@@ -651,6 +651,10 @@ type Cfg struct {
 	// This is used to override the general error message shown to users when we want to obfuscate a sensitive backend error
 	UserFacingDefaultError string
 
+	// TrustIncomingRequestID, when true, uses a well-formed incoming X-Request-Id
+	// as the request id. Default false: Grafana always generates one.
+	TrustIncomingRequestID bool
+
 	// DatabaseInstrumentQueries is used to decide if database queries
 	// should be instrumented with metrics, logs and traces.
 	// This needs to be on the global object since its used in the
@@ -1851,6 +1855,7 @@ func (cfg *Cfg) parseINIFile(iniFile *ini.File) error {
 
 	logSection := iniFile.Section("log")
 	cfg.UserFacingDefaultError = logSection.Key("user_facing_default_error").MustString("please inspect Grafana server log for details")
+	cfg.TrustIncomingRequestID = logSection.Key("trust_incoming_request_id").MustBool(false)
 
 	cfg.readPublicDashboardsSettings()
 	cfg.readCloudMigrationSettings()
