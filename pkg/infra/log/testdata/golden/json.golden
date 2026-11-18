@@ -1,0 +1,31 @@
+=== levels ===
+{"k":"v","level":"debug","logger":"levels","msg":"debug message","t":"2024-01-15T10:11:12.123456789Z"}
+{"k":"v","level":"info","logger":"levels","msg":"info message","t":"2024-01-15T10:11:12.123456789Z"}
+{"k":"v","level":"warn","logger":"levels","msg":"warn message","t":"2024-01-15T10:11:12.123456789Z"}
+{"k":"v","level":"error","logger":"levels","msg":"error message","t":"2024-01-15T10:11:12.123456789Z"}
+
+=== named-loggers ===
+{"addr":":3000","level":"info","logger":"http.server","msg":"listening","t":"2024-01-15T10:11:12.123456789Z"}
+{"db":"sqlite","level":"info","logger":"sqlstore","msg":"connected","t":"2024-01-15T10:11:12.123456789Z"}
+
+=== filters ===
+{"level":"debug","logger":"sqlstore","msg":"query","sql":"SELECT 1","t":"2024-01-15T10:11:12.123456789Z"}
+{"level":"info","logger":"http.server","msg":"served","status":200,"t":"2024-01-15T10:11:12.123456789Z"}
+
+=== errors ===
+{"attempt":3,"error":"boom","level":"error","logger":"errors","msg":"failed","t":"2024-01-15T10:11:12.123456789Z"}
+
+=== structs ===
+{"data":{"Name":"foo","Count":3},"level":"info","logger":"structs","msg":"payload","t":"2024-01-15T10:11:12.123456789Z","tags":["a","b"]}
+
+=== nil-values ===
+{"err":null,"level":"info","logger":"nils","msg":"nils","ptr":null,"t":"2024-01-15T10:11:12.123456789Z","val":null}
+
+=== contextual-attributes ===
+{"level":"info","logger":"request","msg":"handled","orgId":1,"path":"/api/dashboards","t":"2024-01-15T10:11:12.123456789Z","traceID":"trace-abc","userId":42}
+
+=== typed-values ===
+{"level":"info","logger":"types","msg":"mixed","n":7,"note":"has spaces","ok":true,"ratio":1.5,"t":"2024-01-15T10:11:12.123456789Z"}
+
+=== child-logger ===
+{"k":"v","level":"info","logger":"parent","msg":"child","requestID":"r1","t":"2024-01-15T10:11:12.123456789Z"}
