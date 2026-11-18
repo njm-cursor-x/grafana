@@ -11,6 +11,11 @@ var _ slog.Handler = &slogHandler{}
 
 type slogHandler struct {
 	log.Logger
+	// group is the WithGroup prefix applied to keys on the go-kit path.
+	group string
+	// core is the slog pipeline handler for Logger, used while the slog core is active.
+	// It is nil when Logger does not write to the pipeline.
+	core slog.Handler
 }
 
 func init() {
@@ -23,22 +28,32 @@ func Provide() slog.Handler { return New(log.New()) }
 
 // NewSLogHandler returns a new slog.Handler that logs to the given log.Logger.
 func New(logger log.Logger) *slogHandler {
-	return &slogHandler{logger}
+	return &slogHandler{Logger: logger, core: log.SlogHandler(logger)}
+}
+
+func (h *slogHandler) useCore() bool {
+	return h.core != nil && log.SlogCoreActive()
 }
 
 // Enabled implements slog.Handler.Enabled.
-func (h *slogHandler) Enabled(_ context.Context, _ slog.Level) bool {
+func (h *slogHandler) Enabled(ctx context.Context, level slog.Level) bool {
+	if h.useCore() {
+		return h.core.Enabled(ctx, level)
+	}
 	return true
 }
 
 // Handle implements slog.Handler.Handle.
 func (h *slogHandler) Handle(ctx context.Context, r slog.Record) error {
-	attrs := make([]any, 0, 2*r.NumAttrs())
-	fn := func(attr slog.Attr) bool {
-		attrs = append(attrs, attr.Key, attr.Value)
-		return true
+	if h.useCore() {
+		return h.core.Handle(ctx, r)
 	}
-	r.Attrs(fn)
+
+	attrs := make([]any, 0, 2*r.NumAttrs())
+	r.Attrs(func(attr slog.Attr) bool {
+		attrs = appendAttr(attrs, h.group, attr)
+		return true
+	})
 	attrs = append(attrs, log.FromContext(ctx)...)
 
 	switch level := r.Level; {
@@ -58,9 +73,13 @@ func (h *slogHandler) Handle(ctx context.Context, r slog.Record) error {
 func (h *slogHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	out := make([]any, 0, 2*len(attrs))
 	for _, attr := range attrs {
-		out = append(out, attr.Key, attr.Value)
+		out = appendAttr(out, h.group, attr)
 	}
-	return New(h.New(out...))
+	c := &slogHandler{Logger: h.New(out...), group: h.group, core: h.core}
+	if h.core != nil {
+		c.core = h.core.WithAttrs(attrs)
+	}
+	return c
 }
 
 // WithGroup implements slog.Handler.WithGroup.
@@ -68,5 +87,23 @@ func (h *slogHandler) WithGroup(name string) slog.Handler {
 	if name == "" {
 		return h
 	}
-	return New(h.New("group", name))
+	c := &slogHandler{Logger: h.Logger, group: h.group + name + ".", core: h.core}
+	if h.core != nil {
+		c.core = h.core.WithGroup(name)
+	}
+	return c
+}
+
+// appendAttr flattens groups into dotted keys, since the go-kit engine has no nesting.
+func appendAttr(kv []any, prefix string, attr slog.Attr) []any {
+	if attr.Value.Kind() != slog.KindGroup {
+		return append(kv, prefix+attr.Key, attr.Value)
+	}
+	if attr.Key != "" {
+		prefix += attr.Key + "."
+	}
+	for _, a := range attr.Value.Group() {
+		kv = appendAttr(kv, prefix, a)
+	}
+	return kv
 }
