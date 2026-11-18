@@ -1616,6 +1616,14 @@ GF_LOG_FILTERS: sqlstore:debug,plugins:info
 GF_LOG_LEVEL: error
 ```
 
+#### `redact_keys`
+
+Optional extra attribute keys whose values are masked in logs. Matching is case-insensitive and ignores separators, so `api_key` and `X-API-Key` both match.
+
+Grafana always masks `password`, `secret`, `token`, `authorization`, `cookie`, `apikey`, and `private_key`, including keys nested in groups. Use `redact_keys` to add more, for example `ssn session_id`.
+
+This is a safety net, not a guarantee. Avoid logging secrets at the call site. Default is empty.
+
 #### `user_facing_default_error`
 
 Use this configuration option to set the default error message shown to users. This message is displayed instead of sensitive backend errors, which should be obfuscated. The default message is `Please inspect the Grafana server log for details.`.

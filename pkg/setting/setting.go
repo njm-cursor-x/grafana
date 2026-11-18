@@ -651,6 +651,10 @@ type Cfg struct {
 	// This is used to override the general error message shown to users when we want to obfuscate a sensitive backend error
 	UserFacingDefaultError string
 
+	// LogRedactKeys are extra log attribute keys whose values are masked.
+	// Parsed from [log] redact_keys. The built-in deny-list lives in pkg/infra/log/redact.
+	LogRedactKeys []string
+
 	// DatabaseInstrumentQueries is used to decide if database queries
 	// should be instrumented with metrics, logs and traces.
 	// This needs to be on the global object since its used in the
@@ -1851,6 +1855,7 @@ func (cfg *Cfg) parseINIFile(iniFile *ini.File) error {
 
 	logSection := iniFile.Section("log")
 	cfg.UserFacingDefaultError = logSection.Key("user_facing_default_error").MustString("please inspect Grafana server log for details")
+	cfg.LogRedactKeys = util.SplitString(logSection.Key("redact_keys").String())
 
 	cfg.readPublicDashboardsSettings()
 	cfg.readCloudMigrationSettings()
