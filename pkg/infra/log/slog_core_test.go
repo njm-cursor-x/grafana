@@ -123,7 +123,7 @@ func TestSlogCoreContextProviders(t *testing.T) {
 	}
 }
 
-func TestSlogCoreLegacyFileMode(t *testing.T) {
+func TestSlogCoreNativeFileMode(t *testing.T) {
 	dir := t.TempDir()
 	logFile := filepath.Join(dir, "grafana.log")
 	cfg, err := ini.Load([]byte(`
@@ -145,17 +145,28 @@ file_name = ` + logFile + `
 	})
 
 	New("slogtest.file").Error("written", "orgId", 4)
+	require.NoError(t, Reload())
+	New("slogtest.file").Info("after reload")
 	require.NoError(t, Close())
 
 	body, err := os.ReadFile(logFile)
 	require.NoError(t, err)
-	var line map[string]any
-	require.NoError(t, json.Unmarshal(bytes.TrimSpace(body), &line))
-	assert.Equal(t, "error", line["level"])
-	assert.Equal(t, "written", line["msg"])
-	assert.Equal(t, "slogtest.file", line["logger"])
-	assert.Equal(t, 4.0, line["grafana.org.id"])
-	assert.Contains(t, line, "t")
+	var lines []map[string]any
+	for _, raw := range bytes.Split(bytes.TrimSpace(body), []byte("\n")) {
+		if len(raw) == 0 {
+			continue
+		}
+		m := map[string]any{}
+		require.NoError(t, json.Unmarshal(raw, &m), string(raw))
+		lines = append(lines, m)
+	}
+	require.Len(t, lines, 2)
+	assert.Equal(t, "error", lines[0]["level"])
+	assert.Equal(t, "written", lines[0]["msg"])
+	assert.Equal(t, "slogtest.file", lines[0]["logger"])
+	assert.Equal(t, 4.0, lines[0]["grafana.org.id"])
+	assert.Contains(t, lines[0], "t")
+	assert.Equal(t, "after reload", lines[1]["msg"])
 }
 
 func TestSlogCoreConfigErrors(t *testing.T) {

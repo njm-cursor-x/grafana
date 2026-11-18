@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"path/filepath"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -16,6 +17,8 @@ import (
 
 	"github.com/grafana/grafana-app-sdk/logging"
 	"github.com/grafana/grafana/pkg/infra/log/sinks/console"
+	filesink "github.com/grafana/grafana/pkg/infra/log/sinks/file"
+	syslogsink "github.com/grafana/grafana/pkg/infra/log/sinks/syslog"
 	"github.com/grafana/grafana/pkg/infra/log/slogcore"
 	"github.com/grafana/grafana/pkg/util"
 )
@@ -43,6 +46,8 @@ var (
 	sinkFactoriesMu sync.RWMutex
 	sinkFactories   = map[string]SinkFactory{
 		"console": newConsoleSink,
+		"file":    newFileSink,
+		"syslog":  newSyslogSink,
 	}
 )
 
@@ -65,6 +70,35 @@ func newConsoleSink(section *ini.Section, _ string) (slog.Handler, error) {
 	return console.New(console.Config{
 		Format: section.Key("format").MustString(""),
 		Output: section.Key("output").MustString("stdout"),
+	})
+}
+
+func newFileSink(section *ini.Section, logsPath string) (slog.Handler, error) {
+	h, err := filesink.New(filesink.Config{
+		Format:   section.Key("format").MustString(""),
+		Filename: section.Key("file_name").MustString(filepath.Join(logsPath, "grafana.log")),
+		Rotate:   section.Key("log_rotate").MustBool(true),
+		MaxLines: section.Key("max_lines").MustInt(1000000),
+		MaxSize:  1 << uint(section.Key("max_size_shift").MustInt(28)),
+		Daily:    section.Key("daily_rotate").MustBool(true),
+		MaxDays:  section.Key("max_days").MustInt64(7),
+	})
+	if err != nil {
+		root.Error("Failed to initialize file handler", "err", err)
+		// Skip this sink the way the legacy engine does, so mode=console file still
+		// starts when the log directory is not writable.
+		return nil, nil
+	}
+	return h, nil
+}
+
+func newSyslogSink(section *ini.Section, _ string) (slog.Handler, error) {
+	return syslogsink.New(syslogsink.Config{
+		Format:   section.Key("format").MustString(""),
+		Network:  section.Key("network").MustString(""),
+		Address:  section.Key("address").MustString(""),
+		Facility: section.Key("facility").MustString("local7"),
+		Tag:      section.Key("tag").MustString(""),
 	})
 }
 
@@ -172,8 +206,8 @@ func newSlogSinkHandler(mode string, sec *ini.Section, logsPath string) (slog.Ha
 	}
 	switch mode {
 	case "file", "syslog":
-		// Native file and syslog sinks are not on the slog pipeline yet, so the legacy
-		// writers are driven through an adapter to keep those modes working.
+		// Native factories are registered for these modes. This adapter remains as a
+		// fallback if a factory is unregistered.
 		logger, ok := newLegacyModeLogger(mode, sec, getLogFormat(sec.Key("format").MustString("")), logsPath)
 		if !ok {
 			return nil, nil
