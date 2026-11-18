@@ -1958,7 +1958,7 @@ func (cfg *Cfg) initLogging(file *ini.File) error {
 	}
 	logsPath := valueAsString(file.Section("paths"), "logs", "")
 	cfg.LogsPath = makeAbsolute(logsPath, cfg.HomePath)
-	return log.ReadLoggingConfig(logModes, cfg.LogsPath, file, log.WithSlogCore(slogLoggingCoreEnabled(file)))
+	return log.ReadLoggingConfig(logModes, cfg.LogsPath, file, log.WithSlogCore(slogLoggingCoreEnabled(file)), log.WithBuildVersion(BuildVersion))
 }
 
 // slogLoggingCoreEnabled reads the toggle straight from config because logging is set up

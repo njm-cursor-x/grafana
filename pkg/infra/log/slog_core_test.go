@@ -174,6 +174,68 @@ func TestSlogCoreConfigErrors(t *testing.T) {
 	require.ErrorContains(t, ReadLoggingConfig([]string{"console"}, "", cfg, WithSlogCore(true)), "somewhere")
 }
 
+func TestSlogCoreOTLPRequiresEndpoint(t *testing.T) {
+	t.Cleanup(func() {
+		legacy, _ := ini.Load([]byte("[log]\n[log.console]\n"))
+		_ = ReadLoggingConfig([]string{"console"}, "", legacy)
+	})
+
+	cfg, err := ini.Load([]byte(`
+[log]
+mode = otlp
+[log.otlp]
+`))
+	require.NoError(t, err)
+	require.ErrorContains(t, ReadLoggingConfig([]string{"otlp"}, "", cfg, WithSlogCore(true)), "endpoint is required")
+}
+
+func TestSlogCoreOTLPWiresSink(t *testing.T) {
+	t.Cleanup(func() {
+		legacy, _ := ini.Load([]byte("[log]\n[log.console]\n"))
+		_ = ReadLoggingConfig([]string{"console"}, "", legacy)
+	})
+
+	cfg, err := ini.Load([]byte(`
+[log]
+mode = otlp
+filters = sqlstore:debug
+[log.otlp]
+endpoint = 127.0.0.1:4317
+insecure = true
+level = warn
+filters = noisy:error
+`))
+	require.NoError(t, err)
+
+	sink, err := newOtlpSink(cfg, "1.2.3", map[string]slog.Level{"sqlstore": slog.LevelDebug})
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, sink.Handler.(interface{ Close(context.Context) error }).Close(context.Background()))
+	})
+	assert.Equal(t, "otlp", sink.Name)
+	assert.Equal(t, slog.LevelWarn, sink.Level)
+	assert.Equal(t, map[string]slog.Level{"sqlstore": slog.LevelDebug, "noisy": slog.LevelError}, sink.Filters)
+
+	require.NoError(t, ReadLoggingConfig([]string{"otlp"}, "", cfg, WithSlogCore(true), WithBuildVersion("1.2.3")))
+}
+
+func TestSlogCoreRedactsSensitiveKeys(t *testing.T) {
+	buf := useSlogCore(t, `
+[log]
+mode = capture
+redact_keys = sessionid
+
+[log.capture]
+`)
+	New("slogtest.redact").Info("secrets", "password", "hunter2", "token", "abc", "sessionid", "xyz", "ok", "keep")
+	lines := buf.lines(t)
+	require.Len(t, lines, 1)
+	assert.Equal(t, "[REDACTED]", lines[0]["password"])
+	assert.Equal(t, "[REDACTED]", lines[0]["token"])
+	assert.Equal(t, "[REDACTED]", lines[0]["sessionid"])
+	assert.Equal(t, "keep", lines[0]["ok"])
+}
+
 func TestSlogCoreOffRestoresLegacyEngine(t *testing.T) {
 	buf := useSlogCore(t, "[log]\nmode = capture\n[log.capture]\n")
 	logger := New("slogtest.switch")

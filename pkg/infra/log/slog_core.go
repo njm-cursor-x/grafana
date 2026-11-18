@@ -15,7 +15,9 @@ import (
 	"gopkg.in/ini.v1"
 
 	"github.com/grafana/grafana-app-sdk/logging"
+	"github.com/grafana/grafana/pkg/infra/log/redact"
 	"github.com/grafana/grafana/pkg/infra/log/sinks/console"
+	"github.com/grafana/grafana/pkg/infra/log/sinks/otlp"
 	"github.com/grafana/grafana/pkg/infra/log/slogcore"
 	"github.com/grafana/grafana/pkg/util"
 )
@@ -27,12 +29,18 @@ const SlogCoreFeatureToggle = "grafana.slogLoggingCore"
 type ConfigOption func(*configOptions)
 
 type configOptions struct {
-	slogCore bool
+	slogCore     bool
+	buildVersion string
 }
 
 // WithSlogCore makes ReadLoggingConfig build the slog pipeline instead of the go-kit one.
 func WithSlogCore(enabled bool) ConfigOption {
 	return func(o *configOptions) { o.slogCore = enabled }
+}
+
+// WithBuildVersion sets service.version on the OTLP sink resource.
+func WithBuildVersion(version string) ConfigOption {
+	return func(o *configOptions) { o.buildVersion = version }
 }
 
 // SinkFactory builds the handler for one `[log] mode` entry from its `[log.<mode>]`
@@ -71,7 +79,15 @@ func newConsoleSink(section *ini.Section, _ string) (slog.Handler, error) {
 var (
 	slogManagerOnce sync.Once
 	slogManager     *slogcore.Manager
+	slogRedactExtra atomic.Pointer[[]string]
 )
+
+func currentRedactExtra() []string {
+	if extra := slogRedactExtra.Load(); extra != nil {
+		return *extra
+	}
+	return nil
+}
 
 // SlogManager returns the manager of the slog pipeline, creating it on first use. It has
 // no sinks until ReadLoggingConfig runs with the slog core enabled.
@@ -81,6 +97,11 @@ func SlogManager() *slogcore.Manager {
 			ContextExtractors: []slogcore.ContextExtractor{
 				slogcore.SpanContextAttrs,
 				contextProviderAttrs,
+			},
+			Middlewares: []slogcore.Middleware{
+				func(next slog.Handler) slog.Handler {
+					return redact.New(next, currentRedactExtra()...)
+				},
 			},
 			Registerer: prometheus.DefaultRegisterer,
 		})
@@ -103,7 +124,10 @@ func contextProviderAttrs(ctx context.Context) []slog.Attr {
 	return keyvalsToAttrs(FromContext(ctx))
 }
 
-func readSlogLoggingConfig(modes []string, logsPath string, cfg *ini.File, defaultLevelName string) error {
+func readSlogLoggingConfig(modes []string, logsPath string, cfg *ini.File, defaultLevelName string, options configOptions) error {
+	extra := redact.ParseKeys(cfg.Section("log").Key("redact_keys").String())
+	slogRedactExtra.Store(&extra)
+
 	defaultFilters, invalid := slogcore.ParseFilters(util.SplitString(cfg.Section("log").Key("filters").String()))
 	for _, lvl := range invalid {
 		root.Error("Unknown log level", "level", lvl)
@@ -116,6 +140,14 @@ func readSlogLoggingConfig(modes []string, logsPath string, cfg *ini.File, defau
 	sinks := make([]slogcore.Sink, 0, len(modes))
 	for _, mode := range modes {
 		mode = strings.TrimSpace(mode)
+		if mode == otlp.SinkName {
+			sink, err := newOtlpSink(cfg, options.buildVersion, defaultFilters)
+			if err != nil {
+				return err
+			}
+			sinks = append(sinks, sink)
+			continue
+		}
 		sec, err := cfg.GetSection("log." + mode)
 		if err != nil {
 			root.Error("Unknown log mode", "mode", mode)
@@ -158,6 +190,32 @@ func readSlogLoggingConfig(modes []string, logsPath string, cfg *ini.File, defau
 	slogCoreActive.Store(true)
 	root.initializeSlog(manager.Handler())
 	return nil
+}
+
+// newOtlpSink builds the OTLP sink from the full ini file. Level and per-logger
+// filters are applied by the fan-out handler, so the OTLP handler itself accepts
+// every record it is given.
+func newOtlpSink(raw *ini.File, buildVersion string, defaultFilters map[string]slog.Level) (slogcore.Sink, error) {
+	cfg, err := otlp.ReadConfig(raw, buildVersion)
+	if err != nil {
+		return slogcore.Sink{}, fmt.Errorf("log mode %q: %w", otlp.SinkName, err)
+	}
+	filters := cfg.Filters
+	if filters == nil {
+		filters = map[string]slog.Level{}
+	}
+	for name, lvl := range defaultFilters {
+		if _, exists := filters[name]; !exists {
+			filters[name] = lvl
+		}
+	}
+	sinkLevel := cfg.Level
+	cfg.Level = slog.LevelDebug - 1000
+	h, err := otlp.New(context.Background(), cfg, prometheus.DefaultRegisterer)
+	if err != nil {
+		return slogcore.Sink{}, fmt.Errorf("log mode %q: %w", otlp.SinkName, err)
+	}
+	return slogcore.Sink{Name: otlp.SinkName, Handler: h, Level: sinkLevel, Filters: filters}, nil
 }
 
 // newSlogSinkHandler returns nil, nil when the sink is skipped, matching the legacy

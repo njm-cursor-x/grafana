@@ -484,7 +484,7 @@ func ReadLoggingConfig(modes []string, logsPath string, cfg *ini.File, opts ...C
 
 	defaultLevelName, _ := getLogLevelFromConfig("log", "info", cfg)
 	if options.slogCore {
-		return readSlogLoggingConfig(modes, logsPath, cfg, defaultLevelName)
+		return readSlogLoggingConfig(modes, logsPath, cfg, defaultLevelName, options)
 	}
 	slogCoreActive.Store(false)
 
