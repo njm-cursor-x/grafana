@@ -1021,4 +1021,8 @@ const (
 	// FlagDatasourcesQueryGateway
 	// Data source query gateway
 	FlagDatasourcesQueryGateway = "datasources.queryGateway"
+
+	// FlagGrafanaSlogLoggingCore
+	// Routes backend logs through the log/slog pipeline, which writes canonical field names such as trace_id and grafana.org.id to every sink
+	FlagGrafanaSlogLoggingCore = "grafana.slogLoggingCore"
 )

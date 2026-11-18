@@ -3396,6 +3396,20 @@
     },
     {
       "metadata": {
+        "name": "grafana.slogLoggingCore",
+        "resourceVersion": "1795009368882",
+        "creationTimestamp": "2026-11-18T13:42:48Z"
+      },
+      "spec": {
+        "description": "Routes backend logs through the log/slog pipeline, which writes canonical field names such as trace_id and grafana.org.id to every sink",
+        "stage": "experimental",
+        "codeowner": "@grafana/grafana-backend-services-squad",
+        "requiresRestart": true,
+        "expression": "false"
+      }
+    },
+    {
+      "metadata": {
         "name": "grafana.ssoSettingsToMTSettings",
         "resourceVersion": "1783523719423",
         "creationTimestamp": "2026-07-08T15:15:19Z"
