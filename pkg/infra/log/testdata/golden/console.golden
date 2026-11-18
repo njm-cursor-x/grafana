@@ -1,0 +1,31 @@
+=== levels ===
+logger=levels t=2024-01-15T10:11:12.123456789Z level=debug msg="debug message" k=v
+logger=levels t=2024-01-15T10:11:12.123456789Z level=info msg="info message" k=v
+logger=levels t=2024-01-15T10:11:12.123456789Z level=warn msg="warn message" k=v
+logger=levels t=2024-01-15T10:11:12.123456789Z level=error msg="error message" k=v
+
+=== named-loggers ===
+logger=http.server t=2024-01-15T10:11:12.123456789Z level=info msg=listening addr=:3000
+logger=sqlstore t=2024-01-15T10:11:12.123456789Z level=info msg=connected db=sqlite
+
+=== filters ===
+logger=sqlstore t=2024-01-15T10:11:12.123456789Z level=debug msg=query sql="SELECT 1"
+logger=http.server t=2024-01-15T10:11:12.123456789Z level=info msg=served status=200
+
+=== errors ===
+logger=errors t=2024-01-15T10:11:12.123456789Z level=error msg=failed error=boom attempt=3
+
+=== structs ===
+logger=structs t=2024-01-15T10:11:12.123456789Z level=info msg=payload data="{Name:foo Count:3}" tags="[a b]"
+
+=== nil-values ===
+logger=nils t=2024-01-15T10:11:12.123456789Z level=info msg=nils err=null ptr=null val=null
+
+=== contextual-attributes ===
+logger=request traceID=trace-abc orgId=1 userId=42 t=2024-01-15T10:11:12.123456789Z level=info msg=handled path=/api/dashboards
+
+=== typed-values ===
+logger=types t=2024-01-15T10:11:12.123456789Z level=info msg=mixed ok=true n=7 ratio=1.5 note="has spaces"
+
+=== child-logger ===
+logger=parent requestID=r1 t=2024-01-15T10:11:12.123456789Z level=info msg=child k=v
