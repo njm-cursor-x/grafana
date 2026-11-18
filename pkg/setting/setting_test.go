@@ -80,6 +80,15 @@ func TestLoadingSettings(t *testing.T) {
 		require.Equal(t, filepath.Join(cfg.DataPath, "log"), cfg.LogsPath)
 	})
 
+	t.Run("Should parse [log] redact_keys from environment", func(t *testing.T) {
+		t.Setenv("GF_LOG_REDACT_KEYS", "ssn, session_id")
+
+		cfg := NewCfg()
+		err := cfg.Load(CommandLineArgs{HomePath: "../../"})
+		require.Nil(t, err)
+		require.Equal(t, []string{"ssn", "session_id"}, cfg.LogRedactKeys)
+	})
+
 	t.Run("Should be able to override via plugins.preinstall with GF_INSTALL_PLUGINS env var when GF_PLUGINS_PREINSTALL and cfg.plugins.preinstall are not set", func(t *testing.T) {
 		t.Setenv("GF_INSTALL_PLUGINS", "https://grafana.com/grafana/plugins/grafana-piechart-panel/;grafana-piechart-panel")
 
