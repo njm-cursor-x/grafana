@@ -342,3 +342,20 @@ func TestFlagValueSerialization(t *testing.T) {
 		}
 	}
 }
+
+func TestSlogLoggingCoreEnabled(t *testing.T) {
+	load := func(t *testing.T, conf string) *ini.File {
+		t.Helper()
+		f, err := ini.Load([]byte(conf))
+		require.NoError(t, err)
+		return f
+	}
+
+	assert.False(t, slogLoggingCoreEnabled(load(t, "")))
+	assert.True(t, slogLoggingCoreEnabled(load(t, "[feature_toggles]\ngrafana.slogLoggingCore = true\n")))
+	assert.True(t, slogLoggingCoreEnabled(load(t, "[feature_toggles]\nenable = grafana.slogLoggingCore\n")))
+	assert.False(t, slogLoggingCoreEnabled(load(t, "[feature_toggles]\ngrafana.slogLoggingCore = false\n")))
+
+	t.Setenv("GF_FEATURE_TOGGLES_grafana.slogLoggingCore", "false")
+	assert.False(t, slogLoggingCoreEnabled(load(t, "[feature_toggles]\ngrafana.slogLoggingCore = true\n")), "env overrides ini")
+}
